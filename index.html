@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agustín Vila — Game &amp; Level Designer</title>
+<meta name="description" content="Game y Level Designer en Buenos Aires. Sealcoating Simulator (ACE 87 Studios) y SolAR (KYKUYO). Unity, Unreal y C#.">
+<meta name="theme-color" content="#0A0710">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Agustín Vila — Game &amp; Level Designer">
+<meta property="og:description" content="Sistemas, encuentros y niveles. Sealcoating Simulator y SolAR. Buenos Aires.">
+<!-- EDITAR: falta subir la imagen 1200x630 al repo como og.png -->
+<meta property="og:image" content="https://agusvila87.github.io/og.png">
+<meta property="og:url" content="https://agusvila87.github.io/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --void:#0A0710; --panel:#130F1E; --panel-2:#1B1529; --line:#2A2140;
+  --violet:#7B2BF9; --violet-hot:#A96BFF; --bone:#EDE9F5; --muted:#8A81A3;
+  --display:"Archivo",system-ui,sans-serif;
+  --body:"Instrument Sans",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --gut:clamp(20px,5vw,64px); --maxw:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--bone);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(760px 420px at 82% -8%,rgba(123,43,249,.30),transparent 62%),
+             radial-gradient(560px 400px at 4% 44%,rgba(123,43,249,.12),transparent 66%)}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
+a{color:inherit}
+img{max-width:100%;display:block}
+:focus-visible{outline:2px solid var(--violet-hot);outline-offset:3px;border-radius:2px}
+
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--violet-hot);display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--violet);transform:skewX(-32deg)}
+.h2{font-family:var(--display);font-variation-settings:"wdth" 74,"wght" 800;font-size:clamp(34px,6.4vw,68px);line-height:.92;letter-spacing:-.01em;text-transform:uppercase;margin:18px 0 0}
+.lede{color:var(--muted);max-width:58ch;margin-top:18px;font-size:clamp(15px,1.6vw,17px)}
+
+nav{position:sticky;top:0;z-index:60;background:rgba(10,7,16,.74);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:var(--maxw);margin:0 auto;padding:14px var(--gut);display:flex;align-items:center;gap:24px}
+.mark{font-family:var(--display);font-variation-settings:"wdth" 62,"wght" 900;font-size:19px;letter-spacing:.06em;margin-right:auto;text-decoration:none}
+.mark span{color:var(--violet-hot)}
+.nav-in a.nl{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .18s;white-space:nowrap}
+.nav-in a.nl:hover{color:var(--bone)}
+@media(max-width:760px){.nav-in a.nl:not(.keep){display:none}}
+
+header{padding:clamp(52px,9vw,104px) 0 clamp(36px,6vw,72px)}
+.card{position:relative;background:linear-gradient(160deg,var(--panel-2),var(--panel) 58%);border:1px solid var(--line);padding:clamp(24px,4.2vw,54px);overflow:hidden}
+.card::before{content:"";position:absolute;top:0;left:0;bottom:0;width:9px;background:var(--violet);transform:skewX(-11deg) translateX(-4px)}
+.card::after{content:"AV";position:absolute;right:-3.5vw;bottom:-13vw;font-family:var(--display);font-variation-settings:"wdth" 62,"wght" 900;font-size:34vw;line-height:.7;color:#fff;opacity:.026;pointer-events:none}
+.rowtop{display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between}
+.loc{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
+.avail{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;border:1px solid rgba(169,107,255,.45);color:var(--violet-hot);padding:6px 12px;display:flex;align-items:center;gap:8px}
+.dot{width:6px;height:6px;background:var(--violet-hot);border-radius:50%;box-shadow:0 0 0 0 rgba(169,107,255,.6);animation:pulse 2.6s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(169,107,255,0)}100%{box-shadow:0 0 0 0 rgba(169,107,255,0)}}
+h1{font-family:var(--display);font-variation-settings:"wdth" 68,"wght" 900;font-size:clamp(52px,13.5vw,152px);line-height:.83;letter-spacing:-.02em;text-transform:uppercase;margin:26px 0 0}
+h1 em{font-style:normal;display:block;color:transparent;-webkit-text-stroke:1.4px var(--violet-hot)}
+.role{font-family:var(--mono);font-size:clamp(11px,1.5vw,13px);letter-spacing:.3em;text-transform:uppercase;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
+.pitch{margin-top:20px;max-width:50ch;font-size:clamp(16px,2vw,19px);color:#C9C1DC}
+.stats{display:flex;flex-wrap:wrap;margin-top:34px;border:1px solid var(--line)}
+.stat{flex:1 1 130px;padding:14px 16px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:var(--display);font-variation-settings:"wdth" 70,"wght" 800;font-size:22px;line-height:1.1}
+.stat span{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;padding:14px 22px;text-decoration:none;border:1px solid var(--violet);transition:background .2s,color .2s,transform .2s}
+.btn.solid{background:var(--violet);color:#fff}
+.btn.solid:hover{background:var(--violet-hot);transform:translateY(-2px)}
+.btn.ghost{color:var(--violet-hot)}
+.btn.ghost:hover{background:rgba(123,43,249,.14);transform:translateY(-2px)}
+
+section{padding:clamp(56px,8vw,110px) 0}
+.sec-head{margin-bottom:clamp(30px,4.5vw,52px)}
+
+/* ── reproductor liviano de YouTube ── */
+.yt{position:relative;aspect-ratio:16/9;background:#0E0A18;cursor:pointer;overflow:hidden;border:0;width:100%;padding:0;display:block}
+.yt img{width:100%;height:100%;object-fit:cover;opacity:.62;transition:opacity .3s,transform .5s}
+.yt:hover img{opacity:.86;transform:scale(1.03)}
+.yt .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.yt .play i{width:60px;height:60px;background:var(--violet);display:grid;place-items:center;transition:background .25s}
+.yt:hover .play i{background:var(--violet-hot)}
+.yt .play i::after{content:"";border-left:16px solid #fff;border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px}
+.yt iframe{width:100%;height:100%;border:0;display:block}
+
+/* ── proyectos destacados ── */
+.proj{border:1px solid var(--line);background:var(--panel);margin-bottom:26px;overflow:hidden;transition:border-color .25s}
+.proj:hover{border-color:rgba(169,107,255,.45)}
+.proj-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr)}
+@media(max-width:900px){.proj-grid{grid-template-columns:1fr}}
+.shot{position:relative;border-right:1px solid var(--line);background:#0E0A18}
+@media(max-width:900px){.shot{border-right:0;border-bottom:1px solid var(--line)}}
+.shot>img{width:100%;aspect-ratio:16/9;object-fit:cover}
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line)}
+.strip img{width:100%;aspect-ratio:16/10;object-fit:cover;opacity:.72;transition:opacity .25s}
+.strip img:hover{opacity:1}
+.tag{position:absolute;top:14px;left:14px;z-index:3;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;background:var(--violet);color:#fff;padding:6px 11px}
+.tag.soft{background:rgba(10,7,16,.85);border:1px solid var(--line);color:var(--muted)}
+.proj-body{padding:clamp(22px,3.2vw,38px)}
+.proj h3{font-family:var(--display);font-variation-settings:"wdth" 76,"wght" 800;font-size:clamp(24px,3.4vw,36px);line-height:1;text-transform:uppercase;margin-bottom:16px}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:20px}
+.meta div{background:var(--panel);padding:10px 12px}
+.meta dt{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.meta dd{font-size:13.5px;font-weight:500}
+.proj p{color:var(--muted);font-size:15px;margin-bottom:14px}
+.proj p strong{color:var(--bone);font-weight:600}
+.proj-links{display:flex;flex-wrap:wrap;gap:18px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
+.proj-links a{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-hot);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.proj-links a:hover{border-bottom-color:var(--violet-hot)}
+
+/* ── grilla académica ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
+.mini{border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;transition:border-color .25s,transform .25s}
+.mini:hover{border-color:rgba(169,107,255,.45);transform:translateY(-3px)}
+.mini-body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
+.mini h4{font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 800;font-size:20px;text-transform:uppercase;line-height:1.05;margin-bottom:10px}
+.mini .line{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-hot);margin-bottom:12px}
+.mini p{color:var(--muted);font-size:14px;flex:1}
+.mini .foot{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.mini .foot a,.mini .foot span{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
+.mini .foot a{color:var(--violet-hot)}
+.mini .foot span{color:var(--muted)}
+
+.more{margin-top:26px;border:1px solid var(--line);background:var(--panel)}
+.more-row{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline;padding:16px 22px;border-bottom:1px solid var(--line)}
+.more-row:last-child{border-bottom:0}
+.more-row b{font-family:var(--display);font-variation-settings:"wdth" 80,"wght" 700;font-size:16px;text-transform:uppercase;min-width:190px}
+.more-row em{font-style:normal;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);flex:1;min-width:180px}
+.more-row a{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-hot);text-decoration:none}
+.more-row a:hover{text-decoration:underline}
+
+/* ── competencias ── */
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.skill{background:var(--panel);padding:clamp(20px,2.8vw,30px)}
+.skill h4{font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 700;font-size:17px;text-transform:uppercase;margin-bottom:10px}
+.skill p{color:var(--muted);font-size:14.5px}
+.skill .num{font-family:var(--mono);font-size:10px;color:var(--violet-hot);letter-spacing:.2em;display:block;margin-bottom:12px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.tool{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);padding:9px 15px;color:var(--muted)}
+
+.contact-h{font-family:var(--display);font-variation-settings:"wdth" 70,"wght" 900;font-size:clamp(38px,8vw,88px);line-height:.88;text-transform:uppercase;margin-top:20px}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+footer{border-top:1px solid var(--line);padding:26px 0 40px}
+.foot-in{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none;transition:none}
+  .dot{animation:none}
+  .btn:hover,.mini:hover,.yt:hover img{transform:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <a href="#top" class="mark">AGUSTÍN VILA<span>.</span></a>
+    <a href="#destacados" class="nl">Proyectos</a>
+    <a href="#davinci" class="nl">Da Vinci</a>
+    <a href="#quehago" class="nl">Qué hago</a>
+    <!-- EDITAR: subí el PDF a la raíz del repo con este nombre exacto -->
+    <a href="Agustin_Vila_Game_Designer_CV.pdf" class="nl" download>CV</a>
+    <a href="#contacto" class="nl keep">Contacto</a>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="wrap">
+    <div class="card">
+      <div class="rowtop">
+        <div class="loc">AR · Buenos Aires · GMT-3</div>
+        <div class="avail"><i class="dot"></i>Abierto a propuestas</div>
+      </div>
+
+      <h1>Agustín<em>Vila</em></h1>
+      <div class="role">Game Designer &nbsp;·&nbsp; Level Designer</div>
+
+      <!-- EDITAR: tu tesis. Reescribila con tus palabras. -->
+      <p class="pitch">Diseño loops, encuentros y niveles. Me interesa el momento en que
+      alguien entiende una mecánica sin que nadie se la haya explicado.</p>
+
+      <div class="stats">
+        <div class="stat"><b>2</b><span>Títulos profesionales</span></div>
+        <div class="stat"><b>8</b><span>Proyectos Da Vinci</span></div>
+        <div class="stat"><b>Unity · Unreal</b><span>Motores</span></div>
+        <div class="stat"><b>C#</b><span>Scripting</span></div>
+        <div class="stat"><b>PC · Mobile</b><span>Plataformas</span></div>
+      </div>
+
+      <div class="cta-row">
+        <a href="#destacados" class="btn solid">Ver proyectos</a>
+        <a href="Agustin_Vila_Game_Designer_CV.pdf" class="btn ghost" download>Descargar CV</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════ DESTACADOS ═══════════ -->
+<section id="destacados">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Trabajo profesional</div>
+      <h2 class="h2">Destacados</h2>
+      <p class="lede">Dos juegos, dos estudios, dos plataformas. Abajo está qué problema de
+      diseño había en cada uno y qué decidí al respecto.</p>
+    </div>
+
+    <!-- ── Sealcoating Simulator ── -->
+    <article class="proj rv">
+      <div class="proj-grid">
+        <div class="shot">
+          <span class="tag">En desarrollo · Steam</span>
+          <button class="yt" data-id="G1gEgFUrqv8" aria-label="Ver el trailer de Sealcoating Simulator">
+            <img src="https://ace87studio.github.io/assets/keyart.jpg" alt="Key art de Sealcoating Simulator">
+            <span class="play"><i></i></span>
+          </button>
+          <div class="strip">
+            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Chorro.png" alt="Vertiendo sellador con la manguera" loading="lazy">
+            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Faltante.png" alt="Zonas sin cubrir resaltadas" loading="lazy">
+            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Lvl%20Completado.png" alt="Pantalla de nivel completado" loading="lazy">
+          </div>
+        </div>
+        <div class="proj-body">
+          <h3>Sealcoating Simulator</h3>
+          <dl class="meta">
+            <div><dt>Rol</dt><dd>Game &amp; Level Designer</dd></div>
+            <div><dt>Estudio</dt><dd>ACE 87 Studios</dd></div>
+            <div><dt>Motor</dt><dd>Unity · C#</dd></div>
+            <div><dt>Plataforma</dt><dd>PC (Steam) · SP y coop local</dd></div>
+          </dl>
+
+          <!-- EDITAR: los "por qué" son tuyos. Esto es un punto de partida. -->
+          <p>Juego en primera persona sobre sellar asfalto, desarrollado con Santino Casolati.
+          Definí el <strong>core loop, las mecánicas y todos los niveles jugables</strong>, y el
+          tuning de ritmo que sostiene la satisfacción desde el primer chorro hasta el 100%.</p>
+
+          <p>El desafío de diseño es que el sellador es un fluido real: fluye, se encharca y se
+          asienta. Eso vuelve cada superficie impredecible, así que la dificultad no se ajusta con
+          números sino con <strong>geometría, obstáculos y capacidad de tanque</strong>.</p>
+
+          <p>Sobre la legibilidad: las zonas faltantes brillan y las estaciones de recarga pulsan
+          a través de las paredes cuando el tanque se vacía. Ningún jugador se queda perdido sin
+          saber qué le falta, y eso permitió sacar el juego <strong>sin fail states ni timers</strong>.</p>
+
+          <div class="proj-links">
+            <a href="https://store.steampowered.com/app/5027030/Sealcoating_Simulator/" target="_blank" rel="noopener">Steam ↗</a>
+            <a href="https://ace87studio.github.io" target="_blank" rel="noopener">Press kit ↗</a>
+            <a href="https://drive.google.com/drive/folders/1U6dj_mj4bsi9TGzsrukU7kMo9Qnq2cnm?usp=drive_link" target="_blank" rel="noopener">Jugar la build ↗</a>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ── SolAR ── -->
+    <article class="proj rv">
+      <div class="proj-grid">
+        <div class="shot">
+          <span class="tag">Publicado · iOS y Android</span>
+          <!-- EDITAR: reemplazá por una captura tuya de SolAR (img/solar.jpg) -->
+          <img src="https://www.kykuyo.com/_next/image?url=%2Fmedia%2Fweb%2Fgameplay-poster.jpg&w=1920&q=75" alt="Gameplay de SolAR en las calles de Singapur">
+        </div>
+        <div class="proj-body">
+          <h3>SolAR</h3>
+          <dl class="meta">
+            <div><dt>Rol</dt><dd>Game Designer</dd></div>
+            <div><dt>Estudio</dt><dd>KYKUYO · Singapur</dd></div>
+            <div><dt>Motor</dt><dd>Unity</dd></div>
+            <div><dt>Plataforma</dt><dd>Mobile · Geolocalización y AR</dd></div>
+          </dl>
+
+          <!-- EDITAR: esto es lo más importante de reescribir. ¿Qué diseñaste puntualmente? -->
+          <p>Geo-RPG solarpunk publicado en Singapur, con <strong>7.700 lugares reales</strong>
+          convertidos en mapa jugable. El juego usa la ciudad como open world: caminás las calles
+          reales para purificarlas.</p>
+
+          <p>Trabajé el <strong>FTUE y la progresión temprana</strong>: cómo enseñarle a alguien un
+          juego que le pide salir a la calle antes de que entienda por qué vale la pena hacerlo.</p>
+
+          <p>Diseñar para AR en movimiento obliga a resolver todo con sesiones cortas y atención
+          partida. Es la restricción más dura con la que trabajé, y la que más me cambió la forma
+          de escribir tutoriales.</p>
+
+          <div class="proj-links">
+            <a href="https://apps.apple.com/sg/app/solar-solarpunk-geo-rpg/id6737652523" target="_blank" rel="noopener">App Store ↗</a>
+            <a href="https://play.google.com/store/apps/details?id=com.kykuyo.solar" target="_blank" rel="noopener">Google Play ↗</a>
+            <a href="https://www.kykuyo.com/solar" target="_blank" rel="noopener">Sobre el juego ↗</a>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ═══════════ DA VINCI ═══════════ -->
+<!-- VERIFICAR: chequeá que cada video corresponda al proyecto correcto.
+     Los saqué del orden de tu Google Sites y ese orden puede estar corrido. -->
+<section id="davinci">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Escuela Da Vinci</div>
+      <h2 class="h2">Proyectos de carrera</h2>
+      <p class="lede">Ocho juegos terminados y jugables durante la carrera de Videojuegos.
+      Todos tienen video y descarga.</p>
+    </div>
+
+    <div class="grid rv">
+
+      <article class="mini">
+        <button class="yt" data-id="4lcbUXcykps" aria-label="Ver gameplay de Cold Blooded">
+          <img src="https://img.youtube.com/vi/4lcbUXcykps/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/4lcbUXcykps/hqdefault.jpg" alt="Gameplay de Cold Blooded" loading="lazy">
+          <span class="play"><i></i></span>
+        </button>
+        <div class="mini-body">
+          <h4>Cold Blooded</h4>
+          <div class="line">PC · Unity 3D · FPS single player · Solo</div>
+          <p>Proyecto final de carrera, hecho enteramente por mí: diseño, niveles, programación y
+          guion. Es la prueba de que puedo llevar un juego de la idea al build sin nadie más.</p>
+          <div class="foot">
+            <span>Game &amp; Level Design · Programación · Guion</span>
+            <a href="https://drive.google.com/open?id=1xBf7i2JIhsNbTl9bxaHIxE__QqPO_fQR&usp=drive_fs" target="_blank" rel="noopener">Descargar ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="mini">
+        <button class="yt" data-id="kFyClFSWqzs" aria-label="Ver gameplay de Bit Con">
+          <img src="https://img.youtube.com/vi/kFyClFSWqzs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/kFyClFSWqzs/hqdefault.jpg" alt="Gameplay de Bit Con" loading="lazy">
+          <span class="play"><i></i></span>
+        </button>
+        <div class="mini-body">
+          <h4>Bit Con</h4>
+          <div class="line">PC · Unity 3D · Plataformero · Solo · Materia: Diseño de Niveles</div>
+          <p>Plataformero construido específicamente como ejercicio de diseño de niveles, sobre la
+          consigna obligatoria "la avaricia corrompe". Mecánicas, niveles e historia empujan la
+          misma idea: el nivel castiga al que quiere de más.</p>
+          <div class="foot">
+            <span>Game &amp; Level Design</span>
+            <a href="https://drive.google.com/file/d/1vTNqeawi_gHIq55o95ece2zziRdQ1f81/view" target="_blank" rel="noopener">Descargar ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="mini">
+        <button class="yt" data-id="PfuSDMfh4vQ" aria-label="Ver gameplay de OrbBuster">
+          <img src="https://img.youtube.com/vi/PfuSDMfh4vQ/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/PfuSDMfh4vQ/hqdefault.jpg" alt="Gameplay de OrbBuster" loading="lazy">
+          <span class="play"><i></i></span>
+        </button>
+        <div class="mini-body">
+          <h4>OrbBuster</h4>
+          <div class="line">PC · Unreal Engine 4 · RPG single player · Equipo de 3</div>
+          <p>Único proyecto en Unreal. Me concentré en el diseño e implementación de mecánicas y
+          en la construcción de los niveles.</p>
+          <div class="foot">
+            <span>Game &amp; Level Design</span>
+            <a href="https://drive.google.com/file/d/1E-hNoGor7rCVNsnJDJmmFoBBtuJWSDxg/view?usp=drive_link" target="_blank" rel="noopener">Descargar ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="mini">
+        <button class="yt" data-id="MwDtFKsLwvs" aria-label="Ver gameplay de Zack 2">
+          <img src="https://img.youtube.com/vi/MwDtFKsLwvs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/MwDtFKsLwvs/hqdefault.jpg" alt="Gameplay de Zack 2" loading="lazy">
+          <span class="play"><i></i></span>
+        </button>
+        <div class="mini-body">
+          <h4>Zack 2</h4>
+          <div class="line">Mobile · Unity 3D · Shooter survival · Equipo de 3</div>
+          <!-- EDITAR: contá qué cambiaste en la última actualización. Es tu proyecto más vivo. -->
+          <p>Shooter de supervivencia para mobile, con actualizaciones que le siguo haciendo hoy.
+          Cubrí diseño, niveles, programación y guion.</p>
+          <div class="foot">
+            <span>Actualizado recientemente</span>
+            <a href="https://drive.google.com/file/d/1wGHjWC-hT7eG88OY1FST6lJG-An_nNfE/view" target="_blank" rel="noopener">Descargar ↗</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- ── el resto, compacto ── -->
+    <div class="more rv">
+      <div class="more-row">
+        <b>Grab it, It's Hot!</b>
+        <em>PC · Unity 3D · Multiplayer 2–4 con Photon · Equipo de 2</em>
+        <a href="https://drive.google.com/open?id=1xErI63W65QAe1Zq-qM7va3-dPqqNPn2Q&usp=drive_fs" target="_blank" rel="noopener">Descargar ↗</a>
+        <a href="https://youtu.be/TfBjDYBX2PI" target="_blank" rel="noopener">Video ↗</a>
+      </div>
+      <div class="more-row">
+        <b>Proyecto Caos</b>
+        <em>PC · Unity 2D · Plataformero · Equipo de 4</em>
+        <a href="https://drive.google.com/file/d/1NYe7GxX6MJrHdbW2NOB7UnjQNTSNwy4I/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
+        <a href="https://youtu.be/TTQJIlwGJXM" target="_blank" rel="noopener">Video ↗</a>
+      </div>
+      <div class="more-row">
+        <b>Asteroids</b>
+        <em>PC · Unity 2D · Reinterpretación del clásico · Equipo de 2</em>
+        <a href="https://drive.google.com/file/d/1r74E0lzcg4vZ-iKusEGUyCoGO44rkLw5/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
+        <a href="https://youtu.be/kGAdaWTG4cg" target="_blank" rel="noopener">Video ↗</a>
+      </div>
+      <div class="more-row">
+        <b>Cold World</b>
+        <em>PC · Unity 2D · Plataformero shooter · Solo · Mi primer juego</em>
+        <a href="https://drive.google.com/file/d/1wCVIjtfbjw6e97jDAwVeZwWj6NXRA7Pv/view" target="_blank" rel="noopener">Descargar ↗</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ QUÉ HAGO ═══════════ -->
+<section id="quehago">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="eyebrow">Competencias</div>
+      <h2 class="h2">Qué hago</h2>
+    </div>
+
+    <div class="skills rv">
+      <div class="skill"><span class="num">01</span><h4>Diseño de niveles</h4>
+        <p>Layout, ritmo y curva de dificultad. Niveles que enseñan una idea y después la ponen a prueba.</p></div>
+      <div class="skill"><span class="num">02</span><h4>Core loop y mecánicas</h4>
+        <p>Definir qué hace el jugador cada treinta segundos y por qué querría hacerlo de nuevo.</p></div>
+      <div class="skill"><span class="num">03</span><h4>FTUE y onboarding</h4>
+        <p>Las primeras sesiones de un juego complejo, sin muros de texto. Enseñar jugando.</p></div>
+      <div class="skill"><span class="num">04</span><h4>Feedback y legibilidad</h4>
+        <p>Que el jugador siempre sepa qué le falta y dónde está. Highlights, pulsos, estados claros.</p></div>
+      <div class="skill"><span class="num">05</span><h4>Prototipado en Unity</h4>
+        <p>Scripting en C# para probar una mecánica yo mismo antes de pedirle tiempo a nadie.</p></div>
+      <div class="skill"><span class="num">06</span><h4>Playtesting e iteración</h4>
+        <p>Mirar a alguien jugar, separar lo que dice de lo que hace, y cambiar una cosa por vez.</p></div>
+    </div>
+
+    <div class="tools rv">
+      <span class="tool">Unity</span><span class="tool">Unreal Engine</span><span class="tool">C#</span>
+      <span class="tool">Photon</span><span class="tool">Git</span><span class="tool">Figma</span>
+      <span class="tool">Miro</span><span class="tool">Notion</span><span class="tool">Google Sheets</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CONTACTO ═══════════ -->
+<section id="contacto">
+  <div class="wrap">
+    <div class="card rv">
+      <div class="eyebrow">Contacto</div>
+      <p class="contact-h">Hablemos<br>de tu juego</p>
+      <p class="lede">Si querés ver design docs, layouts anotados o planillas de balanceo de
+      cualquiera de estos proyectos, pedímelos y te los mando.</p>
+      <div class="links">
+        <a class="btn solid" href="mailto:agusvila0087@gmail.com">agusvila0087@gmail.com</a>
+        <a class="btn ghost" href="https://www.linkedin.com/in/agustinvila87/" target="_blank" rel="noopener">LinkedIn</a>
+        <!-- EDITAR: verificá este número, en tu Google Sites el texto y el link no coinciden -->
+        <a class="btn ghost" href="https://wa.me/5491141401115" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-in">
+    <span>Agustín Vila — Buenos Aires, AR</span>
+    <span>© 2026</span>
+  </div>
+</footer>
+
+<script>
+// thumbnails: si no existe maxresdefault, cae a hqdefault
+document.querySelectorAll('.yt img[data-fb]').forEach(img => {
+  img.addEventListener('error', () => { img.src = img.dataset.fb; }, { once: true });
+});
+
+// click → carga el iframe de YouTube (la página arranca liviana)
+document.querySelectorAll('.yt').forEach(box => {
+  box.addEventListener('click', () => {
+    const id = box.dataset.id;
+    if (!id) return;
+    const f = document.createElement('iframe');
+    f.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+    f.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
+    f.allowFullscreen = true;
+    f.title = box.getAttribute('aria-label') || 'Video';
+    box.replaceChildren(f);
+  }, { once: true });
+});
+
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
