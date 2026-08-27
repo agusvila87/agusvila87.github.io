@@ -97,11 +97,13 @@ section{padding:clamp(56px,8vw,110px) 0}
 .proj:hover{border-color:rgba(169,107,255,.45)}
 .proj-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr)}
 @media(max-width:900px){.proj-grid{grid-template-columns:1fr}}
-.shot{position:relative;border-right:1px solid var(--line);background:#0E0A18}
+.shot{position:relative;border-right:1px solid var(--line);background:#0E0A18;display:flex;flex-direction:column}
 @media(max-width:900px){.shot{border-right:0;border-bottom:1px solid var(--line)}}
-.shot>img{width:100%;aspect-ratio:16/9;object-fit:cover}
-.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line)}
-.strip img{width:100%;aspect-ratio:16/10;object-fit:cover;opacity:.72;transition:opacity .25s}
+.shot>.yt{flex:0 0 auto}
+.shot>img{width:100%;aspect-ratio:16/9;object-fit:cover;flex:0 0 auto}
+.shot>img:last-child{flex:1 1 auto;aspect-ratio:auto;min-height:210px}
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line);flex:1 1 auto;min-height:112px}
+.strip img{width:100%;height:100%;object-fit:cover;opacity:.72;transition:opacity .25s}
 .strip img:hover{opacity:1}
 .tag{position:absolute;top:14px;left:14px;z-index:3;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;background:var(--violet);color:#fff;padding:6px 11px}
 .tag.soft{background:rgba(10,7,16,.85);border:1px solid var(--line);color:var(--muted)}
@@ -220,7 +222,10 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
           </button>
           <div class="strip">
             <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Chorro.png" alt="Vertiendo sellador con la manguera" loading="lazy">
+            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Barrido%201.png" alt="Barrido con el squeegee" loading="lazy">
             <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Faltante.png" alt="Zonas sin cubrir resaltadas" loading="lazy">
+            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Recargar.png" alt="Estación de recarga del tanque" loading="lazy">
+            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%2099_.png" alt="Cobertura al 99 por ciento" loading="lazy">
             <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Lvl%20Completado.png" alt="Pantalla de nivel completado" loading="lazy">
           </div>
         </div>
@@ -258,8 +263,13 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
       <div class="proj-grid">
         <div class="shot">
           <span class="tag">Publicado · iOS y Android</span>
-          <!-- EDITAR: reemplazá por una captura tuya de SolAR (img/solar.jpg) -->
-          <img src="https://www.kykuyo.com/_next/image?url=%2Fmedia%2Fweb%2Fgameplay-poster.jpg&w=1920&q=75" alt="Gameplay de SolAR en las calles de Singapur">
+          <!-- EDITAR: si tenes capturas propias de SolAR, reemplazan a estas (que salen de kykuyo.com) -->
+          <img src="https://www.kykuyo.com/media/web/gameplay-poster.jpg" alt="Gameplay de SolAR en las calles de Singapur">
+          <div class="strip">
+            <img src="https://www.kykuyo.com/media/web/avatar-poster.jpg" alt="Personalización de avatar en SolAR" loading="lazy">
+            <img src="https://www.kykuyo.com/media/web/enemies-poster.jpg" alt="Enemigos de SolAR" loading="lazy">
+            <img src="https://www.kykuyo.com/media/web/solarpunk-poster.jpg" alt="Estética solarpunk de SolAR" loading="lazy">
+          </div>
         </div>
         <div class="proj-body">
           <h3>SolAR</h3>
@@ -502,9 +512,15 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
 </footer>
 
 <script>
-// thumbnails: si no existe maxresdefault, cae a hqdefault
+// thumbnails: si no hay maxresdefault, YouTube devuelve un gris de 120x90 con
+// status 200, asi que el evento 'error' nunca dispara. Hay que medir la imagen.
 document.querySelectorAll('.yt img[data-fb]').forEach(img => {
-  img.addEventListener('error', () => { img.src = img.dataset.fb; }, { once: true });
+  const usarFallback = () => {
+    if (img.src !== img.dataset.fb) img.src = img.dataset.fb;
+  };
+  const revisar = () => { if (img.naturalWidth <= 120) usarFallback(); };
+  img.addEventListener('error', usarFallback, { once: true });
+  if (img.complete) revisar(); else img.addEventListener('load', revisar, { once: true });
 });
 
 // click → carga el iframe de YouTube (la página arranca liviana)
