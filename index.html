@@ -137,15 +137,18 @@ section{padding:clamp(56px,8vw,110px) 0}
 .mini .foot a{color:var(--violet-hot)}
 .mini .foot span{color:var(--muted)}
 
-/* ── lista compacta: proyectos de carrera secundarios ── */
-.more{margin-top:22px;border:1px solid var(--line);background:var(--panel)}
-.more-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:13px 18px;border-bottom:1px solid var(--line)}
-.more-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding:14px 18px;border-bottom:1px solid var(--line)}
-.more-row:last-child{border-bottom:0}
-.more-row b{font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 700;font-size:16px;text-transform:uppercase;flex:0 0 auto}
-.more-row .line{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);flex:1 1 210px;margin:0}
-.more-row a{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-hot);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;flex:0 0 auto}
-.more-row a:hover{border-bottom-color:var(--violet-hot)}
+/* ── fichas chicas: el resto de los proyectos de carrera ── */
+.tiles-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:34px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:20px}
+.tile{border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;transition:border-color .25s,transform .25s}
+.tile:hover{border-color:rgba(169,107,255,.45);transform:translateY(-3px)}
+.tile .play i{width:38px;height:38px}
+.tile .play i::after{border-left:11px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent;margin-left:3px}
+.tile-body{padding:13px 15px 15px;display:flex;flex-direction:column;gap:8px;flex:1}
+.tile h4{font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 800;font-size:15px;text-transform:uppercase;line-height:1.05}
+.tile .line{font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);line-height:1.6}
+.tile a{margin-top:auto;align-self:flex-start;font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-hot);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+.tile a:hover{border-bottom-color:var(--violet-hot)}
 
 /* ── competencias ── */
 .skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
@@ -465,62 +468,66 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
           </div>
         </div>
       </article>
-      <article class="mini">
+
+    </div>
+
+    <div class="tiles-h rv">También de la carrera</div>
+    <div class="tiles rv">
+      <article class="tile">
         <button class="yt" data-id="S9SGYD3hVBs" aria-label="Ver gameplay de Bit Con">
           <img src="https://img.youtube.com/vi/S9SGYD3hVBs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/S9SGYD3hVBs/hqdefault.jpg" alt="Gameplay de Bit Con" loading="lazy">
           <span class="play"><i></i></span>
         </button>
-        <div class="mini-body">
+        <div class="tile-body">
           <h4>Bit Con</h4>
-          <div class="line">PC · Unity 3D · Plataformero · Solo · Materia: Diseño de Niveles</div>
-          <p>Plataformero construido específicamente como ejercicio de diseño de niveles, sobre la
-          consigna obligatoria "la avaricia corrompe". Mecánicas, niveles e historia empujan la
-          misma idea: el nivel castiga al que quiere de más.</p>
-          <div class="foot">
-            <span>Game &amp; Level Design</span>
-            <a href="https://drive.google.com/file/d/1vTNqeawi_gHIq55o95ece2zziRdQ1f81/view" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
+          <div class="line">PC · Unity 3D · Plataformero · Solo · Diseño de Niveles</div>
+          <a href="https://drive.google.com/file/d/1vTNqeawi_gHIq55o95ece2zziRdQ1f81/view" target="_blank" rel="noopener">Descargar ↗</a>
         </div>
       </article>
-      <article class="mini">
+      <article class="tile">
         <button class="yt" data-id="kFyClFSWqzs" aria-label="Ver gameplay de OrbBuster">
           <img src="https://img.youtube.com/vi/kFyClFSWqzs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/kFyClFSWqzs/hqdefault.jpg" alt="Gameplay de OrbBuster" loading="lazy">
           <span class="play"><i></i></span>
         </button>
-        <div class="mini-body">
+        <div class="tile-body">
           <h4>OrbBuster</h4>
-          <div class="line">PC · Unreal Engine 4 · RPG single player · Equipo de 3</div>
-          <p>Único proyecto en Unreal. Me concentré en el diseño e implementación de mecánicas y
-          en la construcción de los niveles.</p>
-          <div class="foot">
-            <span>Game &amp; Level Design</span>
-            <a href="https://drive.google.com/file/d/1E-hNoGor7rCVNsnJDJmmFoBBtuJWSDxg/view?usp=drive_link" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
+          <div class="line">PC · Unreal Engine 4 · RPG · Equipo de 3</div>
+          <a href="https://drive.google.com/file/d/1E-hNoGor7rCVNsnJDJmmFoBBtuJWSDxg/view?usp=drive_link" target="_blank" rel="noopener">Descargar ↗</a>
         </div>
       </article>
-
-    </div>
-
-    <div class="more rv">
-      <div class="more-h">También de la carrera</div>
-      <div class="more-row">
-        <b>Proyecto Caos</b>
-        <p class="line">PC · Unity 2D · Plataformero · Equipo de 4 · Diseño y Producción de Juegos</p>
-        <a href="https://www.youtube.com/watch?v=PfuSDMfh4vQ" target="_blank" rel="noopener">Video ↗</a>
-        <a href="https://drive.google.com/file/d/1NYe7GxX6MJrHdbW2NOB7UnjQNTSNwy4I/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
-      </div>
-      <div class="more-row">
-        <b>Asteroids</b>
-        <p class="line">PC · Unity 2D · Equipo de 2 · Modelos y Algoritmos 1</p>
-        <a href="https://www.youtube.com/watch?v=TTQJIlwGJXM" target="_blank" rel="noopener">Video ↗</a>
-        <a href="https://drive.google.com/file/d/1r74E0lzcg4vZ-iKusEGUyCoGO44rkLw5/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
-      </div>
-      <div class="more-row">
-        <b>Cold World</b>
-        <p class="line">PC · Unity 2D · Plataformero shooter · Solo · Mi primer juego, para Lógica de Programación</p>
-        <a href="https://www.youtube.com/watch?v=kGAdaWTG4cg" target="_blank" rel="noopener">Video ↗</a>
-        <a href="https://drive.google.com/file/d/1wCVIjtfbjw6e97jDAwVeZwWj6NXRA7Pv/view" target="_blank" rel="noopener">Descargar ↗</a>
-      </div>
+      <article class="tile">
+        <button class="yt" data-id="PfuSDMfh4vQ" aria-label="Ver gameplay de Proyecto Caos">
+          <img src="https://img.youtube.com/vi/PfuSDMfh4vQ/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/PfuSDMfh4vQ/hqdefault.jpg" alt="Gameplay de Proyecto Caos" loading="lazy">
+          <span class="play"><i></i></span>
+        </button>
+        <div class="tile-body">
+          <h4>Proyecto Caos</h4>
+          <div class="line">PC · Unity 2D · Plataformero · Equipo de 4</div>
+          <a href="https://drive.google.com/file/d/1NYe7GxX6MJrHdbW2NOB7UnjQNTSNwy4I/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
+        </div>
+      </article>
+      <article class="tile">
+        <button class="yt" data-id="TTQJIlwGJXM" aria-label="Ver gameplay de Asteroids">
+          <img src="https://img.youtube.com/vi/TTQJIlwGJXM/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/TTQJIlwGJXM/hqdefault.jpg" alt="Gameplay de Asteroids" loading="lazy">
+          <span class="play"><i></i></span>
+        </button>
+        <div class="tile-body">
+          <h4>Asteroids</h4>
+          <div class="line">PC · Unity 2D · Equipo de 2 · Modelos y Algoritmos 1</div>
+          <a href="https://drive.google.com/file/d/1r74E0lzcg4vZ-iKusEGUyCoGO44rkLw5/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
+        </div>
+      </article>
+      <article class="tile">
+        <button class="yt" data-id="kGAdaWTG4cg" aria-label="Ver gameplay de Cold World">
+          <img src="https://img.youtube.com/vi/kGAdaWTG4cg/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/kGAdaWTG4cg/hqdefault.jpg" alt="Gameplay de Cold World" loading="lazy">
+          <span class="play"><i></i></span>
+        </button>
+        <div class="tile-body">
+          <h4>Cold World</h4>
+          <div class="line">PC · Unity 2D · Plataformero shooter · Solo · Mi primer juego</div>
+          <a href="https://drive.google.com/file/d/1wCVIjtfbjw6e97jDAwVeZwWj6NXRA7Pv/view" target="_blank" rel="noopener">Descargar ↗</a>
+        </div>
+      </article>
     </div>
 
   </div>
