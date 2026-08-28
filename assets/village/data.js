@@ -121,6 +121,8 @@ export const DESTACADOS = [
 ];
 
 /* Las ocho casas: carrera en Escuela Da Vinci.
+   Ojo con el angulo 180 exacto: queda detras del torreon y el edificio
+   no se puede apuntar con el mouse desde la vista inicial.
    Las tres primeras van en el anillo interior (terraza baja) y las
    cinco restantes en el anillo exterior, al nivel del suelo. */
 export const CASITAS = [
@@ -151,7 +153,7 @@ export const CASITAS = [
     links: [{ label: 'Descargar', url: 'https://drive.google.com/file/d/1wGHjWC-hT7eG88OY1FST6lJG-An_nNfE/view' }]
   },
   {
-    id: 'grab-it', kind: 'house', angle: 180, radius: 33.8,
+    id: 'grab-it', kind: 'house', angle: -152, radius: 34.2,
     nombre: "Grab it, It's Hot!",
     linea: 'PC · Unity 3D · Multiplayer Photon · Equipo de 2',
     rol: 'Materia: Desarrollo de Redes',

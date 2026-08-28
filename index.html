@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Agustín Vila · Game &amp; Level Designer</title>
 <meta name="description" content="Portfolio de Agustín Vila, Game y Level Designer en Buenos Aires, como una aldea medieval. Sealcoating Simulator (ACE 87 Studios) y SolAR (KYKUYO).">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23241B14'/><path d='M16 3l5.5 6.5h-1.6V27h-7.8V9.5H10.5z' fill='%23E8B84B'/><rect x='14.2' y='18' width='3.6' height='9' fill='%23241B14'/><rect x='11' y='12.5' width='10' height='1.6' fill='%23BC8A28'/></svg>">
 <meta name="theme-color" content="#2A1E15">
 
 <meta property="og:type" content="website">
@@ -91,17 +92,17 @@ img{display:block;max-width:100%}
    Centrada y ancha: en el panel lateral de 430px los párrafos quedaban
    en una columna angosta y se leían mal. */
 #velo{position:fixed;inset:0;z-index:48;background:rgba(24,17,12,.58);
-  backdrop-filter:blur(2px);transition:opacity .28s}
+  backdrop-filter:blur(2px);transition:opacity .28s,visibility .28s}
 #panel{position:fixed;inset:0;z-index:50;display:grid;place-items:center;
   padding:clamp(14px,4vh,44px) clamp(14px,4vw,44px);pointer-events:none;
-  transition:opacity .28s}
+  transition:opacity .28s,visibility .28s}
 #ficha{pointer-events:auto;position:relative;display:flex;flex-direction:column;
   width:min(760px,100%);max-height:min(88vh,900px);
   background:linear-gradient(165deg,var(--tabla-2),var(--tinta) 60%);
   border:1px solid var(--linea);border-radius:6px;
   box-shadow:0 30px 90px rgba(20,12,8,.62);
   transition:transform .28s}
-body.panel-cerrado #velo,body.panel-cerrado #panel{opacity:0;pointer-events:none}
+body.panel-cerrado #velo,body.panel-cerrado #panel{opacity:0;pointer-events:none;visibility:hidden}
 body.panel-cerrado #ficha{transform:translateY(16px) scale(.98)}
 
 #panel-cerrar{position:absolute;top:12px;right:12px;z-index:2;width:34px;height:34px;
@@ -436,9 +437,11 @@ if (!hayWebGL()) {
   respaldo.classList.add('oculto');
   const { iniciarAldea } = await import('./assets/village/village.js');
 
-  let primeraFicha = true;
-  if (innerWidth < 900) document.body.classList.add('panel-cerrado');
+  /* Arranca cerrado. El modal cubre la pantalla con su velo, asi que si
+     abriera al cargar no se podria clickear ningun edificio hasta cerrarlo. */
+  document.body.classList.add('panel-cerrado');
 
+  const abrirPanel = document.getElementById('abrir-panel');
   const atajos = document.getElementById('atajos');
   const botones = new Map();
   for (const n of NODOS) {
@@ -452,14 +455,12 @@ if (!hayWebGL()) {
   const aldea = iniciarAldea({
     canvas,
     etiqueta: document.getElementById('etiqueta'),
-    /* id null = vista general, sin nada elegido en la aldea. El panel
-       igual muestra el perfil, pero ningún atajo queda marcado. */
+    /* id null = vista general, sin nada elegido. Se carga el perfil en la
+       ficha pero sin abrirla: el modal solo se abre cuando elegiste algo. */
     onSeleccion: id => {
       botones.forEach((b, k) => b.classList.toggle('on', k === id));
-      /* En mobile la hoja tapa media pantalla: al entrar conviene ver la
-         aldea entera, y que la ficha aparezca recién al tocar un edificio. */
-      mostrarFicha(id || PERFIL.id, !(primeraFicha && innerWidth < 900));
-      primeraFicha = false;
+      mostrarFicha(id || PERFIL.id, id !== null);
+      abrirPanel.textContent = (!id || id === PERFIL.id) ? 'Ver perfil' : 'Ver ficha';
     }
   });
 
@@ -469,7 +470,7 @@ if (!hayWebGL()) {
   addEventListener('keydown', e => {
     if (e.key === 'Escape' && !lupa.classList.contains('abierta')) cerrarFicha();
   });
-  document.getElementById('abrir-panel').addEventListener('click', () => {
+  abrirPanel.addEventListener('click', () => {
     document.body.classList.remove('panel-cerrado');
   });
   document.getElementById('ir-perfil').addEventListener('click', e => {
