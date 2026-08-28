@@ -39,6 +39,7 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opac
 .wrap{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
 a{color:inherit}
 img{max-width:100%;display:block}
+picture{display:contents}
 :focus-visible{outline:2px solid var(--violet-hot);outline-offset:3px;border-radius:2px}
 
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--violet-hot);display:flex;align-items:center;gap:12px}
@@ -100,8 +101,8 @@ section{padding:clamp(56px,8vw,110px) 0}
 .shot{position:relative;border-right:1px solid var(--line);background:#0E0A18;display:flex;flex-direction:column}
 @media(max-width:900px){.shot{border-right:0;border-bottom:1px solid var(--line)}}
 .shot>.yt{flex:0 0 auto}
-.shot>img{width:100%;aspect-ratio:16/9;object-fit:cover;flex:0 0 auto}
-.shot>img:last-child{flex:1 1 auto;aspect-ratio:auto;min-height:210px}
+.shot>img,.shot>picture>img{width:100%;aspect-ratio:16/9;object-fit:cover;flex:0 0 auto}
+.shot>img:last-child,.shot>picture:last-child>img{flex:1 1 auto;aspect-ratio:auto;min-height:210px}
 .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line);flex:1 1 auto;min-height:112px}
 .strip img{width:100%;height:100%;object-fit:cover;opacity:.72;transition:opacity .25s}
 .strip img:hover{opacity:1}
@@ -132,6 +133,16 @@ section{padding:clamp(56px,8vw,110px) 0}
 .mini .foot a{color:var(--violet-hot)}
 .mini .foot span{color:var(--muted)}
 
+/* ── lista compacta: proyectos de carrera secundarios ── */
+.more{margin-top:22px;border:1px solid var(--line);background:var(--panel)}
+.more-h{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:13px 18px;border-bottom:1px solid var(--line)}
+.more-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.more-row:last-child{border-bottom:0}
+.more-row b{font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 700;font-size:16px;text-transform:uppercase;flex:0 0 auto}
+.more-row .line{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);flex:1 1 210px;margin:0}
+.more-row a{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-hot);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s;flex:0 0 auto}
+.more-row a:hover{border-bottom-color:var(--violet-hot)}
+
 /* ── competencias ── */
 .skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
 .skill{background:var(--panel);padding:clamp(20px,2.8vw,30px)}
@@ -145,6 +156,11 @@ section{padding:clamp(56px,8vw,110px) 0}
 .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
 footer{border-top:1px solid var(--line);padding:26px 0 40px}
 .foot-in{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+@media(max-width:420px){
+  .meta{grid-template-columns:1fr}
+  .more-row{gap:4px 12px}
+}
 
 .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
 .rv.in{opacity:1;transform:none}
@@ -164,7 +180,6 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
     <a href="#destacados" class="nl">Proyectos</a>
     <a href="#davinci" class="nl">Da Vinci</a>
     <a href="#quehago" class="nl">Qué hago</a>
-    <!-- EDITAR: subí el PDF a la raíz del repo con este nombre exacto -->
     <a href="Agustin_Vila_Game_Designer_CV.pdf" class="nl" download>CV</a>
     <a href="#contacto" class="nl keep">Contacto</a>
   </div>
@@ -181,16 +196,16 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
       <h1>Agustín<em>Vila</em></h1>
       <div class="role">Game Designer &nbsp;·&nbsp; Level Designer</div>
 
-      <!-- EDITAR: tu tesis. Reescribila con tus palabras. -->
-      <p class="pitch">Diseño loops, encuentros y niveles. Me interesa el momento en que
-      alguien entiende una mecánica sin que nadie se la haya explicado.</p>
+      <p class="pitch">Diseño enemigos, bosses y las habilidades con las que el jugador los
+      enfrenta. Me interesa el momento en que alguien entiende una mecánica sin que nadie
+      se la haya explicado.</p>
 
       <div class="stats">
-        <div class="stat"><b>2</b><span>Títulos profesionales</span></div>
-        <div class="stat"><b>8</b><span>Proyectos Da Vinci</span></div>
+        <div class="stat"><b>2</b><span>Títulos publicados</span></div>
+        <div class="stat"><b>1</b><span>En camino a Steam</span></div>
+        <div class="stat"><b>3 años</b><span>En producción</span></div>
         <div class="stat"><b>Unity · Unreal</b><span>Motores</span></div>
-        <div class="stat"><b>C#</b><span>Scripting</span></div>
-        <div class="stat"><b>PC · Mobile</b><span>Plataformas</span></div>
+        <div class="stat"><b>PC · Mobile · AR</b><span>Plataformas</span></div>
       </div>
 
       <div class="cta-row">
@@ -217,16 +232,16 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
         <div class="shot">
           <span class="tag">En desarrollo · Steam</span>
           <button class="yt" data-id="G1gEgFUrqv8" aria-label="Ver el trailer de Sealcoating Simulator">
-            <img src="https://ace87studio.github.io/assets/keyart.jpg" alt="Key art de Sealcoating Simulator">
+            <picture><source srcset="assets/sealcoating/keyart.webp" type="image/webp"><img src="assets/sealcoating/keyart.jpg" width="1280" height="720" alt="Key art de Sealcoating Simulator"></picture>
             <span class="play"><i></i></span>
           </button>
           <div class="strip">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Chorro.png" alt="Vertiendo sellador con la manguera" loading="lazy">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Barrido%201.png" alt="Barrido con el squeegee" loading="lazy">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Faltante.png" alt="Zonas sin cubrir resaltadas" loading="lazy">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Recargar.png" alt="Estación de recarga del tanque" loading="lazy">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%2099_.png" alt="Cobertura al 99 por ciento" loading="lazy">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Lvl%20Completado.png" alt="Pantalla de nivel completado" loading="lazy">
+            <picture><source srcset="assets/sealcoating/chorro.webp" type="image/webp"><img src="assets/sealcoating/chorro.jpg" width="640" height="360" loading="lazy" alt="Vertiendo sellador con la manguera sobre el asfalto"></picture>
+            <picture><source srcset="assets/sealcoating/barrido.webp" type="image/webp"><img src="assets/sealcoating/barrido.jpg" width="640" height="360" loading="lazy" alt="Extendiendo el sellador con el squeegee"></picture>
+            <picture><source srcset="assets/sealcoating/faltante.webp" type="image/webp"><img src="assets/sealcoating/faltante.jpg" width="640" height="360" loading="lazy" alt="Las zonas sin cubrir resaltadas sobre la superficie"></picture>
+            <picture><source srcset="assets/sealcoating/recargar.webp" type="image/webp"><img src="assets/sealcoating/recargar.jpg" width="640" height="360" loading="lazy" alt="Estación de recarga del tanque de sellador"></picture>
+            <picture><source srcset="assets/sealcoating/cobertura.webp" type="image/webp"><img src="assets/sealcoating/cobertura.jpg" width="640" height="360" loading="lazy" alt="Contador de cobertura al 99 por ciento"></picture>
+            <picture><source srcset="assets/sealcoating/completado.webp" type="image/webp"><img src="assets/sealcoating/completado.jpg" width="640" height="360" loading="lazy" alt="Pantalla de nivel completado con el resumen del trabajo"></picture>
           </div>
         </div>
         <div class="proj-body">
@@ -269,15 +284,15 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
       <div class="proj-grid">
         <div class="shot">
           <span class="tag">Publicado · iOS y Android</span>
-          <!-- EDITAR: si tenes capturas propias de SolAR, reemplazan a estas (que salen de kykuyo.com) -->
-          <img src="https://www.kykuyo.com/media/web/gameplay-poster.jpg" alt="Gameplay de SolAR en las calles de Singapur">
+          <!-- Material de prensa publico de KYKUYO, copiado al repo para no depender de kykuyo.com -->
+          <picture><source srcset="assets/solar/gameplay.webp" type="image/webp"><img src="assets/solar/gameplay.jpg" width="1280" height="720" alt="Gameplay de SolAR en las calles de Singapur"></picture>
           <div class="strip">
-            <img src="https://www.kykuyo.com/media/web/enemies-poster.jpg" alt="Enemigos robot avanzando por una arena de neón" loading="lazy">
-            <img src="https://www.kykuyo.com/media/web/trailer-poster.jpg" alt="Fotograma del trailer de SolAR" loading="lazy">
-            <img src="https://www.kykuyo.com/media/brand/169%20Thumbnails.png" alt="El jugador cruzando un portal de piedra hacia un parque con Supertrees al fondo" loading="lazy">
-            <img src="https://www.kykuyo.com/media/brand/169%20Thumbnails%20copy.png" alt="Escena del mundo de SolAR" loading="lazy">
-            <img src="https://www.kykuyo.com/media/brand/169%20Thumbnails-2.png" alt="Escena del mundo de SolAR" loading="lazy">
-            <img src="https://www.kykuyo.com/media/brand/169%20Thumbnails%20copy%202.png" alt="Escena del mundo de SolAR" loading="lazy">
+            <picture><source srcset="assets/solar/enemigos.webp" type="image/webp"><img src="assets/solar/enemigos.jpg" width="640" height="360" loading="lazy" alt="Enemigos robot avanzando por una arena de neón"></picture>
+            <picture><source srcset="assets/solar/trailer.webp" type="image/webp"><img src="assets/solar/trailer.jpg" width="640" height="360" loading="lazy" alt="Fotograma del trailer de SolAR"></picture>
+            <picture><source srcset="assets/solar/portal.webp" type="image/webp"><img src="assets/solar/portal.jpg" width="640" height="361" loading="lazy" alt="El jugador cruza un portal de piedra hacia un parque con Supertrees al fondo"></picture>
+            <picture><source srcset="assets/solar/mundo-1.webp" type="image/webp"><img src="assets/solar/mundo-1.jpg" width="640" height="360" loading="lazy" alt="Un portal jugable emplazado sobre una esquina real de Singapur"></picture>
+            <picture><source srcset="assets/solar/mundo-2.webp" type="image/webp"><img src="assets/solar/mundo-2.jpg" width="640" height="360" loading="lazy" alt="Encuentro de combate en realidad aumentada a nivel de calle"></picture>
+            <picture><source srcset="assets/solar/mundo-3.webp" type="image/webp"><img src="assets/solar/mundo-3.jpg" width="640" height="360" loading="lazy" alt="Vista del mundo solarpunk de SolAR superpuesto a la ciudad"></picture>
           </div>
         </div>
         <div class="proj-body">
@@ -293,18 +308,21 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
                numeros internos no. Los detalles van en entrevista, verbalmente.
                El "7.800+" es dato publico: esta en el Instagram oficial del estudio
                (instagram.com/kykuyogame), y la guia permite reusar lo ya publicado. -->
-          <p>Geo-RPG solarpunk con geolocalización y realidad aumentada, publicado en Singapur
-          para iOS y Android. Más de <strong>7.800 lugares reales</strong> funcionan como portales
-          jugables. Formo parte del equipo de KYKUYO desde hace <strong>tres años</strong>.</p>
+          <p>Geo-RPG solarpunk con realidad aumentada, publicado en Singapur para iOS y Android.
+          Corre sobre un <strong>digital twin 1:1 de la ciudad</strong>: más de
+          <strong>7.800 lugares reales</strong> funcionan como portales jugables. El espacio de
+          juego no se dibuja, lo da la ciudad, y el trabajo es diseñar encuentros que funcionen
+          en cualquier esquina. Trabajé <strong>tres años</strong> en el equipo de KYKUYO.</p>
 
-          <p>Estoy a cargo del <strong>diseño de enemigos</strong>: la mecánica de cada uno, su
-          comportamiento y el rol que cumple en combate. Cubro esa área de punta a punta, del
+          <p>Estuve a cargo de las dos mitades del combate: el <strong>diseño de enemigos</strong>,
+          con la mecánica de cada uno, su comportamiento y el rol que cumple en pelea, y las
+          <strong>habilidades del jugador</strong>, ataques especiales y ultimates, que son las
+          herramientas con las que ese bestiario se enfrenta. Cubrí esa área de punta a punta, del
           concepto a la documentación con la que después trabajan animación y programación.</p>
 
-          <p>También diseño <strong>habilidades de combate del jugador</strong> y construyo
-          prototipos para validar ideas antes de comprometer tiempo de producción. A eso se suman
-          documentación de diseño, investigación, testeo y diseño de niveles en zonas puntuales
-          del mapa.</p>
+          <p>También construí prototipos para validar ideas antes de comprometer tiempo de
+          producción, y me ocupé de documentación de diseño, investigación, testeo y diseño de
+          niveles en zonas puntuales del mapa.</p>
 
           <!-- EDITAR: decime que hiciste puntualmente en SPCA y lo detallo. -->
           <p>También participé en el desarrollo de <strong>SolAR × SPCA</strong>, un spin-off hecho
@@ -321,6 +339,64 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
         </div>
       </div>
     </article>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         SERIOUS GAME DE PREVENCIÓN DE INCENDIOS  ·  BLOQUE LISTO, SIN PUBLICAR
+
+         Está comentado a propósito: no quiero dejar una tarjeta con la palabra
+         COMPLETAR visible en un portfolio que estás usando para aplicar.
+
+         Para publicarlo:
+           1. Completá cada [[COMPLETAR: ...]] de abajo.
+           2. Poné las capturas en assets/incendios/ (mismo formato que las otras:
+              .webp y .jpg, 1280x720 la grande y 640x360 las de la tira).
+           3. Borrá esta línea de apertura y la de cierre del comentario.
+           4. Cambiá el lede de la sección: hoy dice "Dos juegos, dos estudios,
+              dos plataformas" y pasarían a ser tres.
+         ═══════════════════════════════════════════════════════════════════
+
+    <article class="proj rv">
+      <div class="proj-grid">
+        <div class="shot">
+          <span class="tag soft">Serious game · [[COMPLETAR: año]]</span>
+          <picture>
+            <source srcset="assets/incendios/portada.webp" type="image/webp">
+            <img src="assets/incendios/portada.jpg" width="1280" height="720" alt="[[COMPLETAR: qué se ve en la captura principal]]">
+          </picture>
+          <div class="strip">
+            <picture><source srcset="assets/incendios/1.webp" type="image/webp"><img src="assets/incendios/1.jpg" width="640" height="360" loading="lazy" alt="[[COMPLETAR]]"></picture>
+            <picture><source srcset="assets/incendios/2.webp" type="image/webp"><img src="assets/incendios/2.jpg" width="640" height="360" loading="lazy" alt="[[COMPLETAR]]"></picture>
+            <picture><source srcset="assets/incendios/3.webp" type="image/webp"><img src="assets/incendios/3.jpg" width="640" height="360" loading="lazy" alt="[[COMPLETAR]]"></picture>
+          </div>
+        </div>
+        <div class="proj-body">
+          <h3>[[COMPLETAR: nombre del proyecto]]</h3>
+          <dl class="meta">
+            <div><dt>Rol</dt><dd>[[COMPLETAR: tu rol]]</dd></div>
+            <div><dt>Cliente</dt><dd>[[COMPLETAR: institución o cliente]]</dd></div>
+            <div><dt>Motor</dt><dd>[[COMPLETAR: Unity o Unreal]]</dd></div>
+            <div><dt>Contexto</dt><dd>UADE · [[COMPLETAR: año]]</dd></div>
+          </dl>
+
+          <p>[[COMPLETAR: qué es el juego en una frase, para quién era y cuál era el
+          objetivo educativo concreto que tenía que cumplir]]</p>
+
+          <p>Estuve a cargo de [[COMPLETAR: tu rol concreto. Si diseñaste los escenarios
+          de riesgo, decilo así: el jugador tiene que reconocer una situación peligrosa
+          antes de que escale, y el nivel se lo enseña sin decírselo]].</p>
+
+          <p>El diseño se validó con testeo antes y después: [[COMPLETAR: cómo lo mediste,
+          con cuánta gente y qué comparaste]]. El resultado fue [[COMPLETAR: qué dio]].
+          Es el proyecto donde puedo mostrar que una decisión de diseño funcionó con un
+          número y no con una opinión.</p>
+
+          <div class="proj-links">
+            <a href="[[COMPLETAR: link al video, build o paper]]" target="_blank" rel="noopener">Ver el proyecto ↗</a>
+          </div>
+        </div>
+      </div>
+    </article>
+    -->
   </div>
 </section>
 
@@ -331,8 +407,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
     <div class="sec-head rv">
       <div class="eyebrow">Escuela Da Vinci</div>
       <h2 class="h2">Proyectos de carrera</h2>
-      <p class="lede">Ocho juegos terminados y jugables durante la carrera de Videojuegos.
-      Todos tienen video y descarga.</p>
+      <p class="lede">Juegos terminados y jugables de la carrera de Videojuegos. Arriba están
+      los que mejor muestran cómo diseño; abajo el resto, todos con video y descarga.</p>
     </div>
 
     <div class="grid rv">
@@ -371,21 +447,6 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
         </div>
       </article>
       <article class="mini">
-        <button class="yt" data-id="TfBjDYBX2PI" aria-label="Ver gameplay de Grab it, It's Hot!">
-          <img src="https://img.youtube.com/vi/TfBjDYBX2PI/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/TfBjDYBX2PI/hqdefault.jpg" alt="Gameplay de Grab it, It's Hot!" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Grab it, It's Hot!</h4>
-          <div class="line">PC · Unity 3D · Multiplayer de 2 a 4 con Photon · Equipo de 2 · Materia: Desarrollo de Redes</div>
-          <!-- EDITAR: ¿qué rol tuviste acá y qué te obligó a cambiar el multiplayer? -->
-          <p>Multiplayer de 2 a 4 jugadores con Photon, hecho para la materia Desarrollo de Redes.</p>
-          <div class="foot">
-            <a href="https://drive.google.com/open?id=1xErI63W65QAe1Zq-qM7va3-dPqqNPn2Q&amp;usp=drive_fs" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-      <article class="mini">
         <button class="yt" data-id="S9SGYD3hVBs" aria-label="Ver gameplay de Bit Con">
           <img src="https://img.youtube.com/vi/S9SGYD3hVBs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/S9SGYD3hVBs/hqdefault.jpg" alt="Gameplay de Bit Con" loading="lazy">
           <span class="play"><i></i></span>
@@ -418,54 +479,37 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
           </div>
         </div>
       </article>
-      <article class="mini">
-        <button class="yt" data-id="PfuSDMfh4vQ" aria-label="Ver gameplay de Proyecto Caos">
-          <img src="https://img.youtube.com/vi/PfuSDMfh4vQ/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/PfuSDMfh4vQ/hqdefault.jpg" alt="Gameplay de Proyecto Caos" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Proyecto Caos</h4>
-          <div class="line">PC · Unity 2D · Plataformero · Equipo de 4 · Materia: Diseño y Producción de Juegos</div>
-          <!-- EDITAR: ¿qué rol tuviste acá? Es el equipo más grande en el que trabajaste. -->
-          <p>Plataformero 2D hecho en equipo de cuatro para Diseño y Producción de Juegos.</p>
-          <div class="foot">
-            <a href="https://drive.google.com/file/d/1NYe7GxX6MJrHdbW2NOB7UnjQNTSNwy4I/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-      <article class="mini">
-        <button class="yt" data-id="TTQJIlwGJXM" aria-label="Ver gameplay de Asteroids">
-          <img src="https://img.youtube.com/vi/TTQJIlwGJXM/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/TTQJIlwGJXM/hqdefault.jpg" alt="Gameplay de Asteroids" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Asteroids</h4>
-          <div class="line">PC · Unity 2D · Equipo de 2 · Materia: Modelos y Algoritmos 1</div>
-          <!-- EDITAR: ¿qué rol tuviste acá? -->
-          <p>Reinterpretación del clásico, hecha para Modelos y Algoritmos 1.</p>
-          <div class="foot">
-            <a href="https://drive.google.com/file/d/1r74E0lzcg4vZ-iKusEGUyCoGO44rkLw5/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-      <article class="mini">
-        <button class="yt" data-id="kGAdaWTG4cg" aria-label="Ver gameplay de Cold World">
-          <img src="https://img.youtube.com/vi/kGAdaWTG4cg/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/kGAdaWTG4cg/hqdefault.jpg" alt="Gameplay de Cold World" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Cold World</h4>
-          <div class="line">PC · Unity 2D · Plataformero shooter · Solo · Materia: Lógica de Programación</div>
-          <!-- EDITAR: es tu primer juego. ¿Qué harías distinto hoy? Esa respuesta vale más que la descripción. -->
-          <p>Mi primer juego. Plataformero shooter 2D hecho solo, para Lógica de Programación.</p>
-          <div class="foot">
-            <span>Game &amp; Level Design · Programación</span>
-            <a href="https://drive.google.com/file/d/1wCVIjtfbjw6e97jDAwVeZwWj6NXRA7Pv/view" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
 
-</div>
+    </div>
+
+    <div class="more rv">
+      <div class="more-h">También de la carrera</div>
+      <div class="more-row">
+        <b>Grab it, It's Hot!</b>
+        <p class="line">PC · Unity 3D · Multiplayer de 2 a 4 con Photon · Equipo de 2 · Desarrollo de Redes</p>
+        <a href="https://www.youtube.com/watch?v=TfBjDYBX2PI" target="_blank" rel="noopener">Video ↗</a>
+        <a href="https://drive.google.com/open?id=1xErI63W65QAe1Zq-qM7va3-dPqqNPn2Q&amp;usp=drive_fs" target="_blank" rel="noopener">Descargar ↗</a>
+      </div>
+      <div class="more-row">
+        <b>Proyecto Caos</b>
+        <p class="line">PC · Unity 2D · Plataformero · Equipo de 4 · Diseño y Producción de Juegos</p>
+        <a href="https://www.youtube.com/watch?v=PfuSDMfh4vQ" target="_blank" rel="noopener">Video ↗</a>
+        <a href="https://drive.google.com/file/d/1NYe7GxX6MJrHdbW2NOB7UnjQNTSNwy4I/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
+      </div>
+      <div class="more-row">
+        <b>Asteroids</b>
+        <p class="line">PC · Unity 2D · Equipo de 2 · Modelos y Algoritmos 1</p>
+        <a href="https://www.youtube.com/watch?v=TTQJIlwGJXM" target="_blank" rel="noopener">Video ↗</a>
+        <a href="https://drive.google.com/file/d/1r74E0lzcg4vZ-iKusEGUyCoGO44rkLw5/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
+      </div>
+      <div class="more-row">
+        <b>Cold World</b>
+        <p class="line">PC · Unity 2D · Plataformero shooter · Solo · Mi primer juego, para Lógica de Programación</p>
+        <a href="https://www.youtube.com/watch?v=kGAdaWTG4cg" target="_blank" rel="noopener">Video ↗</a>
+        <a href="https://drive.google.com/file/d/1wCVIjtfbjw6e97jDAwVeZwWj6NXRA7Pv/view" target="_blank" rel="noopener">Descargar ↗</a>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -478,14 +522,14 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
     </div>
 
     <div class="skills rv">
-      <div class="skill"><span class="num">01</span><h4>Diseño de niveles</h4>
-        <p>Layout, ritmo y curva de dificultad. Niveles que enseñan una idea y después la ponen a prueba.</p></div>
-      <div class="skill"><span class="num">02</span><h4>Core loop y mecánicas</h4>
-        <p>Definir qué hace el jugador cada treinta segundos y por qué querría hacerlo de nuevo.</p></div>
-      <div class="skill"><span class="num">03</span><h4>Enemigos y comportamientos</h4>
+      <div class="skill"><span class="num">01</span><h4>Enemigos y comportamientos</h4>
         <p>Qué enemigos existen, qué mecánica tiene cada uno y cómo se comporta. Bestiarios completos, no criaturas sueltas.</p></div>
-      <div class="skill"><span class="num">04</span><h4>Habilidades y combate</h4>
-        <p>Ataques especiales y ultimates: qué hacen, cómo se ejecutan y en qué se diferencian entre sí.</p></div>
+      <div class="skill"><span class="num">02</span><h4>Habilidades y combate</h4>
+        <p>Ultimates y ataques especiales: qué hace cada uno, cómo se ejecuta, en qué se diferencia del resto y cómo se cruza con el bestiario que tiene enfrente.</p></div>
+      <div class="skill"><span class="num">03</span><h4>Diseño de niveles</h4>
+        <p>Layout, ritmo y curva de dificultad. Niveles que enseñan una idea y después la ponen a prueba.</p></div>
+      <div class="skill"><span class="num">04</span><h4>Core loop y mecánicas</h4>
+        <p>Definir qué hace el jugador cada treinta segundos y por qué querría hacerlo de nuevo.</p></div>
       <div class="skill"><span class="num">05</span><h4>FTUE y onboarding</h4>
         <p>Las primeras sesiones de un juego complejo, sin muros de texto. Enseñar jugando.</p></div>
       <div class="skill"><span class="num">06</span><h4>Feedback y legibilidad</h4>
@@ -494,6 +538,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
         <p>Scripting en C# para probar una mecánica yo mismo antes de pedirle tiempo a nadie.</p></div>
       <div class="skill"><span class="num">08</span><h4>Documentación y GDD</h4>
         <p>Research, specs y documentos que otro pueda implementar sin tener que venir a preguntarme.</p></div>
+      <div class="skill"><span class="num">09</span><h4>Testing y validación</h4>
+        <p>Playtesting estructurado, documentación de bugs y testing de balance. Diseño con objetivos verificables: si no puedo medir si funcionó, no está terminado.</p></div>
     </div>
 
     <div class="tools rv">
@@ -513,6 +559,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
       <p class="lede">Puedo mostrar documentación de diseño, layouts anotados y planillas de
       balanceo de mis proyectos propios y de los académicos. Del trabajo de estudio hablo en
       entrevista, con el detalle que haga falta.</p>
+      <p class="lede"><strong style="color:var(--bone)">Disponible para roles remotos y
+      reubicación en España.</strong></p>
       <div class="links">
         <a class="btn solid" href="mailto:agusvila0087@gmail.com">agusvila0087@gmail.com</a>
         <a class="btn ghost" href="https://www.linkedin.com/in/agustinvila87/" target="_blank" rel="noopener">LinkedIn</a>
