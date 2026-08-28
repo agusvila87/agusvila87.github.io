@@ -52,7 +52,7 @@ export const DESTACADOS = [
     id: 'sealcoating',
     kind: 'castle',
     angle: -41,
-    radius: 19.4,
+    radius: 20.4,
     nombre: 'Sealcoating Simulator',
     linea: 'PC · Steam · Unity · ACE 87 Studios',
     rol: 'Game & Level Designer',
@@ -86,7 +86,7 @@ export const DESTACADOS = [
     id: 'solar',
     kind: 'castle',
     angle: 40,
-    radius: 18.6,
+    radius: 19.6,
     nombre: 'SolAR',
     linea: 'Mobile · Geo + AR · Unity · KYKUYO',
     rol: 'Game Designer · 3 años',
@@ -124,7 +124,7 @@ export const DESTACADOS = [
 /* Las ocho casas: carrera en Escuela Da Vinci. */
 export const CASITAS = [
   {
-    id: 'cold-blooded', kind: 'house', angle: -68, radius: 25.2,
+    id: 'cold-blooded', kind: 'house', angle: -68, radius: 33.4,
     nombre: 'Cold Blooded',
     linea: 'PC · Unity 3D · FPS · Solo',
     rol: 'Proyecto final de carrera',
@@ -137,7 +137,7 @@ export const CASITAS = [
     links: [{ label: 'Descargar', url: 'https://drive.google.com/open?id=1xBf7i2JIhsNbTl9bxaHIxE__QqPO_fQR&usp=drive_fs' }]
   },
   {
-    id: 'zack-2', kind: 'house', angle: 71, radius: 26.4,
+    id: 'zack-2', kind: 'house', angle: 71, radius: 34.6,
     nombre: 'Zack 2',
     linea: 'Mobile · Unity 3D · Shooter survival · Equipo de 3',
     rol: 'Sigue actualizándose',
@@ -150,7 +150,7 @@ export const CASITAS = [
     links: [{ label: 'Descargar', url: 'https://drive.google.com/file/d/1wGHjWC-hT7eG88OY1FST6lJG-An_nNfE/view' }]
   },
   {
-    id: 'grab-it', kind: 'house', angle: -101, radius: 24.6,
+    id: 'grab-it', kind: 'house', angle: -101, radius: 32.8,
     nombre: "Grab it, It's Hot!",
     linea: 'PC · Unity 3D · Multiplayer Photon · Equipo de 2',
     rol: 'Materia: Desarrollo de Redes',
@@ -163,7 +163,7 @@ export const CASITAS = [
     links: [{ label: 'Descargar', url: 'https://drive.google.com/open?id=1xErI63W65QAe1Zq-qM7va3-dPqqNPn2Q&usp=drive_fs' }]
   },
   {
-    id: 'bit-con', kind: 'house', angle: 104, radius: 26.9,
+    id: 'bit-con', kind: 'house', angle: 104, radius: 35.0,
     nombre: 'Bit Con',
     linea: 'PC · Unity 3D · Plataformero · Solo',
     rol: 'Materia: Diseño de Niveles',
@@ -176,7 +176,7 @@ export const CASITAS = [
     links: [{ label: 'Descargar', url: 'https://drive.google.com/file/d/1vTNqeawi_gHIq55o95ece2zziRdQ1f81/view' }]
   },
   {
-    id: 'orbbuster', kind: 'house', angle: -131, radius: 25.4,
+    id: 'orbbuster', kind: 'house', angle: -131, radius: 33.6,
     nombre: 'OrbBuster',
     linea: 'PC · Unreal Engine 4 · RPG · Equipo de 3',
     rol: 'Game & Level Design',
@@ -189,7 +189,7 @@ export const CASITAS = [
     links: [{ label: 'Descargar', url: 'https://drive.google.com/file/d/1E-hNoGor7rCVNsnJDJmmFoBBtuJWSDxg/view?usp=drive_link' }]
   },
   {
-    id: 'proyecto-caos', kind: 'house', angle: 136, radius: 26.2,
+    id: 'proyecto-caos', kind: 'house', angle: 136, radius: 34.4,
     nombre: 'Proyecto Caos',
     linea: 'PC · Unity 2D · Plataformero · Equipo de 4',
     rol: 'Materia: Diseño y Producción',
@@ -202,7 +202,7 @@ export const CASITAS = [
     links: [{ label: 'Descargar', url: 'https://drive.google.com/file/d/1NYe7GxX6MJrHdbW2NOB7UnjQNTSNwy4I/view?usp=sharing' }]
   },
   {
-    id: 'asteroids', kind: 'house', angle: -163, radius: 24.8,
+    id: 'asteroids', kind: 'house', angle: -163, radius: 33.0,
     nombre: 'Asteroids',
     linea: 'PC · Unity 2D · Equipo de 2',
     rol: 'Materia: Modelos y Algoritmos 1',
@@ -215,7 +215,7 @@ export const CASITAS = [
     links: [{ label: 'Descargar', url: 'https://drive.google.com/file/d/1r74E0lzcg4vZ-iKusEGUyCoGO44rkLw5/view?usp=sharing' }]
   },
   {
-    id: 'cold-world', kind: 'house', angle: 168, radius: 26.6,
+    id: 'cold-world', kind: 'house', angle: 168, radius: 34.8,
     nombre: 'Cold World',
     linea: 'PC · Unity 2D · Plataformero shooter · Solo',
     rol: 'Mi primer juego',

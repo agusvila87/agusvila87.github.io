@@ -1,7 +1,7 @@
 /* ═══════════════════════════════════════════════════════════════════
    UTILERIA
    Barriles, cajones, carros, puestos de feria, banderines, pozo,
-   cercas, faroles, rocas, arboles y nubes.
+   cercas, faroles, rocas y nubes.
 
    Esto es lo que separa un blockout de una aldea: sin objetos chicos
    y desordenados, cualquier escena 3D se lee como render generico.
@@ -19,10 +19,6 @@ const M = {
   piedraOsc: mat(C.piedraOscura),
   teja:      mat(C.techos[0]),
   paja:      mat(C.heno),
-  tronco:    mat(C.tronco),
-  hoja:      mat(C.hoja),
-  hojaClara: mat(C.hojaClara),
-  hojaOscura: mat(C.hojaOscura),
   nube:      mat(C.nube),
   luz:       mat(C.vidrio),
   manzana:   mat(0xC0392B)
@@ -184,38 +180,6 @@ export function pilaDeHeno() {
   const h = cilindro(0.75, 0.75, 1.1, M.paja, 8);
   h.rotation.z = Math.PI / 2;
   g.add(ubicar(h, 0, 0.75, 0));
-  return g;
-}
-
-/* ── Vegetacion ─────────────────────────────────────────────────────
-   Arbol frondoso: copa de tres bloques desparejos. Mucho mejor que un
-   cono, y sigue siendo low poly. */
-export function arbol(rnd) {
-  const g = new THREE.Group();
-  const e = 0.8 + rnd() * 0.7;
-  g.add(ubicar(cilindro(0.28, 0.42, 2.6 * e, M.tronco, 6), 0, 1.3 * e, 0));
-  const copas = [
-    { r: 1.7, x: 0, y: 3.5, z: 0, m: M.hoja },
-    { r: 1.25, x: 1.1, y: 3.0, z: 0.5, m: M.hojaClara },
-    { r: 1.15, x: -0.9, y: 3.2, z: -0.6, m: M.hojaOscura }
-  ];
-  for (const c of copas) {
-    const b = new THREE.Mesh(new THREE.IcosahedronGeometry(c.r * e, 0), c.m);
-    b.position.set(c.x * e, c.y * e, c.z * e);
-    b.rotation.set(rnd() * 3, rnd() * 3, rnd() * 3);
-    g.add(b);
-  }
-  return g;
-}
-
-export function pino(rnd) {
-  const g = new THREE.Group();
-  const e = 0.85 + rnd() * 0.6;
-  g.add(ubicar(cilindro(0.24, 0.34, 1.6 * e, M.tronco, 5), 0, 0.8 * e, 0));
-  for (let i = 0; i < 3; i++) {
-    const c = cono((1.7 - i * 0.42) * e, (2.1 - i * 0.25) * e, i === 1 ? M.hojaOscura : M.hoja, 7);
-    g.add(ubicar(c, 0, (2.0 + i * 1.35) * e, 0));
-  }
   return g;
 }
 

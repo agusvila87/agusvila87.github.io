@@ -40,29 +40,6 @@ img{display:block;max-width:100%}
 /* ── escena ── */
 #aldea{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
 #aldea:active{cursor:grabbing}
-#carteles{position:fixed;inset:0;pointer-events:none;z-index:20}
-
-/* ── carteles de madera sobre cada edificio ── */
-.cartel{
-  position:absolute;top:0;left:0;will-change:transform;
-  transform:translate(-50%,-100%);margin-top:-14px;
-  background:linear-gradient(var(--tabla-2),var(--tabla));
-  border:1px solid var(--linea);border-radius:3px;
-  box-shadow:0 4px 14px rgba(30,18,10,.34);
-  padding:7px 12px;max-width:min(240px,64vw);text-align:center;
-  transition:opacity .2s,border-color .2s,box-shadow .2s;
-}
-.cartel::after{content:"";position:absolute;left:50%;bottom:-14px;width:2px;height:14px;
-  background:var(--linea)}
-.cartel.hov,.cartel.sel{border-color:var(--ambar);box-shadow:0 6px 20px rgba(30,18,10,.5)}
-.cartel b{display:block;font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 800;
-  font-size:14px;line-height:1.12;text-transform:uppercase;letter-spacing:.015em;color:var(--pergamino)}
-.cartel em{display:none;font-family:var(--mono);font-style:normal;font-size:8.5px;
-  letter-spacing:.13em;text-transform:uppercase;color:var(--ambar-claro);margin-top:5px}
-.cartel.hov em,.cartel.sel em{display:block}
-.k-castle b{font-size:17px}
-.k-keep b{font-size:20px}
-.k-keep{border-color:var(--ambar)}
 
 /* ── barras ── */
 .chrome{position:fixed;z-index:40;pointer-events:none}
@@ -235,7 +212,6 @@ body.panel-cerrado #abrir-panel{display:block}
 <body>
 
 <canvas id="aldea"></canvas>
-<div id="carteles"></div>
 
 <div id="cargando">Levantando la aldea…</div>
 
@@ -247,7 +223,7 @@ body.panel-cerrado #abrir-panel{display:block}
 </div>
 
 <div class="chrome" id="barra-inf">
-  <div id="pistas">Arrastrá para girar · Rueda o pinza para acercar · Tocá un edificio</div>
+  <div id="pistas">Arrastrá para girar · Rueda o pinza para acercar · Hacé click en un edificio para ver el proyecto</div>
   <div id="atajos"></div>
 </div>
 
@@ -435,7 +411,6 @@ if (!hayWebGL()) {
 
   const aldea = iniciarAldea({
     canvas,
-    capaCarteles: document.getElementById('carteles'),
     huecoPanel: () => {
       if (document.body.classList.contains('panel-cerrado')) return null;
       const r = panel.getBoundingClientRect();
