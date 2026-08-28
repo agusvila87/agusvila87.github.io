@@ -22,8 +22,8 @@ const GRADO = Math.PI / 180;
    desvio corre la camara de la linea que pasa por el torreon, para que
    el fondo del edificio elegido no sea siempre el keep. */
 const ENCUADRE = {
-  keep:   { dist: 104, alturaFoco: 9, polar: 57, desvio: 0 },
-  castle: { dist: 50,  alturaFoco: 7,  polar: 52, desvio: 38 },
+  keep:   { dist: 142, alturaFoco: 10, polar: 57, desvio: 0 },
+  castle: { dist: 54,  alturaFoco: 7,  polar: 52, desvio: 38 },
   house:  { dist: 36,  alturaFoco: 6,  polar: 50, desvio: 34 }
 };
 
@@ -47,7 +47,7 @@ class CamaraOrbital {
     this.focoMeta = this.foco.clone();
     this.azim = 0;           this.azimMeta = 0;
     this.polar = 57 * GRADO; this.polarMeta = this.polar;
-    this.dist = 160;         this.distMeta = 104;
+    this.dist = 205;         this.distMeta = 142;
     this.corrX = 0; this.corrXMeta = 0;   // panel al costado (desktop)
     this.corrY = 0; this.corrYMeta = 0;   // panel abajo (mobile)
     this.punteros = new Map();
@@ -86,7 +86,7 @@ class CamaraOrbital {
     const v = [...this.punteros.values()];
     return Math.hypot(v[0].x - v[1].x, v[0].y - v[1].y);
   }
-  zoom(d) { this.distMeta = THREE.MathUtils.clamp(this.distMeta + d * 0.08, 20, 175); }
+  zoom(d) { this.distMeta = THREE.MathUtils.clamp(this.distMeta + d * 0.1, 22, 235); }
   irA(foco, dist, azim, polar) {
     this.focoMeta.copy(foco);
     this.distMeta = dist;
@@ -130,7 +130,7 @@ class CamaraOrbital {
 /* ── Arranque ──────────────────────────────────────────────────────── */
 export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
   const escena = new THREE.Scene();
-  escena.fog = new THREE.Fog(C.cieloBajo, 185, 430);
+  escena.fog = new THREE.Fog(C.cieloBajo, 230, 470);
 
   const camara = new THREE.PerspectiveCamera(50, 1, 0.5, 1400);
   const render = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -142,15 +142,15 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
      verde del pasto. Las tres juntas dan la lectura estilizada. */
   escena.add(new THREE.HemisphereLight(C.reboteCielo, C.reboteSuelo, 1.45));
   const sol = new THREE.DirectionalLight(C.sol, 2.3);
-  sol.position.set(-56, 76, 48);
+  sol.position.set(-74, 100, 64);
   sol.castShadow = true;
   sol.shadow.mapSize.set(2048, 2048);
   sol.shadow.camera.near = 20;
-  sol.shadow.camera.far = 240;
-  sol.shadow.camera.left = -66;
-  sol.shadow.camera.right = 66;
-  sol.shadow.camera.top = 66;
-  sol.shadow.camera.bottom = -66;
+  sol.shadow.camera.far = 320;
+  sol.shadow.camera.left = -84;
+  sol.shadow.camera.right = 84;
+  sol.shadow.camera.top = 84;
+  sol.shadow.camera.bottom = -84;
   sol.shadow.camera.updateProjectionMatrix();
   sol.shadow.bias = -0.0006;
   sol.shadow.normalBias = 0.04;
@@ -188,7 +188,7 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
   /* Anillo de luz en el piso. Sin carteles, esto y el levante son la
      unica señal de que un edificio esta bajo el cursor o elegido. */
   const aro = new THREE.Mesh(
-    new THREE.RingGeometry(0.82, 1, 44),
+    new THREE.RingGeometry(0.78, 1, 44),
     new THREE.MeshBasicMaterial({ color: 0xFFE9A8, transparent: true, opacity: 0, side: THREE.DoubleSide })
   );
   aro.rotation.x = -Math.PI / 2;
@@ -202,7 +202,7 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
   function pintar(g) {
     const id = g.userData.nodo.id;
     const activo = seleccionado === id, encima = hover === id;
-    const intensidad = activo ? 0.15 : encima ? 0.1 : 0;
+    const intensidad = activo ? 0.07 : encima ? 0.045 : 0;
     for (const m of g.userData.materiales) {
       m.emissive.setHex(0xFFD98A);
       m.emissiveIntensity = intensidad;
@@ -218,7 +218,7 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
     const r = RADIO_ARO[g.userData.nodo.kind];
     aro.scale.set(r, r, 1);
     aro.position.set(g.position.x, g.userData.suelo + 0.09, g.position.z);
-    aro.material.opacity = fuerte ? 0.55 : 0.3;
+    aro.material.opacity = fuerte ? 0.7 : 0.4;
   }
 
   /* En touch no hay hover real: el dedo dispara pointermove justo antes

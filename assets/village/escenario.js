@@ -15,13 +15,17 @@ import { C, mat, caja, cilindro, cono, ubicar, azar, techoDosAguas, fusionar } f
 import { barril, cajon, carro, puesto, banderines, pozo, cerca, farol,
          roca, pilaDeHeno, nube } from './props.js';
 
-/* ── Geometria de las terrazas ── */
-export const R_ALTA = 12,  H_ALTA = 4.2;    // meseta del torreon
-export const R_MEDIA = 28, H_MEDIA = 2.0;   // primer anillo
-export const RADIO_MURALLA = 41.5;
+/* ── Geometria de las terrazas ──
+   Cuatro niveles: el torreon arriba, los dos castillos, el anillo
+   interior de proyectos y el exterior al ras del suelo. */
+export const R_ALTA  = 12,   H_ALTA  = 5.6;   // meseta del torreon
+export const R_MEDIA = 28.5, H_MEDIA = 3.6;   // castillos
+export const R_BAJA  = 40,   H_BAJA  = 1.8;   // anillo interior de casas
+export const RADIO_MURALLA = 52;
 
 const GRADO = Math.PI / 180;
-const ESCALERAS = [0, 90, 180, -90];        // angulos donde bajan las escaleras
+/* Las escaleras esquivan los angulos donde hay casas. */
+const ESCALERAS = [0, 130, -130];
 
 /* Altura del piso en cualquier punto. La usan los edificios, la utileria
    y el pasto para apoyarse donde corresponde. */
@@ -29,6 +33,7 @@ export function alturaTerreno(x, z) {
   const d = Math.hypot(x, z);
   if (d < R_ALTA) return H_ALTA;
   if (d < R_MEDIA) return H_MEDIA;
+  if (d < R_BAJA) return H_BAJA;
   if (d < RADIO_MURALLA + 2) return 0;
   const k = Math.min((d - RADIO_MURALLA - 2) / 24, 1);
   const n = Math.sin(x * 0.062) * Math.cos(z * 0.054) + 0.5 * Math.sin((x + z) * 0.09);
@@ -108,7 +113,7 @@ export function construirTerreno(escena, nodos) {
   /* caminos del anillo exterior */
   const g = new THREE.Group();
   const tierra = mat(C.tierra);
-  const anillo = new THREE.Mesh(new THREE.RingGeometry(29.5, 33, 56), tierra);
+  const anillo = new THREE.Mesh(new THREE.RingGeometry(42.6, 44.8, 64), tierra);
   anillo.rotation.x = -Math.PI / 2;
   anillo.position.y = 0.02;
   anillo.receiveShadow = true;
@@ -125,10 +130,10 @@ export function construirTerreno(escena, nodos) {
     g.add(m);
   };
   for (const n of nodos) {
-    if (n.kind !== 'house') continue;
-    senda(n.angle * GRADO, 31, n.radius - 4, 3.0, 0);
+    if (n.kind !== 'house' || n.radius < R_BAJA) continue;
+    senda(n.angle * GRADO, 44, n.radius - 4, 3.0, 0);
   }
-  senda(0, 31, RADIO_MURALLA + 1, 5.4, 0);       // avenida al porton
+  senda(0, 44, RADIO_MURALLA + 1, 5.4, 0);       // avenida al porton
   escena.add(g);
 }
 
@@ -191,15 +196,29 @@ export function construirTerrazas(escena, nodos) {
   const pastoAlto = mat(C.pastoClaro);
   const tierra = mat(C.tierra);
 
-  /* terraza media (primer anillo: los dos castillos) */
-  terraza(g, R_MEDIA, H_MEDIA, 0, piedra, piedraOsc);
+  /* terraza baja (anillo interior de casas) */
+  terraza(g, R_BAJA, H_BAJA, 0, piedra, piedraOsc);
+  const pisoBaja = new THREE.Mesh(new THREE.CircleGeometry(R_BAJA, 64), pastoAlto);
+  pisoBaja.rotation.x = -Math.PI / 2;
+  pisoBaja.position.y = H_BAJA;
+  pisoBaja.receiveShadow = true;
+  g.add(pisoBaja);
+
+  const anilloBaja = new THREE.Mesh(new THREE.RingGeometry(31, 33.6, 64), tierra);
+  anilloBaja.rotation.x = -Math.PI / 2;
+  anilloBaja.position.y = H_BAJA + 0.02;
+  anilloBaja.receiveShadow = true;
+  g.add(anilloBaja);
+
+  /* terraza media (los dos castillos) */
+  terraza(g, R_MEDIA, H_MEDIA, H_BAJA, piedra, piedraOsc);
   const pisoMedia = new THREE.Mesh(new THREE.CircleGeometry(R_MEDIA, 56), pastoAlto);
   pisoMedia.rotation.x = -Math.PI / 2;
   pisoMedia.position.y = H_MEDIA;
   pisoMedia.receiveShadow = true;
   g.add(pisoMedia);
 
-  const anilloMedia = new THREE.Mesh(new THREE.RingGeometry(17.5, 22.5, 56), tierra);
+  const anilloMedia = new THREE.Mesh(new THREE.RingGeometry(18.6, 22, 56), tierra);
   anilloMedia.rotation.x = -Math.PI / 2;
   anilloMedia.position.y = H_MEDIA + 0.02;
   anilloMedia.receiveShadow = true;
@@ -215,8 +234,9 @@ export function construirTerrazas(escena, nodos) {
 
   /* escaleras: del suelo a la media, y de la media a la alta */
   for (const a of ESCALERAS) {
-    escalera(g, a, R_MEDIA, H_MEDIA, 0, 6.5, piedraOsc);
-    escalera(g, a, R_ALTA, H_ALTA, H_MEDIA, 5.0, piedraOsc);
+    escalera(g, a, R_BAJA,  H_BAJA,  0,       7.0, piedraOsc);
+    escalera(g, a, R_MEDIA, H_MEDIA, H_BAJA,  6.5, piedraOsc);
+    escalera(g, a, R_ALTA,  H_ALTA,  H_MEDIA, 5.0, piedraOsc);
   }
 
   /* sendas de la terraza media hacia cada castillo */
@@ -315,10 +335,11 @@ export function construirPasto(escena) {
   let i = 0, j = 0, intentos = 0;
   while (i < N && intentos++ < N * 8) {
     const a = rnd() * Math.PI * 2;
-    const r = 13 + rnd() * 74;
+    const r = 13 + rnd() * 88;
     const x = Math.sin(a) * r, z = Math.cos(a) * r;
-    if (r > 17 && r < 23) continue;                  // anillo de la terraza media
-    if (r > 29 && r < 33.5) continue;                // anillo del suelo
+    if (r > 18 && r < 22.6) continue;                // camino de la terraza media
+    if (r > 30.4 && r < 34.2) continue;              // camino de la terraza baja
+    if (r > 42 && r < 45.4) continue;                // camino del suelo
     const y = alturaTerreno(x, z);
     const s = 0.7 + rnd() * 0.9;
     q.setFromAxisAngle(eje, rnd() * Math.PI);
@@ -392,12 +413,17 @@ export function decorarAldea(escena, nodos, posiciones) {
   for (const a of [40, 140, 220, 320]) enAnillo(10.4, a, H_ALTA, farol);
 
   /* terraza media: feria entre los dos castillos */
-  for (const a of [-115, 115, 155, -155, 65, -65]) enAnillo(24.5, a, H_MEDIA, () => puesto(Math.abs(a) % 5));
-  for (const a of [-70, -140, 70, 140, 180]) enAnillo(25.8, a, H_MEDIA, farol);
-  for (const a of [-100, 100]) enAnillo(24, a, H_MEDIA, carro);
+  for (const a of [-115, 115, 155, -155, 65, -65]) enAnillo(25, a, H_MEDIA, () => puesto(Math.abs(a) % 5));
+  for (const a of [-70, -145, 70, 145, 180]) enAnillo(26.3, a, H_MEDIA, farol);
+  for (const a of [-100, 100]) enAnillo(24.5, a, H_MEDIA, carro);
+
+  /* terraza baja: el anillo interior de proyectos */
+  for (const a of [-25, 25, -105, 105, 155, -155]) enAnillo(37, a, H_BAJA, farol);
+  for (const a of [-45, 45]) enAnillo(36.5, a, H_BAJA, () => puesto(Math.abs(a) % 5));
+  for (const a of [140, -140]) enAnillo(36, a, H_BAJA, carro);
 
   /* suelo: faroles a lo largo de la avenida al porton */
-  for (const s of [-1, 1]) for (const r of [33, 37]) poner(farol(), s * 3.8, r, 0);
+  for (const s of [-1, 1]) for (const r of [46, 50]) poner(farol(), s * 3.8, r, 0);
 
   /* utileria apoyada contra cada edificio, a la altura de su terraza */
   for (const nodo of nodos) {
@@ -426,11 +452,14 @@ export function decorarAldea(escena, nodos, posiciones) {
   }
 
   /* guirnaldas entre casas vecinas del anillo exterior */
-  const anillo = nodos.filter(n => n.kind === 'house').slice().sort((a, b) => a.angle - b.angle);
-  for (let i = 0; i < anillo.length - 1; i++) {
-    const a = posiciones.get(anillo[i].id), b = posiciones.get(anillo[i + 1].id);
-    if (Math.hypot(a.x - b.x, a.z - b.z) > 28) continue;
-    g.add(banderines([a.x, 9.4, a.z], [b.x, 9.4, b.z], { hundimiento: 3.0 }));
+  for (const anillo of [nodos.filter(n => n.kind === 'house' && n.radius < R_BAJA),
+                        nodos.filter(n => n.kind === 'house' && n.radius >= R_BAJA)]) {
+    const orden = anillo.slice().sort((a, b) => a.angle - b.angle);
+    for (let i = 0; i < orden.length - 1; i++) {
+      const a = posiciones.get(orden[i].id), b = posiciones.get(orden[i + 1].id);
+      if (Math.hypot(a.x - b.x, a.z - b.z) > 30) continue;
+      g.add(banderines([a.x, a.y + 9.4, a.z], [b.x, b.y + 9.4, b.z], { hundimiento: 3.0 }));
+    }
   }
   /* y cruzando entre los dos castillos, por encima de la plaza */
   const seal = posiciones.get('sealcoating'), sol = posiciones.get('solar');
@@ -441,7 +470,7 @@ export function decorarAldea(escena, nodos, posiciones) {
 
   /* cercas contra la muralla */
   for (const a of [-2.4, -1.2, 1.2, 2.4]) {
-    const r = RADIO_MURALLA - 3.4;
+    const r = RADIO_MURALLA - 4.5;
     g.add(cerca(
       [Math.sin(a - 0.14) * r, 0, Math.cos(a - 0.14) * r],
       [Math.sin(a + 0.14) * r, 0, Math.cos(a + 0.14) * r]

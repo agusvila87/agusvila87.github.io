@@ -1,16 +1,18 @@
 /* ═══════════════════════════════════════════════════════════════════
    EDIFICIOS
-   casa    → los ocho proyectos de carrera
-   castillo→ los dos titulos profesionales
-   torreon → el perfil, en el centro de la plaza
+   torreon → el perfil. Realeza: piedra clara, techo purpura y filetes
+             de oro en cumbrera, aleros, almenas, marcos y banderas.
+   castillo→ los dos titulos profesionales. Comparten tono: piedra
+             tibia, teja borgoña y filetes de bronce.
+   casa    → los ocho proyectos de carrera. Teja de terracota y madera,
+             sin metal, con una variacion chica para que no sean clones.
 
-   Cada uno recibe una semilla para que el color de techo, la chimenea
-   y el musgo varien: ocho casas identicas se notan al instante.
+   El rango se lee por material antes que por tamaño.
    ═══════════════════════════════════════════════════════════════════ */
 
 import * as THREE from '../vendor/three.module.min.js';
-import { C, mat, caja, cilindro, cono, ubicar, techoDosAguas, entramado,
-         ventana, puerta, azar, fusionar } from './paleta.js';
+import { C, CLASES, mat, caja, cilindro, cono, ubicar, techoDosAguas,
+         entramado, ventana, puerta, azar, variar, fusionar } from './paleta.js';
 
 /* Junta los materiales del edificio para poder resaltarlo despues.
    El vidrio queda afuera: no tiene que cambiar de color al seleccionar. */
@@ -50,18 +52,33 @@ function musgoEnTecho(g, ancho, largo, alto, y, matMusgo, rnd) {
   }
 }
 
+/* Anillo de almenas alrededor de una torre, con coronamiento del metal
+   de la clase si lo tiene. */
+function almenas(g, x, y, z, radio, n, matPiedra, matFilete) {
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2;
+    g.add(ubicar(caja(radio * 0.55, 1.0, 0.6, matPiedra),
+      x + Math.sin(a) * radio, y + 0.5, z + Math.cos(a) * radio, a));
+  }
+  if (matFilete) {
+    const aro = cilindro(radio + 0.22, radio + 0.22, 0.3, matFilete, Math.max(10, n));
+    g.add(ubicar(aro, x, y - 0.1, z));
+  }
+}
+
 /* ── Casa de aldea ─────────────────────────────────────────────────── */
 export function construirCasa(semilla) {
   const rnd = azar(semilla);
+  const K = CLASES.house;
   const t = taller();
   const g = new THREE.Group();
 
-  const piedra = t.m(C.piedra);
-  const yeso   = t.m(C.yeso);
-  const yesoAlto = t.m(C.yesoSombra);
-  const madera = t.m(C.madera);
-  const marco  = t.m(C.marco);
-  const teja   = t.m(C.techos[Math.floor(rnd() * C.techos.length)]);
+  const piedra = t.m(K.piedra);
+  const yeso   = t.m(K.muro);
+  const yesoAlto = t.m(K.muroAlto);
+  const madera = t.m(K.madera);
+  const marco  = t.m(K.marco);
+  const teja   = t.m(variar(K.teja, (rnd() - 0.5) * 0.16));   // misma clase, no clones
   const musgo  = t.m(C.musgo);
   const vidrio = t.suelto(C.vidrio);
   const matHumo = t.suelto(C.humo, { transparent: true, opacity: 0.72 });
@@ -116,19 +133,21 @@ export function construirCasa(semilla) {
 /* ── Castillo: los dos titulos profesionales ───────────────────────── */
 export function construirCastillo(semilla) {
   const rnd = azar(semilla);
+  const K = CLASES.castle;
   const t = taller();
   const g = new THREE.Group();
 
-  const piedra = t.m(C.piedra);
-  const piedraOsc = t.m(C.piedraOscura);
-  const yeso   = t.m(C.yesoSombra);
-  const madera = t.m(C.madera);
-  const marco  = t.m(C.marco);
-  const teja   = t.m(C.techos[semilla % 2 === 0 ? 0 : 2]);
+  const piedra = t.m(K.piedra);
+  const piedraOsc = t.m(K.muroAlto);
+  const yeso   = t.m(K.muro);
+  const madera = t.m(K.madera);
+  const marco  = t.m(K.marco);
+  const teja   = t.m(K.teja);
+  const bronce = t.m(K.trim);
   const musgo  = t.m(C.musgo);
   const vidrio = t.suelto(C.vidrio);
   const matHumo = t.suelto(C.humo, { transparent: true, opacity: 0.72 });
-  const banderaMat = t.suelto(C.tela[semilla % C.tela.length], { side: THREE.DoubleSide });
+  const banderaMat = t.suelto(K.bandera, { side: THREE.DoubleSide });
 
   g.add(ubicar(caja(8.6, 0.9, 8.6, piedraOsc), 0, 0.45, 0));
 
@@ -157,7 +176,7 @@ export function construirCastillo(semilla) {
   const altoTecho = 4.0;
   const techo = techoDosAguas({
     ancho: 8.5, largo: 8.5, alto: altoTecho, alero: 0.9,
-    matTecho: teja, matFronton: yeso
+    matTecho: teja, matFronton: yeso, matFilete: bronce
   });
   techo.position.y = yTecho;
   g.add(techo);
@@ -166,17 +185,12 @@ export function construirCastillo(semilla) {
   /* torre lateral con techo conico y bandera */
   const tx = 4.3, tz = -3.4, altoTorre = 15.5;
   g.add(ubicar(cilindro(2.0, 2.2, altoTorre, piedra, 10), tx, altoTorre / 2, tz));
-  for (let i = 0; i < 10; i++) {
-    const a = (i / 10) * Math.PI * 2;
-    g.add(ubicar(caja(0.75, 0.9, 0.55, piedraOsc),
-      tx + Math.sin(a) * 2.0, altoTorre + 0.45, tz + Math.cos(a) * 2.0, a));
-  }
+  g.add(ubicar(cilindro(2.12, 2.12, 0.28, bronce, 10), tx, altoTorre * 0.62, tz));
+  almenas(g, tx, altoTorre, tz, 2.0, 10, piedraOsc, bronce);
   g.add(ubicar(ventana(marco, vidrio, 0.8, 1.1), tx, altoTorre - 3.4, tz + 2.05));
-  const conoTorre = cono(2.9, 4.4, teja, 10);
-  g.add(ubicar(conoTorre, tx, altoTorre + 3.1, tz));
-  g.add(ubicar(caja(0.16, 2.6, 0.16, marco), tx, altoTorre + 6.4, tz));
-  const bandera = caja(1.9, 1.15, 0.08, banderaMat);
-  g.add(ubicar(bandera, tx + 0.95, altoTorre + 7.2, tz));
+  g.add(ubicar(cono(2.9, 4.4, teja, 10), tx, altoTorre + 3.1, tz));
+  g.add(ubicar(caja(0.16, 2.6, 0.16, bronce), tx, altoTorre + 6.4, tz));
+  g.add(ubicar(caja(1.9, 1.15, 0.08, banderaMat), tx + 0.95, altoTorre + 7.2, tz));
 
   /* chimenea */
   g.add(ubicar(caja(0.95, 4.2, 0.95, piedra), -2.6, yTecho + 1.6, 2.2));
@@ -187,25 +201,28 @@ export function construirCastillo(semilla) {
   return g;
 }
 
-/* ── Torreon del perfil: lo mas alto de la aldea, en el centro ─────── */
+/* ── Torreon del perfil: realeza ───────────────────────────────────── */
 export function construirTorreon() {
+  const K = CLASES.keep;
   const t = taller();
   const g = new THREE.Group();
 
-  const piedra = t.m(C.piedra);
-  const piedraOsc = t.m(C.piedraOscura);
-  const yeso   = t.m(C.yesoSombra);
-  const madera = t.m(C.madera);
-  const marco  = t.m(C.marco);
-  const teja   = t.m(C.techos[1]);
+  const piedra = t.m(K.piedra);
+  const piedraOsc = t.m(K.muroAlto);
+  const yeso   = t.m(K.muro);
+  const madera = t.m(K.madera);
+  const marco  = t.m(K.trim);          // los marcos tambien van en oro
+  const teja   = t.m(K.teja);
+  const oro    = t.m(K.trim);
+  const oroOsc = t.m(K.trimOscuro);
   const musgo  = t.m(C.musgo);
   const vidrio = t.suelto(C.vidrio);
-  const banderaMat = t.suelto(C.tela[1], { side: THREE.DoubleSide });
-  const banderaMat2 = t.suelto(C.tela[0], { side: THREE.DoubleSide });
+  const banderaMat = t.suelto(K.bandera, { side: THREE.DoubleSide });
 
-  /* plataforma escalonada */
+  /* plataforma escalonada, con filo de oro */
   g.add(ubicar(caja(14.5, 0.5, 14.5, piedraOsc), 0, 0.25, 0));
   g.add(ubicar(caja(13.0, 0.5, 13.0, piedra), 0, 0.72, 0));
+  g.add(ubicar(caja(13.2, 0.16, 13.2, oroOsc), 0, 0.99, 0));
 
   /* salon de piedra */
   const baja = 6.6, yBaja = 1.0 + baja / 2;
@@ -215,6 +232,8 @@ export function construirTorreon() {
     g.add(ubicar(ventana(marco, vidrio, 1.1, 1.5), sx * 2.7, yBaja + 1.1, 4.76));
     g.add(ubicar(ventana(marco, vidrio, 1.1, 1.5), sx * 4.76, yBaja + 1.1, 0, sx * Math.PI / 2));
   }
+  /* cornisa dorada entre los dos cuerpos */
+  g.add(ubicar(caja(9.7, 0.22, 9.7, oro), 0, 1.0 + baja - 0.1, 0));
 
   /* planta entramada */
   const alta = 3.6, yAlta = 1.0 + baja + alta / 2;
@@ -232,7 +251,7 @@ export function construirTorreon() {
   const altoTecho = 4.6;
   const techo = techoDosAguas({
     ancho: 11.4, largo: 11.4, alto: altoTecho, alero: 1.0,
-    matTecho: teja, matFronton: yeso
+    matTecho: teja, matFronton: yeso, matFilete: oro
   });
   techo.position.y = yTecho;
   g.add(techo);
@@ -241,28 +260,31 @@ export function construirTorreon() {
   /* torre central: atraviesa el techo y define la silueta de la aldea */
   const altoTorre = 21.0;
   g.add(ubicar(cilindro(2.9, 3.3, altoTorre, piedra, 12), 0, altoTorre / 2, 0));
-  g.add(ubicar(cilindro(3.5, 3.5, 0.6, piedraOsc, 12), 0, altoTorre - 0.3, 0));
-  for (let i = 0; i < 12; i++) {
-    const a = (i / 12) * Math.PI * 2;
-    g.add(ubicar(caja(0.9, 1.1, 0.6, piedraOsc),
-      Math.sin(a) * 3.3, altoTorre + 0.55, Math.cos(a) * 3.3, a));
+  for (const y of [altoTorre * 0.42, altoTorre * 0.68]) {   // anillos de oro
+    g.add(ubicar(cilindro(3.06, 3.06, 0.3, oro, 12), 0, y, 0));
   }
+  g.add(ubicar(cilindro(3.5, 3.5, 0.6, piedraOsc, 12), 0, altoTorre - 0.3, 0));
+  almenas(g, 0, altoTorre, 0, 3.3, 12, piedraOsc, oro);
   for (let i = 0; i < 3; i++) {
     const a = (-0.5 + i * 0.5);
     g.add(ubicar(ventana(marco, vidrio, 0.85, 1.2),
       Math.sin(a) * 2.95, altoTorre - 4.5, Math.cos(a) * 2.95, a));
   }
   g.add(ubicar(cono(4.2, 6.0, teja, 12), 0, altoTorre + 3.9, 0));
-  g.add(ubicar(caja(0.18, 3.4, 0.18, marco), 0, altoTorre + 8.4, 0));
+  g.add(ubicar(cilindro(4.24, 4.24, 0.26, oro, 12), 0, altoTorre + 1.05, 0));
+  g.add(ubicar(new THREE.Mesh(new THREE.IcosahedronGeometry(0.62, 0), oro),
+    0, altoTorre + 7.1, 0));                                 // remate dorado
+  g.add(ubicar(caja(0.18, 3.4, 0.18, oro), 0, altoTorre + 8.4, 0));
   g.add(ubicar(caja(2.6, 1.5, 0.08, banderaMat), 1.3, altoTorre + 9.3, 0));
 
   /* cuatro torretas de esquina */
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
     const x = sx * 5.0, z = sz * 5.0, h = 13.0;
     g.add(ubicar(cilindro(1.5, 1.7, h, piedra, 8), x, h / 2, z));
+    g.add(ubicar(cilindro(1.58, 1.58, 0.24, oro, 8), x, h * 0.66, z));
     g.add(ubicar(cono(2.2, 3.4, teja, 8), x, h + 1.7, z));
-    g.add(ubicar(caja(0.12, 1.8, 0.12, marco), x, h + 4.2, z));
-    g.add(ubicar(caja(1.3, 0.8, 0.06, banderaMat2), x + 0.65, h + 4.6, z));
+    g.add(ubicar(caja(0.12, 1.8, 0.12, oro), x, h + 4.2, z));
+    g.add(ubicar(caja(1.3, 0.8, 0.06, banderaMat), x + 0.65, h + 4.6, z));
   }
 
   g.userData.materiales = t.materiales;

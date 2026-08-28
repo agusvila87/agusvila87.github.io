@@ -21,15 +21,40 @@ export const C = {
   madera: 0xB05F31,     maderaOscura: 0x7E4020, maderaClara: 0xC57B45,
   piedra: 0xB6A88D,     piedraOscura: 0x8E836B,
 
-  /* techos: la variedad de color es lo que hace que no parezcan clones */
+  /* techos sueltos, para murallas y utileria */
   techos: [0xA24A4C, 0x8D3B45, 0x6F5F94, 0x7C6BA6, 0x6D8244, 0x9A5340],
   musgo: 0x6E8B45,
+  oro: 0xE8B84B, oroOscuro: 0xBC8A28,
+  bronce: 0xAE7B34, bronceOscuro: 0x8A5F26,
 
   /* detalles */
   marco: 0x6B3B1F, vidrio: 0xFFCE85, humo: 0xF2EDE4,
   tela: [0x7EC8E8, 0x8B6BC4, 0xF0E7D2, 0xD4696B, 0xE2A94F],
   tronco: 0x6E4B2C, hoja: 0x4F8B33, hojaClara: 0x6FAA45, hojaOscura: 0x3E7029,
   hierro: 0x4A4038, heno: 0xD9B85C
+};
+
+/* ── Clases ─────────────────────────────────────────────────────────
+   El rango de cada edificio se lee por material antes que por tamaño:
+   el torreon es realeza (piedra clara, techo purpura, filetes de oro),
+   los dos castillos comparten un tono de bronce y borgoña, y las ocho
+   casas comparten teja de terracota y madera, sin metal. */
+export const CLASES = {
+  keep: {
+    muro: 0xF0E7D2, muroAlto: 0xE3D6BB, piedra: 0xDCCBA8,
+    teja: 0x6B3A7E, madera: 0x8A5B2E, marco: 0x5E3A18,
+    trim: 0xE8B84B, trimOscuro: 0xBC8A28, bandera: 0xE8B84B
+  },
+  castle: {
+    muro: 0xDCCEB1, muroAlto: 0xCCBC98, piedra: 0xC3B392,
+    teja: 0x50609A, madera: 0xA1552B, marco: 0x6B3B1F,
+    trim: 0xAE7B34, trimOscuro: 0x8A5F26, bandera: 0xAE7B34
+  },
+  house: {
+    muro: 0xE9DEC5, muroAlto: 0xD8C9A8, piedra: 0xB6A88D,
+    teja: 0xA85040, madera: 0xB05F31, marco: 0x6B3B1F,
+    trim: null, trimOscuro: null, bandera: null
+  }
 };
 
 /* Lambert + flatShading: da la lectura plana y estilizada de la referencia
@@ -62,7 +87,7 @@ export function ubicar(m, x, y, z, rotY = 0) {
    sobresale y frontones triangulares. El ridge tapa la union arriba. */
 export function techoDosAguas({ ancho, largo, alto, grosor = 0.32,
                                 alero = 0.7, aleroFrente = 0.5,
-                                matTecho, matFronton }) {
+                                matTecho, matFronton, matFilete }) {
   const g = new THREE.Group();
   const a = Math.atan2(alto, ancho / 2);
   const faldon = Math.hypot(ancho / 2, alto) + alero;
@@ -94,10 +119,21 @@ export function techoDosAguas({ ancho, largo, alto, grosor = 0.32,
     g.add(f);
   }
 
-  const cumbrera = caja(0.42, 0.3, L + 0.12, matTecho);
+  const cumbrera = caja(0.42, 0.3, L + 0.12, matFilete || matTecho);
   cumbrera.position.y = alto;
   cumbrera.castShadow = true;
   g.add(cumbrera);
+
+  /* filete a lo largo de los dos aleros: es lo que da el aire de realeza */
+  if (matFilete) {
+    for (const lado of [1, -1]) {
+      const f = caja(0.26, 0.2, L + 0.1, matFilete);
+      f.position.set(lado * (ancho / 2 + alero * Math.cos(a) * 0.5),
+                     -alero * Math.sin(a) * 0.5 + 0.06, 0);
+      f.castShadow = true;
+      g.add(f);
+    }
+  }
 
   return g;
 }
@@ -163,6 +199,16 @@ export function puerta(matMarco, w = 1.1, h = 1.9) {
   tablas.position.z = 0.06;
   g.add(tablas);
   return g;
+}
+
+/* Corre la luminosidad de un color. Las ocho casas comparten teja, pero
+   con una variacion chica no se leen como copias pegadas. */
+export function variar(hex, k) {
+  const c = new THREE.Color(hex);
+  const hsl = {};
+  c.getHSL(hsl);
+  c.setHSL(hsl.h, hsl.s, Math.min(0.92, Math.max(0.08, hsl.l + k)));
+  return c.getHex();
 }
 
 /* Ruido determinista: mismo id, misma aldea en cada carga. */
