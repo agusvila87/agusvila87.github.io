@@ -20,10 +20,9 @@ export const PERFIL = {
   lugar: 'Buenos Aires, AR · GMT-3',
   disponible: 'Abierto a propuestas',
 
-  /* EDITAR: subí tu foto al repo (cuadrada, 500x500 alcanza) y poné acá la
-     ruta, por ejemplo 'assets/foto.jpg'. Mientras esté vacío el panel muestra
-     las iniciales AV, sin pedirle al servidor un archivo que no existe. */
-  foto: '',
+  /* Subí tu foto al repo como assets/foto.jpg (cuadrada, 500x500 alcanza).
+     Si el archivo todavia no esta, la ficha cae a las iniciales AV sola. */
+  foto: 'assets/foto.jpg',
 
   pitch: 'Diseño loops, encuentros y niveles. Me interesa el momento en que alguien entiende una mecánica sin que nadie se la haya explicado.',
   parrafos: [

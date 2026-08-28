@@ -48,13 +48,9 @@ class CamaraOrbital {
     this.azim = 0;           this.azimMeta = 0;
     this.polar = 57 * GRADO; this.polarMeta = this.polar;
     this.dist = 205;         this.distMeta = 142;
-    this.corrX = 0; this.corrXMeta = 0;   // panel al costado (desktop)
-    this.corrY = 0; this.corrYMeta = 0;   // panel abajo (mobile)
     this.punteros = new Map();
     this.pinch = 0;
     this.arrastro = 0;
-    this.derecha = new THREE.Vector3();
-    this.arriba = new THREE.Vector3();
 
     dom.addEventListener('pointerdown', e => {
       dom.setPointerCapture(e.pointerId);
@@ -104,8 +100,6 @@ class CamaraOrbital {
     this.azim  += (this.azimMeta  - this.azim)  * k;
     this.polar += (this.polarMeta - this.polar) * k;
     this.dist  += (this.distMeta  - this.dist)  * k;
-    this.corrX += (this.corrXMeta - this.corrX) * k;
-    this.corrY += (this.corrYMeta - this.corrY) * k;
 
     const sp = Math.sin(this.polar);
     this.cam.position.set(
@@ -114,21 +108,11 @@ class CamaraOrbital {
       this.foco.z + this.dist * sp * Math.cos(this.azim)
     );
     this.cam.lookAt(this.foco);
-
-    /* Corre camara y objetivo juntos: el edificio se va al lado opuesto
-       del panel en vez de quedar tapado. */
-    if (Math.abs(this.corrX) > 0.01 || Math.abs(this.corrY) > 0.01) {
-      this.derecha.setFromMatrixColumn(this.cam.matrix, 0).multiplyScalar(this.corrX);
-      this.arriba.setFromMatrixColumn(this.cam.matrix, 1).multiplyScalar(this.corrY);
-      const d = this.derecha.add(this.arriba);
-      this.cam.position.add(d);
-      this.cam.lookAt(this.foco.x + d.x, this.foco.y + d.y, this.foco.z + d.z);
-    }
   }
 }
 
 /* ── Arranque ──────────────────────────────────────────────────────── */
-export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
+export function iniciarAldea({ canvas, etiqueta, onSeleccion }) {
   const escena = new THREE.Scene();
   escena.fog = new THREE.Fog(C.cieloBajo, 230, 470);
 
@@ -263,15 +247,6 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
       (r.left + x) + 'px,' + (r.top + y) + 'px)';
   }
 
-  /* Cuanto correr la camara para que el panel no tape el edificio.
-     En desktop el panel esta al costado; en mobile es una hoja abajo. */
-  function acomodarPorPanel(dist) {
-    const p = huecoPanel ? huecoPanel() : null;
-    const upp = (2 * dist * Math.tan(camara.fov * GRADO / 2)) / canvas.clientHeight;
-    orbita.corrXMeta = p && p.ancho ? p.ancho * 0.42 * upp : 0;
-    orbita.corrYMeta = p && p.alto ? -p.alto * 0.5 * upp : 0;
-  }
-
   /* Vista general: la aldea entera y nada marcado. El panel igual muestra
      el perfil, pero el torreon no queda resaltado sin que lo hayas pedido. */
   function vistaGeneral() {
@@ -283,7 +258,6 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
     orbita.irA(new THREE.Vector3(0, H_ALTA + e.alturaFoco, 0),
                angosto ? e.dist * 1.45 : e.dist, 0, e.polar);
     if (onSeleccion) onSeleccion(null);
-    requestAnimationFrame(() => acomodarPorPanel(orbita.distMeta));
   }
 
   function seleccionar(id) {
@@ -305,8 +279,6 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
       marcarAro(id, true);
     }
     if (onSeleccion) onSeleccion(id);
-    /* el panel recien cambia de tamaño en el proximo cuadro */
-    requestAnimationFrame(() => acomodarPorPanel(orbita.distMeta));
   }
 
   canvas.addEventListener('pointermove', e => {
@@ -333,7 +305,6 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
     render.setSize(w, h, false);
     camara.aspect = w / h || 1;
     camara.updateProjectionMatrix();
-    acomodarPorPanel(orbita.distMeta);
   }
   addEventListener('resize', redimensionar);
 
@@ -372,9 +343,5 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
   redimensionar();
   vistaGeneral();
 
-  return {
-    seleccionar,
-    vistaGeneral,
-    recalcularEncuadre: () => acomodarPorPanel(orbita.distMeta)
-  };
+  return { seleccionar, vistaGeneral };
 }
