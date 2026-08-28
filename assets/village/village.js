@@ -13,8 +13,8 @@ import * as THREE from '../vendor/three.module.min.js';
 import { C, azar } from './paleta.js';
 import { construirEdificio } from './edificios.js';
 import { construirCielo, construirTerreno, construirTerrazas, construirPasto,
-         construirMuralla, decorarAldea, alturaTerreno } from './escenario.js';
-import { PERFIL, NODOS } from './data.js';
+         construirMuralla, decorarAldea, alturaTerreno, H_ALTA } from './escenario.js';
+import { NODOS } from './data.js';
 
 const GRADO = Math.PI / 180;
 
@@ -210,7 +210,7 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
     g.userData.levante = activo ? 0.7 : encima ? 0.45 : 0;
   }
 
-  const RADIO_ARO = { keep: 13.5, castle: 8.5, house: 5.6 };
+  const RADIO_ARO = { keep: 11.2, castle: 8.5, house: 5.6 };
 
   function marcarAro(id, fuerte) {
     const g = edificios.find(e => e.userData.nodo.id === id);
@@ -272,6 +272,20 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
     orbita.corrYMeta = p && p.alto ? -p.alto * 0.5 * upp : 0;
   }
 
+  /* Vista general: la aldea entera y nada marcado. El panel igual muestra
+     el perfil, pero el torreon no queda resaltado sin que lo hayas pedido. */
+  function vistaGeneral() {
+    seleccionado = null;
+    edificios.forEach(pintar);
+    if (!hover) aro.material.opacity = 0;
+    const e = ENCUADRE.keep;
+    const angosto = canvas.clientWidth < 900;
+    orbita.irA(new THREE.Vector3(0, H_ALTA + e.alturaFoco, 0),
+               angosto ? e.dist * 1.45 : e.dist, 0, e.polar);
+    if (onSeleccion) onSeleccion(null);
+    requestAnimationFrame(() => acomodarPorPanel(orbita.distMeta));
+  }
+
   function seleccionar(id) {
     seleccionado = id;
     edificios.forEach(pintar);
@@ -309,7 +323,7 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
 
   canvas.addEventListener('pointerup', () => {
     if (orbita.arrastro > 6) return;                  // fue un arrastre, no un click
-    seleccionar(hover || PERFIL.id);
+    if (hover) seleccionar(hover); else vistaGeneral();
   });
 
   function redimensionar() {
@@ -356,11 +370,11 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
   render.setAnimationLoop(cuadro);
 
   redimensionar();
-  seleccionar(PERFIL.id);
+  vistaGeneral();
 
   return {
     seleccionar,
-    vistaGeneral: () => seleccionar(PERFIL.id),
+    vistaGeneral,
     recalcularEncuadre: () => acomodarPorPanel(orbita.distMeta)
   };
 }

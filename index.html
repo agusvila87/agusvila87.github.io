@@ -438,11 +438,13 @@ if (!hayWebGL()) {
       const r = panel.getBoundingClientRect();
       return innerWidth < 900 ? { ancho: 0, alto: r.height } : { ancho: r.width, alto: 0 };
     },
+    /* id null = vista general, sin nada elegido en la aldea. El panel
+       igual muestra el perfil, pero ningún atajo queda marcado. */
     onSeleccion: id => {
       botones.forEach((b, k) => b.classList.toggle('on', k === id));
       /* En mobile la hoja tapa media pantalla: al entrar conviene ver la
          aldea entera, y que la ficha aparezca recién al tocar un edificio. */
-      mostrarFicha(id, !(primeraFicha && innerWidth < 900));
+      mostrarFicha(id || PERFIL.id, !(primeraFicha && innerWidth < 900));
       primeraFicha = false;
     }
   });
