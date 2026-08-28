@@ -40,6 +40,8 @@ body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opac
 a{color:inherit}
 img{max-width:100%;display:block}
 picture{display:contents}
+/* con display:contents el <source> tambien seria celda de la grilla: hay que ocultarlo */
+picture>source{display:none}
 :focus-visible{outline:2px solid var(--violet-hot);outline-offset:3px;border-radius:2px}
 
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--violet-hot);display:flex;align-items:center;gap:12px}
@@ -100,10 +102,12 @@ section{padding:clamp(56px,8vw,110px) 0}
 @media(max-width:900px){.proj-grid{grid-template-columns:1fr}}
 .shot{position:relative;border-right:1px solid var(--line);background:#0E0A18;display:flex;flex-direction:column}
 @media(max-width:900px){.shot{border-right:0;border-bottom:1px solid var(--line)}}
-.shot>.yt{flex:0 0 auto}
-.shot>img,.shot>picture>img{width:100%;aspect-ratio:16/9;object-fit:cover;flex:0 0 auto}
+.shot>.yt{flex:1 1 auto}
+/* height:auto es obligatorio: el atributo height="720" del <img> se aplica como
+   estilo de presentacion y, si queda, pisa el aspect-ratio y estira la imagen */
+.shot>img,.shot>picture>img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;flex:1 1 auto;min-height:0}
 .shot>img:last-child,.shot>picture:last-child>img{flex:1 1 auto;aspect-ratio:auto;min-height:210px}
-.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line);flex:1 1 auto;min-height:112px}
+.strip{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line);flex:1 1 auto;min-height:112px}
 .strip img{width:100%;height:100%;object-fit:cover;opacity:.72;transition:opacity .25s}
 .strip img:hover{opacity:1}
 .tag{position:absolute;top:14px;left:14px;z-index:3;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;background:var(--violet);color:#fff;padding:6px 11px}
@@ -447,6 +451,21 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
         </div>
       </article>
       <article class="mini">
+        <button class="yt" data-id="TfBjDYBX2PI" aria-label="Ver gameplay de Grab it, It's Hot!">
+          <img src="https://img.youtube.com/vi/TfBjDYBX2PI/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/TfBjDYBX2PI/hqdefault.jpg" alt="Gameplay de Grab it, It's Hot!" loading="lazy">
+          <span class="play"><i></i></span>
+        </button>
+        <div class="mini-body">
+          <h4>Grab it, It's Hot!</h4>
+          <div class="line">PC · Unity 3D · Multiplayer de 2 a 4 con Photon · Equipo de 2 · Materia: Desarrollo de Redes</div>
+          <!-- EDITAR: ¿qué rol tuviste acá y qué te obligó a cambiar el multiplayer? -->
+          <p>Multiplayer de 2 a 4 jugadores con Photon, hecho para la materia Desarrollo de Redes.</p>
+          <div class="foot">
+            <a href="https://drive.google.com/open?id=1xErI63W65QAe1Zq-qM7va3-dPqqNPn2Q&amp;usp=drive_fs" target="_blank" rel="noopener">Descargar ↗</a>
+          </div>
+        </div>
+      </article>
+      <article class="mini">
         <button class="yt" data-id="S9SGYD3hVBs" aria-label="Ver gameplay de Bit Con">
           <img src="https://img.youtube.com/vi/S9SGYD3hVBs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/S9SGYD3hVBs/hqdefault.jpg" alt="Gameplay de Bit Con" loading="lazy">
           <span class="play"><i></i></span>
@@ -484,12 +503,6 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
 
     <div class="more rv">
       <div class="more-h">También de la carrera</div>
-      <div class="more-row">
-        <b>Grab it, It's Hot!</b>
-        <p class="line">PC · Unity 3D · Multiplayer de 2 a 4 con Photon · Equipo de 2 · Desarrollo de Redes</p>
-        <a href="https://www.youtube.com/watch?v=TfBjDYBX2PI" target="_blank" rel="noopener">Video ↗</a>
-        <a href="https://drive.google.com/open?id=1xErI63W65QAe1Zq-qM7va3-dPqqNPn2Q&amp;usp=drive_fs" target="_blank" rel="noopener">Descargar ↗</a>
-      </div>
       <div class="more-row">
         <b>Proyecto Caos</b>
         <p class="line">PC · Unity 2D · Plataformero · Equipo de 4 · Diseño y Producción de Juegos</p>
