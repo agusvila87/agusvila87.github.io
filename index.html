@@ -41,6 +41,26 @@ img{display:block;max-width:100%}
 #aldea{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
 #aldea:active{cursor:grabbing}
 
+/* ── etiqueta de hover ──────────────────────────────────────────────
+   Una sola, reutilizada. Aparece sobre el edificio que estas apuntando
+   y desaparece al salir: los nombres no viven fijos sobre la aldea. */
+#etiqueta{
+  position:fixed;top:0;left:0;z-index:30;pointer-events:none;
+  transform:translate(-50%,-100%);margin-top:-13px;
+  background:linear-gradient(var(--tabla-2),var(--tabla));
+  border:1px solid var(--ambar);border-radius:3px;
+  box-shadow:0 5px 18px rgba(30,18,10,.45);
+  padding:7px 13px;max-width:min(260px,66vw);text-align:center;
+  opacity:0;transition:opacity .13s;
+}
+#etiqueta.visible{opacity:1}
+#etiqueta::after{content:"";position:absolute;left:50%;bottom:-13px;width:2px;height:13px;
+  background:var(--ambar)}
+#etiqueta b{display:block;font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 800;
+  font-size:15px;line-height:1.12;text-transform:uppercase;letter-spacing:.015em;color:var(--pergamino)}
+#etiqueta em{display:block;font-family:var(--mono);font-style:normal;font-size:8.5px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--ambar-claro);margin-top:5px}
+
 /* ── barras ── */
 .chrome{position:fixed;z-index:40;pointer-events:none}
 .chrome a,.chrome button{pointer-events:auto}
@@ -212,6 +232,7 @@ body.panel-cerrado #abrir-panel{display:block}
 <body>
 
 <canvas id="aldea"></canvas>
+<div id="etiqueta" aria-hidden="true"><b></b><em></em></div>
 
 <div id="cargando">Levantando la aldea…</div>
 
@@ -223,7 +244,7 @@ body.panel-cerrado #abrir-panel{display:block}
 </div>
 
 <div class="chrome" id="barra-inf">
-  <div id="pistas">Arrastrá para girar · Rueda o pinza para acercar · Hacé click en un edificio para ver el proyecto</div>
+  <div id="pistas">Arrastrá para girar · Rueda o pinza para acercar · Click en un edificio para ver el proyecto</div>
   <div id="atajos"></div>
 </div>
 
@@ -411,6 +432,7 @@ if (!hayWebGL()) {
 
   const aldea = iniciarAldea({
     canvas,
+    etiqueta: document.getElementById('etiqueta'),
     huecoPanel: () => {
       if (document.body.classList.contains('panel-cerrado')) return null;
       const r = panel.getBoundingClientRect();

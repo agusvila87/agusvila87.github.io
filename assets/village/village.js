@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════════════
    MOTOR DE LA ALDEA
    Arma la escena, maneja la camara orbital y el hover/click sobre los
-   edificios. Los nombres no se muestran flotando: al pasar por encima
-   el edificio se levanta y se ilumina, y al hacer click la ficha
-   aparece en el panel.
+   edificios. Los nombres no viven fijos sobre la aldea: aparecen en
+   una etiqueta solo mientras apuntas un edificio, y al hacer click la
+   ficha completa aparece en el panel.
 
    Cuando llegue el mapa de Unity solo cambia construirEdificio() por
    un loader de .glb: camara, seleccion y paneles siguen igual.
@@ -128,7 +128,7 @@ class CamaraOrbital {
 }
 
 /* ── Arranque ──────────────────────────────────────────────────────── */
-export function iniciarAldea({ canvas, onSeleccion, huecoPanel }) {
+export function iniciarAldea({ canvas, etiqueta, onSeleccion, huecoPanel }) {
   const escena = new THREE.Scene();
   escena.fog = new THREE.Fog(C.cieloBajo, 185, 430);
 
@@ -221,6 +221,10 @@ export function iniciarAldea({ canvas, onSeleccion, huecoPanel }) {
     aro.material.opacity = fuerte ? 0.55 : 0.3;
   }
 
+  /* En touch no hay hover real: el dedo dispara pointermove justo antes
+     del tap y la etiqueta pegaria un flash. Ahi no se muestra. */
+  const hayHover = matchMedia('(hover: hover)').matches;
+
   function setHover(id) {
     if (hover === id) return;
     hover = id;
@@ -229,6 +233,34 @@ export function iniciarAldea({ canvas, onSeleccion, huecoPanel }) {
     if (hover) marcarAro(hover, false);
     else if (seleccionado) marcarAro(seleccionado, true);
     else aro.material.opacity = 0;
+
+    if (!etiqueta) return;
+    const g = id && edificios.find(e => e.userData.nodo.id === id);
+    if (!g || !hayHover) { etiqueta.classList.remove('visible'); return; }
+    const nodo = g.userData.nodo;
+    etiqueta.querySelector('b').textContent = nodo.nombre;
+    etiqueta.querySelector('em').textContent = nodo.rol || nodo.linea || '';
+    etiqueta.classList.add('visible');
+    moverEtiqueta();   // sin esto asoma un cuadro en la esquina antes de ubicarse
+  }
+
+  /* La etiqueta sigue al edificio apuntado, proyectando la punta de su
+     techo a pantalla, y se mantiene dentro del cuadro. */
+  const vEtiqueta = new THREE.Vector3();
+  function moverEtiqueta() {
+    if (!etiqueta || !hover || !etiqueta.classList.contains('visible')) return;
+    const g = edificios.find(e => e.userData.nodo.id === hover);
+    if (!g) return;
+    const r = canvas.getBoundingClientRect();
+    vEtiqueta.copy(g.position).setY(g.position.y + g.userData.altoCartel);
+    vEtiqueta.project(camara);
+    if (vEtiqueta.z > 1) { etiqueta.classList.remove('visible'); return; }
+    const medio = etiqueta.offsetWidth / 2;
+    const x = THREE.MathUtils.clamp((vEtiqueta.x * 0.5 + 0.5) * r.width, medio + 10, r.width - medio - 10);
+    const y = THREE.MathUtils.clamp((-vEtiqueta.y * 0.5 + 0.5) * r.height,
+                                    etiqueta.offsetHeight + 62, r.height - 70);
+    etiqueta.style.transform = 'translate(-50%,-100%) translate(' +
+      (r.left + x) + 'px,' + (r.top + y) + 'px)';
   }
 
   /* Cuanto correr la camara para que el panel no tape el edificio.
@@ -273,6 +305,8 @@ export function iniciarAldea({ canvas, onSeleccion, huecoPanel }) {
     setHover(g ? g.userData.nodo.id : null);
   });
 
+  canvas.addEventListener('pointerleave', () => setHover(null));
+
   canvas.addEventListener('pointerup', () => {
     if (orbita.arrastro > 6) return;                  // fue un arrastre, no un click
     seleccionar(hover || PERFIL.id);
@@ -316,6 +350,7 @@ export function iniciarAldea({ canvas, onSeleccion, huecoPanel }) {
       if (n.position.z > 300) n.position.z = -300;
     }
 
+    moverEtiqueta();
     render.render(escena, camara);
   }
   render.setAnimationLoop(cuadro);
