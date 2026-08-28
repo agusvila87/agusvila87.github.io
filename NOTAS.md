@@ -7,14 +7,11 @@ están los comentarios de cada módulo en `assets/village/`.
 
 ## Pendiente inmediato
 
-- [ ] **Subir la foto de perfil.** El panel ya la busca en `assets/foto.jpg`.
-      Mientras el archivo no exista muestra las iniciales "AV" y no se rompe
-      nada, pero tira un 404 en la consola. Para resolverlo:
-
-      cp /ruta/a/tu/foto.jpg assets/foto.jpg
-
-      Cuadrada, 500×500 alcanza. La ruta ya está puesta en
-      `assets/village/data.js` (campo `foto` del objeto `PERFIL`).
+- [x] ~~Subir la foto de perfil.~~ Hecho. `assets/foto.jpg`, 512×512 y
+      ~47 KB. Salió de `Foto Nueva 4x4.jpg` (2395×2395, 1,1 MB), que quedó
+      en la carpeta local pero fuera del repo por `.gitignore`. Si la
+      querés cambiar, reemplazá `assets/foto.jpg` por otra cuadrada; si el
+      archivo llegara a faltar, la ficha cae sola a las iniciales "AV".
 
 - [ ] **Imagen de Open Graph.** Falta subir `og.png` (1200×630) a la raíz.
       El `<meta property="og:image">` ya la apunta. Sin eso, cuando compartís

@@ -1,0 +1,4 @@
+# La foto original pesa 1,1 MB y no hace falta en el repo: al sitio va
+# solo la version optimizada, assets/foto.jpg (512x512, ~47 KB).
+# El archivo sigue en tu carpeta local por si lo necesitas de nuevo.
+/Foto Nueva 4x4.jpg
