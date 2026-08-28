@@ -2,14 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Agustín Vila · Game &amp; Level Designer</title>
-<meta name="description" content="Game y Level Designer en Buenos Aires. Sealcoating Simulator (ACE 87 Studios) y SolAR (KYKUYO). Unity, Unreal y C#.">
-<meta name="theme-color" content="#0A0710">
+<meta name="description" content="Portfolio de Agustín Vila, Game y Level Designer en Buenos Aires, como una aldea medieval. Sealcoating Simulator (ACE 87 Studios) y SolAR (KYKUYO).">
+<meta name="theme-color" content="#2A1E15">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Agustín Vila · Game &amp; Level Designer">
-<meta property="og:description" content="Sistemas, encuentros y niveles. Sealcoating Simulator y SolAR. Buenos Aires.">
+<meta property="og:description" content="Una aldea medieval donde cada casa es un proyecto. Sealcoating Simulator y SolAR.">
 <!-- EDITAR: falta subir la imagen 1200x630 al repo como og.png -->
 <meta property="og:image" content="https://agusvila87.github.io/og.png">
 <meta property="og:url" content="https://agusvila87.github.io/">
@@ -21,547 +21,456 @@
 
 <style>
 :root{
-  --void:#0A0710; --panel:#130F1E; --panel-2:#1B1529; --line:#2A2140;
-  --violet:#7B2BF9; --violet-hot:#A96BFF; --bone:#EDE9F5; --muted:#8A81A3;
+  /* madera vieja y pergamino, para acompañar la aldea de dia */
+  --tinta:#241B14; --tabla:#31251C; --tabla-2:#3D2E22; --linea:#54402F;
+  --pergamino:#F4EADA; --tenue:#B9A68F;
+  --ambar:#E08A3C; --ambar-claro:#F5B36A; --verde:#7FA23F;
   --display:"Archivo",system-ui,sans-serif;
   --body:"Instrument Sans",system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,monospace;
-  --gut:clamp(20px,5vw,64px); --maxw:1180px;
+  --panel-w:min(430px,34vw);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--void);color:var(--bone);font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(760px 420px at 82% -8%,rgba(123,43,249,.30),transparent 62%),
-             radial-gradient(560px 400px at 4% 44%,rgba(123,43,249,.12),transparent 66%)}
-body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.055;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
-.wrap{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;padding:0 var(--gut)}
+html,body{height:100%;overflow:hidden}
+body{background:#A9D8F0;color:var(--pergamino);font-family:var(--body);-webkit-font-smoothing:antialiased}
 a{color:inherit}
-img{max-width:100%;display:block}
-:focus-visible{outline:2px solid var(--violet-hot);outline-offset:3px;border-radius:2px}
+img{display:block;max-width:100%}
+:focus-visible{outline:2px solid var(--ambar-claro);outline-offset:3px}
 
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--violet-hot);display:flex;align-items:center;gap:12px}
-.eyebrow::before{content:"";width:26px;height:2px;background:var(--violet);transform:skewX(-32deg)}
-.h2{font-family:var(--display);font-variation-settings:"wdth" 74,"wght" 800;font-size:clamp(34px,6.4vw,68px);line-height:.92;letter-spacing:-.01em;text-transform:uppercase;margin:18px 0 0}
-.lede{color:var(--muted);max-width:58ch;margin-top:18px;font-size:clamp(15px,1.6vw,17px)}
+/* ── escena ── */
+#aldea{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#aldea:active{cursor:grabbing}
+#carteles{position:fixed;inset:0;pointer-events:none;z-index:20}
 
-nav{position:sticky;top:0;z-index:60;background:rgba(10,7,16,.74);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
-.nav-in{max-width:var(--maxw);margin:0 auto;padding:14px var(--gut);display:flex;align-items:center;gap:24px}
-.mark{font-family:var(--display);font-variation-settings:"wdth" 62,"wght" 900;font-size:19px;letter-spacing:.06em;margin-right:auto;text-decoration:none}
-.mark span{color:var(--violet-hot)}
-.nav-in a.nl{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .18s;white-space:nowrap}
-.nav-in a.nl:hover{color:var(--bone)}
-@media(max-width:760px){.nav-in a.nl:not(.keep){display:none}}
+/* ── carteles de madera sobre cada edificio ── */
+.cartel{
+  position:absolute;top:0;left:0;will-change:transform;
+  transform:translate(-50%,-100%);margin-top:-14px;
+  background:linear-gradient(var(--tabla-2),var(--tabla));
+  border:1px solid var(--linea);border-radius:3px;
+  box-shadow:0 4px 14px rgba(30,18,10,.34);
+  padding:7px 12px;max-width:min(240px,64vw);text-align:center;
+  transition:opacity .2s,border-color .2s,box-shadow .2s;
+}
+.cartel::after{content:"";position:absolute;left:50%;bottom:-14px;width:2px;height:14px;
+  background:var(--linea)}
+.cartel.hov,.cartel.sel{border-color:var(--ambar);box-shadow:0 6px 20px rgba(30,18,10,.5)}
+.cartel b{display:block;font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 800;
+  font-size:14px;line-height:1.12;text-transform:uppercase;letter-spacing:.015em;color:var(--pergamino)}
+.cartel em{display:none;font-family:var(--mono);font-style:normal;font-size:8.5px;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--ambar-claro);margin-top:5px}
+.cartel.hov em,.cartel.sel em{display:block}
+.k-castle b{font-size:17px}
+.k-keep b{font-size:20px}
+.k-keep{border-color:var(--ambar)}
 
-header{padding:clamp(52px,9vw,104px) 0 clamp(36px,6vw,72px)}
-.card{position:relative;background:linear-gradient(160deg,var(--panel-2),var(--panel) 58%);border:1px solid var(--line);padding:clamp(24px,4.2vw,54px);overflow:hidden}
-.card::before{content:"";position:absolute;top:0;left:0;bottom:0;width:9px;background:var(--violet);transform:skewX(-11deg) translateX(-4px)}
-.card::after{content:"AV";position:absolute;right:-3.5vw;bottom:-13vw;font-family:var(--display);font-variation-settings:"wdth" 62,"wght" 900;font-size:34vw;line-height:.7;color:#fff;opacity:.026;pointer-events:none}
-.rowtop{display:flex;flex-wrap:wrap;align-items:center;gap:14px;justify-content:space-between}
-.loc{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
-.avail{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;border:1px solid rgba(169,107,255,.45);color:var(--violet-hot);padding:6px 12px;display:flex;align-items:center;gap:8px}
-.dot{width:6px;height:6px;background:var(--violet-hot);border-radius:50%;box-shadow:0 0 0 0 rgba(169,107,255,.6);animation:pulse 2.6s infinite}
-@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(169,107,255,0)}100%{box-shadow:0 0 0 0 rgba(169,107,255,0)}}
-h1{font-family:var(--display);font-variation-settings:"wdth" 68,"wght" 900;font-size:clamp(52px,13.5vw,152px);line-height:.83;letter-spacing:-.02em;text-transform:uppercase;margin:26px 0 0}
-h1 em{font-style:normal;display:block;color:transparent;-webkit-text-stroke:1.4px var(--violet-hot)}
-.role{font-family:var(--mono);font-size:clamp(11px,1.5vw,13px);letter-spacing:.3em;text-transform:uppercase;margin-top:22px;padding-top:20px;border-top:1px solid var(--line)}
-.pitch{margin-top:20px;max-width:50ch;font-size:clamp(16px,2vw,19px);color:#C9C1DC}
-.stats{display:flex;flex-wrap:wrap;margin-top:34px;border:1px solid var(--line)}
-.stat{flex:1 1 130px;padding:14px 16px;border-right:1px solid var(--line)}
-.stat:last-child{border-right:0}
-.stat b{display:block;font-family:var(--display);font-variation-settings:"wdth" 70,"wght" 800;font-size:22px;line-height:1.1}
-.stat span{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-.cta-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
-.btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;padding:14px 22px;text-decoration:none;border:1px solid var(--violet);transition:background .2s,color .2s,transform .2s}
-.btn.solid{background:var(--violet);color:#fff}
-.btn.solid:hover{background:var(--violet-hot);transform:translateY(-2px)}
-.btn.ghost{color:var(--violet-hot)}
-.btn.ghost:hover{background:rgba(123,43,249,.14);transform:translateY(-2px)}
+/* ── barras ── */
+.chrome{position:fixed;z-index:40;pointer-events:none}
+.chrome a,.chrome button{pointer-events:auto}
+#barra-sup{top:0;left:0;right:0;display:flex;align-items:center;gap:16px;
+  padding:15px clamp(14px,2.4vw,26px);
+  background:linear-gradient(rgba(36,27,20,.62),transparent)}
+.mark{font-family:var(--display);font-variation-settings:"wdth" 62,"wght" 900;font-size:17px;
+  letter-spacing:.06em;text-transform:uppercase;text-decoration:none;margin-right:auto;
+  text-shadow:0 2px 8px rgba(30,18,10,.6)}
+.mark span{color:var(--ambar-claro)}
+.nl{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--pergamino);text-decoration:none;transition:color .18s;white-space:nowrap;
+  text-shadow:0 2px 8px rgba(30,18,10,.7)}
+.nl:hover{color:var(--ambar-claro)}
 
-section{padding:clamp(56px,8vw,110px) 0}
-.sec-head{margin-bottom:clamp(30px,4.5vw,52px)}
+#barra-inf{bottom:0;left:0;right:var(--panel-w);padding:12px clamp(14px,2.4vw,26px) calc(13px + env(safe-area-inset-bottom));
+  background:linear-gradient(transparent,rgba(36,27,20,.72) 55%);transition:right .34s ease}
+body.panel-cerrado #barra-inf{right:0}
+#pistas{font-family:var(--mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--tenue);margin-bottom:8px;text-shadow:0 1px 6px rgba(30,18,10,.8)}
+#atajos{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+#atajos::-webkit-scrollbar{display:none}
+#atajos button{font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--pergamino);background:rgba(49,37,28,.86);border:1px solid var(--linea);border-radius:3px;
+  padding:7px 10px;cursor:pointer;white-space:nowrap;transition:all .18s}
+#atajos button:hover{border-color:var(--ambar);color:var(--ambar-claro)}
+#atajos button.on{color:#2A1E15;background:var(--ambar-claro);border-color:var(--ambar-claro);font-weight:700}
 
-/* ── reproductor liviano de YouTube ── */
-.yt{position:relative;aspect-ratio:16/9;background:#0E0A18;cursor:pointer;overflow:hidden;border:0;width:100%;padding:0;display:block}
-.yt img{width:100%;height:100%;object-fit:cover;opacity:.62;transition:opacity .3s,transform .5s}
-.yt:hover img{opacity:.86;transform:scale(1.03)}
-.yt .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.yt .play i{width:60px;height:60px;background:var(--violet);display:grid;place-items:center;transition:background .25s}
-.yt:hover .play i{background:var(--violet-hot)}
-.yt .play i::after{content:"";border-left:16px solid #fff;border-top:10px solid transparent;border-bottom:10px solid transparent;margin-left:4px}
-.yt iframe{width:100%;height:100%;border:0;display:block}
+/* ── panel de detalle ── */
+#panel{position:fixed;top:0;right:0;z-index:50;width:var(--panel-w);height:100%;
+  background:linear-gradient(160deg,var(--tabla-2),var(--tinta) 62%);
+  border-left:1px solid var(--linea);box-shadow:-14px 0 40px rgba(30,18,10,.42);
+  display:flex;flex-direction:column;transition:transform .34s ease}
+body.panel-cerrado #panel{transform:translateX(100%)}
+#panel-cerrar{position:absolute;top:12px;right:12px;z-index:2;width:32px;height:32px;
+  display:grid;place-items:center;background:rgba(36,27,20,.7);border:1px solid var(--linea);
+  border-radius:3px;color:var(--pergamino);font-size:16px;line-height:1;cursor:pointer;transition:all .18s}
+#panel-cerrar:hover{border-color:var(--ambar);color:var(--ambar-claro)}
+#panel-cuerpo{overflow-y:auto;overscroll-behavior:contain;padding:26px clamp(18px,2vw,26px) 34px;flex:1}
+#panel-cuerpo::-webkit-scrollbar{width:8px}
+#panel-cuerpo::-webkit-scrollbar-thumb{background:var(--linea);border-radius:4px}
 
-/* ── proyectos destacados ── */
-.proj{border:1px solid var(--line);background:var(--panel);margin-bottom:26px;overflow:hidden;transition:border-color .25s}
-.proj:hover{border-color:rgba(169,107,255,.45)}
-.proj-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr)}
-@media(max-width:900px){.proj-grid{grid-template-columns:1fr}}
-.shot{position:relative;border-right:1px solid var(--line);background:#0E0A18;display:flex;flex-direction:column}
-@media(max-width:900px){.shot{border-right:0;border-bottom:1px solid var(--line)}}
-.shot>.yt{flex:0 0 auto}
-.shot>img{width:100%;aspect-ratio:16/9;object-fit:cover;flex:0 0 auto}
-.shot>img:last-child{flex:1 1 auto;aspect-ratio:auto;min-height:210px}
-.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border-top:1px solid var(--line);flex:1 1 auto;min-height:112px}
-.strip img{width:100%;height:100%;object-fit:cover;opacity:.72;transition:opacity .25s}
-.strip img:hover{opacity:1}
-.tag{position:absolute;top:14px;left:14px;z-index:3;font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;background:var(--violet);color:#fff;padding:6px 11px}
-.tag.soft{background:rgba(10,7,16,.85);border:1px solid var(--line);color:var(--muted)}
-.proj-body{padding:clamp(22px,3.2vw,38px)}
-.proj h3{font-family:var(--display);font-variation-settings:"wdth" 76,"wght" 800;font-size:clamp(24px,3.4vw,36px);line-height:1;text-transform:uppercase;margin-bottom:16px}
-.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:20px}
-.meta div{background:var(--panel);padding:10px 12px}
-.meta dt{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
-.meta dd{font-size:13.5px;font-weight:500}
-.proj p{color:var(--muted);font-size:15px;margin-bottom:14px}
-.proj p strong{color:var(--bone);font-weight:600}
-.proj-links{display:flex;flex-wrap:wrap;gap:18px;margin-top:20px;padding-top:18px;border-top:1px solid var(--line)}
-.proj-links a{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-hot);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
-.proj-links a:hover{border-bottom-color:var(--violet-hot)}
+#abrir-panel{position:fixed;top:50%;right:0;z-index:45;transform:translateY(-50%);
+  writing-mode:vertical-rl;font-family:var(--mono);font-size:10px;letter-spacing:.2em;
+  text-transform:uppercase;background:var(--tabla-2);color:var(--pergamino);
+  border:1px solid var(--linea);border-right:0;border-radius:3px 0 0 3px;
+  padding:16px 9px;cursor:pointer;display:none}
+body.panel-cerrado #abrir-panel{display:block}
+#abrir-panel:hover{color:var(--ambar-claro);border-color:var(--ambar)}
 
-/* ── grilla académica ── */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
-.mini{border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;transition:border-color .25s,transform .25s}
-.mini:hover{border-color:rgba(169,107,255,.45);transform:translateY(-3px)}
-.mini-body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
-.mini h4{font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 800;font-size:20px;text-transform:uppercase;line-height:1.05;margin-bottom:10px}
-.mini .line{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-hot);margin-bottom:12px}
-.mini p{color:var(--muted);font-size:14px;flex:1}
-.mini .foot{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
-.mini .foot a,.mini .foot span{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
-.mini .foot a{color:var(--violet-hot)}
-.mini .foot span{color:var(--muted)}
+.p-kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ambar-claro);display:flex;align-items:center;gap:9px}
+.p-kicker::before{content:"";width:20px;height:2px;background:var(--ambar)}
+.p-titulo{font-family:var(--display);font-variation-settings:"wdth" 74,"wght" 800;
+  font-size:clamp(26px,3vw,38px);line-height:.98;text-transform:uppercase;margin:12px 0 0}
+.p-linea{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--tenue);margin-top:10px}
 
-/* ── competencias ── */
-.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
-.skill{background:var(--panel);padding:clamp(20px,2.8vw,30px)}
-.skill h4{font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 700;font-size:17px;text-transform:uppercase;margin-bottom:10px}
-.skill p{color:var(--muted);font-size:14.5px}
-.skill .num{font-family:var(--mono);font-size:10px;color:var(--violet-hot);letter-spacing:.2em;display:block;margin-bottom:12px}
-.tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
-.tool{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);padding:9px 15px;color:var(--muted)}
+.p-meta{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--linea);
+  border:1px solid var(--linea);border-radius:3px;margin-top:20px;overflow:hidden}
+.p-meta div{background:var(--tinta);padding:9px 11px}
+.p-meta dt{font-family:var(--mono);font-size:8px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--tenue);margin-bottom:3px}
+.p-meta dd{font-size:12.5px;font-weight:500;line-height:1.3}
 
-.contact-h{font-family:var(--display);font-variation-settings:"wdth" 70,"wght" 900;font-size:clamp(38px,8vw,88px);line-height:.88;text-transform:uppercase;margin-top:20px}
-.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
-footer{border-top:1px solid var(--line);padding:26px 0 40px}
-.foot-in{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.p-media{margin-top:20px;border:1px solid var(--linea);border-radius:3px;overflow:hidden;background:#1A1310}
+.yt{position:relative;aspect-ratio:16/9;background:#1A1310;cursor:pointer;border:0;width:100%;padding:0;display:block}
+.yt img{width:100%;height:100%;object-fit:cover;opacity:.72;transition:opacity .3s,transform .5s}
+.yt:hover img{opacity:1;transform:scale(1.04)}
+.yt .play{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+.yt .play i{width:54px;height:54px;border-radius:50%;background:var(--ambar);display:grid;place-items:center;
+  box-shadow:0 6px 20px rgba(0,0,0,.4);transition:background .25s}
+.yt:hover .play i{background:var(--ambar-claro)}
+.yt .play i::after{content:"";border-left:15px solid #2A1E15;border-top:9px solid transparent;
+  border-bottom:9px solid transparent;margin-left:4px}
+.yt iframe{width:100%;height:100%;border:0;display:block;aspect-ratio:16/9}
+.p-media>img{width:100%;aspect-ratio:16/9;object-fit:cover}
 
-.rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
-.rv.in{opacity:1;transform:none}
-@media(prefers-reduced-motion:reduce){
-  html{scroll-behavior:auto}
-  .rv{opacity:1;transform:none;transition:none}
-  .dot{animation:none}
-  .btn:hover,.mini:hover,.yt:hover img{transform:none}
+.p-tiras{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:6px}
+.p-tiras img{width:100%;aspect-ratio:16/10;object-fit:cover;border:1px solid var(--linea);
+  border-radius:2px;cursor:zoom-in;opacity:.82;transition:opacity .2s,border-color .2s}
+.p-tiras img:hover{opacity:1;border-color:var(--ambar)}
+
+.p-texto{margin-top:20px}
+.p-texto p{color:#D9CCB8;font-size:13.5px;line-height:1.62;margin-top:11px}
+.p-texto p strong{color:var(--pergamino);font-weight:600}
+
+.p-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;padding-top:18px;border-top:1px solid var(--linea)}
+.p-links a{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;padding:10px 14px;border:1px solid var(--linea);border-radius:3px;
+  color:var(--pergamino);transition:all .18s}
+.p-links a:hover{border-color:var(--ambar);color:var(--ambar-claro)}
+.p-links a.destacado{background:var(--ambar);border-color:var(--ambar);color:#2A1E15;font-weight:700}
+.p-links a.destacado:hover{background:var(--ambar-claro);border-color:var(--ambar-claro);color:#2A1E15}
+
+/* perfil */
+.p-perfil-top{display:flex;gap:15px;align-items:center}
+.p-foto,.p-ini{width:78px;height:78px;flex:0 0 78px;border-radius:3px;object-fit:cover;
+  border:2px solid var(--ambar)}
+.p-ini{display:grid;place-items:center;font-family:var(--display);
+  font-variation-settings:"wdth" 70,"wght" 900;font-size:29px;color:var(--ambar-claro);
+  background:rgba(224,138,60,.14)}
+.p-disponible{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:9px;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--verde);
+  border:1px solid rgba(127,162,63,.5);border-radius:3px;padding:5px 10px;margin-top:14px}
+.p-disponible i{width:6px;height:6px;border-radius:50%;background:var(--verde)}
+.p-pitch{font-size:15px;line-height:1.55;color:var(--pergamino);margin-top:16px}
+.p-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--linea);
+  border:1px solid var(--linea);border-radius:3px;margin-top:18px;overflow:hidden}
+.p-stats div{background:var(--tinta);padding:9px 11px}
+.p-stats b{display:block;font-family:var(--display);font-variation-settings:"wdth" 72,"wght" 800;
+  font-size:17px;line-height:1.15}
+.p-stats span{font-family:var(--mono);font-size:8px;letter-spacing:.15em;text-transform:uppercase;color:var(--tenue)}
+/* con 5 stats sobra una celda: la última ocupa la fila entera */
+.p-stats div:last-child:nth-child(odd){grid-column:1/-1}
+
+/* lightbox */
+#lupa{position:fixed;inset:0;z-index:90;background:rgba(26,19,16,.94);display:none;
+  place-items:center;padding:4vw;cursor:zoom-out}
+#lupa.abierta{display:grid}
+#lupa img{max-width:100%;max-height:92vh;object-fit:contain;border:1px solid var(--linea)}
+
+#cargando{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:#2A1E15;
+  font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--tenue);transition:opacity .5s}
+#cargando.listo{opacity:0;pointer-events:none}
+
+/* ── respaldo: sin WebGL, sin JS, o para lectores de pantalla ── */
+#respaldo.oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
+  clip-path:inset(50%);white-space:nowrap}
+#respaldo{position:relative;z-index:70;max-width:760px;margin:0 auto;padding:54px 24px;
+  background:var(--tinta);height:100%;overflow-y:auto}
+#respaldo h1{font-family:var(--display);font-variation-settings:"wdth" 68,"wght" 900;
+  font-size:clamp(38px,9vw,72px);line-height:.9;text-transform:uppercase}
+#respaldo h2{font-family:var(--display);font-variation-settings:"wdth" 74,"wght" 800;
+  font-size:24px;text-transform:uppercase;margin:34px 0 12px}
+#respaldo h3{font-size:16px;margin-top:18px}
+#respaldo p{color:var(--tenue);margin-top:9px;font-size:15px}
+#respaldo a{color:var(--ambar-claro)}
+#respaldo .aviso{border:1px solid var(--linea);border-radius:3px;padding:13px;margin-top:20px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--tenue)}
+
+@media(max-width:900px){
+  :root{--panel-w:100%}
+  #panel{top:auto;bottom:0;height:min(56vh,520px);width:100%;border-left:0;
+    border-top:1px solid var(--linea);border-radius:10px 10px 0 0;
+    box-shadow:0 -14px 40px rgba(30,18,10,.45)}
+  body.panel-cerrado #panel{transform:translateY(100%)}
+  #barra-inf{right:0;bottom:min(56vh,520px);background:none;transition:bottom .34s ease}
+  body.panel-cerrado #barra-inf{bottom:0;background:linear-gradient(transparent,rgba(36,27,20,.72) 55%)}
+  /* flotante arriba de los atajos: abajo del todo se pisaba con ellos */
+  #abrir-panel{writing-mode:horizontal-tb;top:auto;bottom:calc(64px + env(safe-area-inset-bottom));
+    right:14px;transform:none;border-radius:3px;border:1px solid var(--ambar);
+    background:var(--ambar);color:#2A1E15;font-weight:700;padding:10px 16px;
+    box-shadow:0 6px 18px rgba(30,18,10,.4)}
+  body.panel-cerrado #barra-inf{bottom:0}
+  #panel-cuerpo{padding:22px 18px 30px}
+  .p-titulo{font-size:26px}
+  #pistas{display:none}
+}
+@media(max-width:560px){
+  /* la barra de arriba no puede partirse en dos lineas */
+  #barra-sup{gap:11px;padding:12px 14px}
+  .mark{font-size:14px}
+  .nl{font-size:8.5px;letter-spacing:.1em}
 }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-in">
-    <a href="#top" class="mark">AGUSTÍN VILA<span>.</span></a>
-    <a href="#destacados" class="nl">Proyectos</a>
-    <a href="#davinci" class="nl">Da Vinci</a>
-    <a href="#quehago" class="nl">Qué hago</a>
-    <!-- EDITAR: subí el PDF a la raíz del repo con este nombre exacto -->
-    <a href="Agustin_Vila_Game_Designer_CV.pdf" class="nl" download>CV</a>
-    <a href="#contacto" class="nl keep">Contacto</a>
-  </div>
-</nav>
+<canvas id="aldea"></canvas>
+<div id="carteles"></div>
 
-<header id="top">
-  <div class="wrap">
-    <div class="card">
-      <div class="rowtop">
-        <div class="loc">AR · Buenos Aires · GMT-3</div>
-        <div class="avail"><i class="dot"></i>Abierto a propuestas</div>
-      </div>
+<div id="cargando">Levantando la aldea…</div>
 
-      <h1>Agustín<em>Vila</em></h1>
-      <div class="role">Game Designer &nbsp;·&nbsp; Level Designer</div>
-
-      <!-- EDITAR: tu tesis. Reescribila con tus palabras. -->
-      <p class="pitch">Diseño loops, encuentros y niveles. Me interesa el momento en que
-      alguien entiende una mecánica sin que nadie se la haya explicado.</p>
-
-      <div class="stats">
-        <div class="stat"><b>2</b><span>Títulos profesionales</span></div>
-        <div class="stat"><b>8</b><span>Proyectos Da Vinci</span></div>
-        <div class="stat"><b>Unity · Unreal</b><span>Motores</span></div>
-        <div class="stat"><b>C#</b><span>Scripting</span></div>
-        <div class="stat"><b>PC · Mobile</b><span>Plataformas</span></div>
-      </div>
-
-      <div class="cta-row">
-        <a href="#destacados" class="btn solid">Ver proyectos</a>
-        <a href="Agustin_Vila_Game_Designer_CV.pdf" class="btn ghost" download>Descargar CV</a>
-      </div>
-    </div>
-  </div>
-</header>
-
-<!-- ═══════════ DESTACADOS ═══════════ -->
-<section id="destacados">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">Trabajo profesional</div>
-      <h2 class="h2">Destacados</h2>
-      <p class="lede">Dos juegos, dos estudios, dos plataformas. Abajo está qué problema de
-      diseño había en cada uno y qué decidí al respecto.</p>
-    </div>
-
-    <!-- ── Sealcoating Simulator ── -->
-    <article class="proj rv">
-      <div class="proj-grid">
-        <div class="shot">
-          <span class="tag">En desarrollo · Steam</span>
-          <button class="yt" data-id="G1gEgFUrqv8" aria-label="Ver el trailer de Sealcoating Simulator">
-            <img src="https://ace87studio.github.io/assets/keyart.jpg" alt="Key art de Sealcoating Simulator">
-            <span class="play"><i></i></span>
-          </button>
-          <div class="strip">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Chorro.png" alt="Vertiendo sellador con la manguera" loading="lazy">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Barrido%201.png" alt="Barrido con el squeegee" loading="lazy">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Faltante.png" alt="Zonas sin cubrir resaltadas" loading="lazy">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Recargar.png" alt="Estación de recarga del tanque" loading="lazy">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%2099_.png" alt="Cobertura al 99 por ciento" loading="lazy">
-            <img src="https://ace87studio.github.io/assets/screenshots/Sealcoating%20Lvl%20Completado.png" alt="Pantalla de nivel completado" loading="lazy">
-          </div>
-        </div>
-        <div class="proj-body">
-          <h3>Sealcoating Simulator</h3>
-          <dl class="meta">
-            <div><dt>Rol</dt><dd>Game &amp; Level Designer</dd></div>
-            <div><dt>Estudio</dt><dd>ACE 87 Studios</dd></div>
-            <div><dt>Motor</dt><dd>Unity · C#</dd></div>
-            <div><dt>Plataforma</dt><dd>PC (Steam) · Coop local y online, hasta 4</dd></div>
-          </dl>
-
-          <p>Simulador cozy en primera persona sobre sellar asfalto, en desarrollo en
-          <strong>ACE 87 Studios</strong> para PC. Cooperativo local y online para hasta cuatro
-          jugadores, por ahora.</p>
-
-          <p>Estoy a cargo del <strong>diseño del juego y de los niveles</strong>: el core loop,
-          las mecánicas, cada nivel jugable y la curva de ritmo que sostiene el interés desde el
-          primer chorro hasta el 100% de cobertura.</p>
-
-          <p>La dificultad no se regula con números. El sellador se comporta como un fluido: fluye,
-          se encharca y se asienta, así que ninguna superficie se resuelve dos veces igual. Lo que
-          gradúa la exigencia es la <strong>geometría del espacio, los obstáculos y la capacidad
-          del tanque</strong>.</p>
-
-          <!-- EDITAR: que cambio en los niveles al pasar a coop de 4? Ese es el mejor ejemplo
-               de criterio de level design que tenes para contar en este proyecto. -->
-          <p>En un cozy la fricción tiene que estar en la tarea, nunca en orientarse. Por eso las
-          zonas sin cubrir se resaltan y las estaciones de recarga se ven a través de las paredes:
-          <strong>nadie pierde tiempo preguntándose qué le falta ni adónde ir</strong>.</p>
-
-          <div class="proj-links">
-            <a href="https://store.steampowered.com/app/5027030/Sealcoating_Simulator/" target="_blank" rel="noopener">Steam ↗</a>
-          </div>
-        </div>
-      </div>
-    </article>
-
-    <!-- ── SolAR ── -->
-    <article class="proj rv">
-      <div class="proj-grid">
-        <div class="shot">
-          <span class="tag">Publicado · iOS y Android</span>
-          <!-- EDITAR: si tenes capturas propias de SolAR, reemplazan a estas (que salen de kykuyo.com) -->
-          <img src="https://www.kykuyo.com/media/web/gameplay-poster.jpg" alt="Gameplay de SolAR en las calles de Singapur">
-          <div class="strip">
-            <img src="https://www.kykuyo.com/media/web/enemies-poster.jpg" alt="Enemigos robot avanzando por una arena de neón" loading="lazy">
-            <img src="https://www.kykuyo.com/media/web/trailer-poster.jpg" alt="Fotograma del trailer de SolAR" loading="lazy">
-            <img src="https://www.kykuyo.com/media/brand/169%20Thumbnails.png" alt="El jugador cruzando un portal de piedra hacia un parque con Supertrees al fondo" loading="lazy">
-            <img src="https://www.kykuyo.com/media/brand/169%20Thumbnails%20copy.png" alt="Escena del mundo de SolAR" loading="lazy">
-            <img src="https://www.kykuyo.com/media/brand/169%20Thumbnails-2.png" alt="Escena del mundo de SolAR" loading="lazy">
-            <img src="https://www.kykuyo.com/media/brand/169%20Thumbnails%20copy%202.png" alt="Escena del mundo de SolAR" loading="lazy">
-          </div>
-        </div>
-        <div class="proj-body">
-          <h3>SolAR</h3>
-          <dl class="meta">
-            <div><dt>Rol</dt><dd>Game Designer · 3 años</dd></div>
-            <div><dt>Estudio</dt><dd>KYKUYO · Singapur</dd></div>
-            <div><dt>Motor</dt><dd>Unity</dd></div>
-            <div><dt>Plataforma</dt><dd>Mobile · Geolocalización y AR</dd></div>
-          </dl>
-
-          <!-- Escrito segun las pautas de KYKUYO: rol y responsabilidades si, sistemas y
-               numeros internos no. Los detalles van en entrevista, verbalmente.
-               El "7.800+" es dato publico: esta en el Instagram oficial del estudio
-               (instagram.com/kykuyogame), y la guia permite reusar lo ya publicado. -->
-          <p>Geo-RPG solarpunk con geolocalización y realidad aumentada, publicado en Singapur
-          para iOS y Android. Más de <strong>7.800 lugares reales</strong> funcionan como portales
-          jugables. Formo parte del equipo de KYKUYO desde hace <strong>tres años</strong>.</p>
-
-          <p>Estoy a cargo del <strong>diseño de enemigos</strong>: la mecánica de cada uno, su
-          comportamiento y el rol que cumple en combate. Cubro esa área de punta a punta, del
-          concepto a la documentación con la que después trabajan animación y programación.</p>
-
-          <p>También diseño <strong>habilidades de combate del jugador</strong> y construyo
-          prototipos para validar ideas antes de comprometer tiempo de producción. A eso se suman
-          documentación de diseño, investigación, testeo y diseño de niveles en zonas puntuales
-          del mapa.</p>
-
-          <!-- EDITAR: decime que hiciste puntualmente en SPCA y lo detallo. -->
-          <p>También participé en el desarrollo de <strong>SolAR × SPCA</strong>, un spin-off hecho
-          junto a la SPCA de Singapur: el jugador sigue rastros de huellas por la ciudad para
-          rescatar gatos que la organización tiene realmente a su cuidado. Salió en 2025 como app
-          propia en iOS y Android.</p>
-
-          <div class="proj-links">
-            <a href="https://apps.apple.com/sg/app/solar-solarpunk-geo-rpg/id6737652523" target="_blank" rel="noopener">App Store ↗</a>
-            <a href="https://play.google.com/store/apps/details?id=com.kykuyo.solar" target="_blank" rel="noopener">Google Play ↗</a>
-            <a href="https://apps.apple.com/sg/app/solar-x-spca/id6751254495" target="_blank" rel="noopener">SolAR × SPCA ↗</a>
-            <a href="https://www.kykuyo.com/solar" target="_blank" rel="noopener">Sobre el juego ↗</a>
-          </div>
-        </div>
-      </div>
-    </article>
-  </div>
-</section>
-
-<!-- ═══════════ DA VINCI ═══════════ -->
-<!-- Videos verificados uno por uno contra sites.google.com/view/agustin-vila-portfolio -->
-<section id="davinci">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">Escuela Da Vinci</div>
-      <h2 class="h2">Proyectos de carrera</h2>
-      <p class="lede">Ocho juegos terminados y jugables durante la carrera de Videojuegos.
-      Todos tienen video y descarga.</p>
-    </div>
-
-    <div class="grid rv">
-
-      <article class="mini">
-        <button class="yt" data-id="4lcbUXcykps" aria-label="Ver gameplay de Cold Blooded">
-          <img src="https://img.youtube.com/vi/4lcbUXcykps/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/4lcbUXcykps/hqdefault.jpg" alt="Gameplay de Cold Blooded" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Cold Blooded</h4>
-          <div class="line">PC · Unity 3D · FPS single player · Solo</div>
-          <p>Proyecto final de carrera, hecho enteramente por mí: diseño, niveles, programación y
-          guion. Es la prueba de que puedo llevar un juego de la idea al build sin nadie más.</p>
-          <div class="foot">
-            <span>Game &amp; Level Design · Programación · Guion</span>
-            <a href="https://drive.google.com/open?id=1xBf7i2JIhsNbTl9bxaHIxE__QqPO_fQR&usp=drive_fs" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-      <article class="mini">
-        <button class="yt" data-id="MwDtFKsLwvs" aria-label="Ver gameplay de Zack 2">
-          <img src="https://img.youtube.com/vi/MwDtFKsLwvs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/MwDtFKsLwvs/hqdefault.jpg" alt="Gameplay de Zack 2" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Zack 2</h4>
-          <div class="line">Mobile · Unity 3D · Shooter survival · Equipo de 3</div>
-          <!-- EDITAR: contá qué cambiaste en la última actualización. Es tu proyecto más vivo. -->
-          <p>Shooter de supervivencia para mobile, con actualizaciones que le siguo haciendo hoy.
-          Cubrí diseño, niveles, programación y guion.</p>
-          <div class="foot">
-            <span>Actualizado recientemente</span>
-            <a href="https://drive.google.com/file/d/1wGHjWC-hT7eG88OY1FST6lJG-An_nNfE/view" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-      <article class="mini">
-        <button class="yt" data-id="TfBjDYBX2PI" aria-label="Ver gameplay de Grab it, It's Hot!">
-          <img src="https://img.youtube.com/vi/TfBjDYBX2PI/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/TfBjDYBX2PI/hqdefault.jpg" alt="Gameplay de Grab it, It's Hot!" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Grab it, It's Hot!</h4>
-          <div class="line">PC · Unity 3D · Multiplayer de 2 a 4 con Photon · Equipo de 2 · Materia: Desarrollo de Redes</div>
-          <!-- EDITAR: ¿qué rol tuviste acá y qué te obligó a cambiar el multiplayer? -->
-          <p>Multiplayer de 2 a 4 jugadores con Photon, hecho para la materia Desarrollo de Redes.</p>
-          <div class="foot">
-            <a href="https://drive.google.com/open?id=1xErI63W65QAe1Zq-qM7va3-dPqqNPn2Q&amp;usp=drive_fs" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-      <article class="mini">
-        <button class="yt" data-id="S9SGYD3hVBs" aria-label="Ver gameplay de Bit Con">
-          <img src="https://img.youtube.com/vi/S9SGYD3hVBs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/S9SGYD3hVBs/hqdefault.jpg" alt="Gameplay de Bit Con" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Bit Con</h4>
-          <div class="line">PC · Unity 3D · Plataformero · Solo · Materia: Diseño de Niveles</div>
-          <p>Plataformero construido específicamente como ejercicio de diseño de niveles, sobre la
-          consigna obligatoria "la avaricia corrompe". Mecánicas, niveles e historia empujan la
-          misma idea: el nivel castiga al que quiere de más.</p>
-          <div class="foot">
-            <span>Game &amp; Level Design</span>
-            <a href="https://drive.google.com/file/d/1vTNqeawi_gHIq55o95ece2zziRdQ1f81/view" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-      <article class="mini">
-        <button class="yt" data-id="kFyClFSWqzs" aria-label="Ver gameplay de OrbBuster">
-          <img src="https://img.youtube.com/vi/kFyClFSWqzs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/kFyClFSWqzs/hqdefault.jpg" alt="Gameplay de OrbBuster" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>OrbBuster</h4>
-          <div class="line">PC · Unreal Engine 4 · RPG single player · Equipo de 3</div>
-          <p>Único proyecto en Unreal. Me concentré en el diseño e implementación de mecánicas y
-          en la construcción de los niveles.</p>
-          <div class="foot">
-            <span>Game &amp; Level Design</span>
-            <a href="https://drive.google.com/file/d/1E-hNoGor7rCVNsnJDJmmFoBBtuJWSDxg/view?usp=drive_link" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-      <article class="mini">
-        <button class="yt" data-id="PfuSDMfh4vQ" aria-label="Ver gameplay de Proyecto Caos">
-          <img src="https://img.youtube.com/vi/PfuSDMfh4vQ/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/PfuSDMfh4vQ/hqdefault.jpg" alt="Gameplay de Proyecto Caos" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Proyecto Caos</h4>
-          <div class="line">PC · Unity 2D · Plataformero · Equipo de 4 · Materia: Diseño y Producción de Juegos</div>
-          <!-- EDITAR: ¿qué rol tuviste acá? Es el equipo más grande en el que trabajaste. -->
-          <p>Plataformero 2D hecho en equipo de cuatro para Diseño y Producción de Juegos.</p>
-          <div class="foot">
-            <a href="https://drive.google.com/file/d/1NYe7GxX6MJrHdbW2NOB7UnjQNTSNwy4I/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-      <article class="mini">
-        <button class="yt" data-id="TTQJIlwGJXM" aria-label="Ver gameplay de Asteroids">
-          <img src="https://img.youtube.com/vi/TTQJIlwGJXM/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/TTQJIlwGJXM/hqdefault.jpg" alt="Gameplay de Asteroids" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Asteroids</h4>
-          <div class="line">PC · Unity 2D · Equipo de 2 · Materia: Modelos y Algoritmos 1</div>
-          <!-- EDITAR: ¿qué rol tuviste acá? -->
-          <p>Reinterpretación del clásico, hecha para Modelos y Algoritmos 1.</p>
-          <div class="foot">
-            <a href="https://drive.google.com/file/d/1r74E0lzcg4vZ-iKusEGUyCoGO44rkLw5/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-      <article class="mini">
-        <button class="yt" data-id="kGAdaWTG4cg" aria-label="Ver gameplay de Cold World">
-          <img src="https://img.youtube.com/vi/kGAdaWTG4cg/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/kGAdaWTG4cg/hqdefault.jpg" alt="Gameplay de Cold World" loading="lazy">
-          <span class="play"><i></i></span>
-        </button>
-        <div class="mini-body">
-          <h4>Cold World</h4>
-          <div class="line">PC · Unity 2D · Plataformero shooter · Solo · Materia: Lógica de Programación</div>
-          <!-- EDITAR: es tu primer juego. ¿Qué harías distinto hoy? Esa respuesta vale más que la descripción. -->
-          <p>Mi primer juego. Plataformero shooter 2D hecho solo, para Lógica de Programación.</p>
-          <div class="foot">
-            <span>Game &amp; Level Design · Programación</span>
-            <a href="https://drive.google.com/file/d/1wCVIjtfbjw6e97jDAwVeZwWj6NXRA7Pv/view" target="_blank" rel="noopener">Descargar ↗</a>
-          </div>
-        </div>
-      </article>
-
+<div class="chrome" id="barra-sup">
+  <a href="#" class="mark" id="ir-perfil">Agustín <span>Vila</span></a>
+  <a class="nl" href="Agustin_Vila_Game_Designer_CV.pdf" download>CV ↓</a>
+  <a class="nl" href="https://www.linkedin.com/in/agustinvila87/" target="_blank" rel="noopener">LinkedIn ↗</a>
+  <a class="nl" href="clasico.html">Versión clásica ↗</a>
 </div>
+
+<div class="chrome" id="barra-inf">
+  <div id="pistas">Arrastrá para girar · Rueda o pinza para acercar · Tocá un edificio</div>
+  <div id="atajos"></div>
+</div>
+
+<aside id="panel" aria-live="polite">
+  <button id="panel-cerrar" type="button" aria-label="Cerrar panel">✕</button>
+  <div id="panel-cuerpo"></div>
+</aside>
+<button id="abrir-panel" type="button">Ver ficha</button>
+
+<div id="lupa" role="dialog" aria-label="Imagen ampliada"><img alt=""></div>
+
+<!-- Contenido real: lo lee un lector de pantalla, un buscador, y cualquiera
+     que entre sin WebGL. Cuando la aldea arranca queda oculto visualmente. -->
+<div id="respaldo">
+  <h1>Agustín<br>Vila</h1>
+  <p><strong>Game Designer · Level Designer</strong> — Buenos Aires, AR.</p>
+  <p>Diseño loops, encuentros y niveles. Me interesa el momento en que alguien entiende
+  una mecánica sin que nadie se la haya explicado.</p>
+  <p>
+    <a href="Agustin_Vila_Game_Designer_CV.pdf">Descargar CV</a> ·
+    <a href="https://www.linkedin.com/in/agustinvila87/">LinkedIn</a> ·
+    <a href="mailto:agusvila0087@gmail.com">agusvila0087@gmail.com</a> ·
+    <a href="https://wa.me/5491141401115">WhatsApp</a>
+  </p>
+
+  <div class="aviso">
+    Esta página es una aldea 3D y tu navegador no pudo iniciarla.
+    <a href="clasico.html">Entrá a la versión clásica del portfolio →</a>
   </div>
-</section>
 
-<!-- ═══════════ QUÉ HAGO ═══════════ -->
-<section id="quehago">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="eyebrow">Competencias</div>
-      <h2 class="h2">Qué hago</h2>
-    </div>
+  <h2>Trabajo profesional</h2>
+  <h3>Sealcoating Simulator — ACE 87 Studios</h3>
+  <p>PC (Steam) · Unity · C# · Cooperativo hasta 4. Game &amp; Level Designer.
+  <a href="https://store.steampowered.com/app/5027030/Sealcoating_Simulator/">Steam</a></p>
+  <h3>SolAR — KYKUYO, Singapur</h3>
+  <p>Mobile · Geolocalización y AR · Unity. Game Designer, tres años, a cargo del diseño de enemigos.
+  <a href="https://apps.apple.com/sg/app/solar-solarpunk-geo-rpg/id6737652523">App Store</a> ·
+  <a href="https://play.google.com/store/apps/details?id=com.kykuyo.solar">Google Play</a> ·
+  <a href="https://apps.apple.com/sg/app/solar-x-spca/id6751254495">SolAR × SPCA</a></p>
 
-    <div class="skills rv">
-      <div class="skill"><span class="num">01</span><h4>Diseño de niveles</h4>
-        <p>Layout, ritmo y curva de dificultad. Niveles que enseñan una idea y después la ponen a prueba.</p></div>
-      <div class="skill"><span class="num">02</span><h4>Core loop y mecánicas</h4>
-        <p>Definir qué hace el jugador cada treinta segundos y por qué querría hacerlo de nuevo.</p></div>
-      <div class="skill"><span class="num">03</span><h4>Enemigos y comportamientos</h4>
-        <p>Qué enemigos existen, qué mecánica tiene cada uno y cómo se comporta. Bestiarios completos, no criaturas sueltas.</p></div>
-      <div class="skill"><span class="num">04</span><h4>Habilidades y combate</h4>
-        <p>Ataques especiales y ultimates: qué hacen, cómo se ejecutan y en qué se diferencian entre sí.</p></div>
-      <div class="skill"><span class="num">05</span><h4>FTUE y onboarding</h4>
-        <p>Las primeras sesiones de un juego complejo, sin muros de texto. Enseñar jugando.</p></div>
-      <div class="skill"><span class="num">06</span><h4>Feedback y legibilidad</h4>
-        <p>Que el jugador siempre sepa qué le falta y dónde está. Highlights, pulsos, estados claros.</p></div>
-      <div class="skill"><span class="num">07</span><h4>Prototipado en Unity</h4>
-        <p>Scripting en C# para probar una mecánica yo mismo antes de pedirle tiempo a nadie.</p></div>
-      <div class="skill"><span class="num">08</span><h4>Documentación y GDD</h4>
-        <p>Research, specs y documentos que otro pueda implementar sin tener que venir a preguntarme.</p></div>
-    </div>
+  <h2>Proyectos de carrera · Escuela Da Vinci</h2>
+  <p>Cold Blooded, Zack 2, Grab it It's Hot!, Bit Con, OrbBuster, Proyecto Caos, Asteroids
+  y Cold World. Todos con video y descarga en la
+  <a href="clasico.html#davinci">versión clásica del portfolio</a>.</p>
+</div>
 
-    <div class="tools rv">
-      <span class="tool">Unity</span><span class="tool">Unreal Engine</span><span class="tool">C#</span>
-      <span class="tool">Photon</span><span class="tool">Git</span><span class="tool">Figma</span>
-      <span class="tool">Miro</span><span class="tool">Notion</span><span class="tool">Google Sheets</span>
-    </div>
-  </div>
-</section>
+<script type="module">
+import { NODOS, PERFIL } from './assets/village/data.js';
 
-<!-- ═══════════ CONTACTO ═══════════ -->
-<section id="contacto">
-  <div class="wrap">
-    <div class="card rv">
-      <div class="eyebrow">Contacto</div>
-      <p class="contact-h">Hablemos<br>de tu juego</p>
-      <p class="lede">Puedo mostrar documentación de diseño, layouts anotados y planillas de
-      balanceo de mis proyectos propios y de los académicos. Del trabajo de estudio hablo en
-      entrevista, con el detalle que haga falta.</p>
-      <div class="links">
-        <a class="btn solid" href="mailto:agusvila0087@gmail.com">agusvila0087@gmail.com</a>
-        <a class="btn ghost" href="https://www.linkedin.com/in/agustinvila87/" target="_blank" rel="noopener">LinkedIn</a>
-        <!-- EDITAR: verificá este número, en tu Google Sites el texto y el link no coinciden -->
-        <a class="btn ghost" href="https://wa.me/5491141401115" target="_blank" rel="noopener">WhatsApp</a>
-      </div>
-    </div>
-  </div>
-</section>
+const canvas = document.getElementById('aldea');
+const respaldo = document.getElementById('respaldo');
+const cargando = document.getElementById('cargando');
 
-<footer>
-  <div class="foot-in">
-    <span>Agustín Vila · Buenos Aires, AR</span>
-    <span>© 2026</span>
-  </div>
-</footer>
+function hayWebGL() {
+  try {
+    const c = document.createElement('canvas');
+    return !!(window.WebGLRenderingContext && (c.getContext('webgl2') || c.getContext('webgl')));
+  } catch (e) { return false; }
+}
 
-<script>
-// thumbnails: si no hay maxresdefault, YouTube devuelve un gris de 120x90 con
-// status 200, asi que el evento 'error' nunca dispara. Hay que medir la imagen.
-document.querySelectorAll('.yt img[data-fb]').forEach(img => {
-  const usarFallback = () => {
-    if (img.src !== img.dataset.fb) img.src = img.dataset.fb;
-  };
-  const revisar = () => { if (img.naturalWidth <= 120) usarFallback(); };
-  img.addEventListener('error', usarFallback, { once: true });
-  if (img.complete) revisar(); else img.addEventListener('load', revisar, { once: true });
-});
+/* ── panel de detalle ── */
+const panel = document.getElementById('panel');
+const cuerpo = document.getElementById('panel-cuerpo');
+const lupa = document.getElementById('lupa');
 
-// click → carga el iframe de YouTube (la página arranca liviana)
-document.querySelectorAll('.yt').forEach(box => {
-  box.addEventListener('click', () => {
-    const id = box.dataset.id;
-    if (!id) return;
+const esc = s => String(s).replace(/&(?![a-z]+;|#)/g, '&amp;');
+
+function linksHTML(links) {
+  return (links || []).map(l => {
+    const externo = /^https?:/.test(l.url) ? ' target="_blank" rel="noopener"' : '';
+    const bajar = /\.pdf$/.test(l.url) ? ' download' : '';
+    return `<a href="${esc(l.url)}"${externo}${bajar} class="${l.destacado ? 'destacado' : ''}">${l.label} ↗</a>`;
+  }).join('');
+}
+
+function videoHTML(id) {
+  if (!id) return '';
+  return `<button class="yt" data-id="${id}" aria-label="Ver video">
+    <img src="https://img.youtube.com/vi/${id}/maxresdefault.jpg"
+         data-fb="https://img.youtube.com/vi/${id}/hqdefault.jpg" alt="" loading="lazy">
+    <span class="play"><i></i></span></button>`;
+}
+
+function fichaProyecto(n) {
+  const media = n.video ? videoHTML(n.video)
+              : n.portada ? `<img src="${n.portada}" alt="" loading="lazy">` : '';
+  const tiras = (n.imagenes || []).length
+    ? `<div class="p-tiras">${n.imagenes.map(u => `<img src="${u}" alt="" loading="lazy">`).join('')}</div>` : '';
+  const meta = (n.meta || []).length
+    ? `<dl class="p-meta">${n.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>` : '';
+  return `<div class="p-kicker">${n.rol || 'Proyecto'}</div>
+    <h2 class="p-titulo">${n.nombre}</h2>
+    <div class="p-linea">${n.linea || ''}</div>
+    ${meta}
+    ${media ? `<div class="p-media">${media}</div>` : ''}
+    ${tiras}
+    <div class="p-texto">${(n.parrafos || []).map(p => `<p>${p}</p>`).join('')}</div>
+    <div class="p-links">${linksHTML(n.links)}</div>`;
+}
+
+function fichaPerfil(n) {
+  const foto = n.foto
+    ? `<img class="p-foto" src="${n.foto}" alt="Foto de ${n.nombre}">`
+    : `<span class="p-ini">AV</span>`;
+  return `<div class="p-perfil-top">${foto}
+      <div><div class="p-kicker">${n.lugar}</div>
+      <h2 class="p-titulo">${n.nombre}</h2>
+      <div class="p-linea">${n.rol}</div></div></div>
+    <div class="p-disponible"><i></i>${n.disponible}</div>
+    <p class="p-pitch">${n.pitch}</p>
+    <div class="p-stats">${n.stats.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('')}</div>
+    <div class="p-texto">${n.parrafos.map(p => `<p>${p}</p>`).join('')}</div>
+    <div class="p-links">${linksHTML(n.links)}</div>`;
+}
+
+function mostrarFicha(id, abrir = true) {
+  const n = NODOS.find(x => x.id === id);
+  if (!n) return;
+  cuerpo.innerHTML = n.kind === 'keep' ? fichaPerfil(n) : fichaProyecto(n);
+  cuerpo.scrollTop = 0;
+  if (abrir) document.body.classList.remove('panel-cerrado');
+
+  /* thumbnails de YouTube: cuando no hay maxresdefault, YouTube devuelve
+     un gris de 120x90 con status 200, asi que hay que medir la imagen. */
+  cuerpo.querySelectorAll('.yt img[data-fb]').forEach(img => {
+    const revisar = () => { if (img.naturalWidth <= 120 && img.src !== img.dataset.fb) img.src = img.dataset.fb; };
+    img.complete ? revisar() : img.addEventListener('load', revisar);
+  });
+  cuerpo.querySelectorAll('.yt').forEach(b => b.addEventListener('click', () => {
     const f = document.createElement('iframe');
-    f.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+    f.src = `https://www.youtube-nocookie.com/embed/${b.dataset.id}?autoplay=1&rel=0`;
     f.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
     f.allowFullscreen = true;
-    f.title = box.getAttribute('aria-label') || 'Video';
-    box.replaceChildren(f);
-  }, { once: true });
-});
+    f.title = 'Video de ' + n.nombre;
+    b.replaceWith(f);
+  }));
+  cuerpo.querySelectorAll('.p-tiras img').forEach(img => img.addEventListener('click', () => {
+    lupa.querySelector('img').src = img.src;
+    lupa.classList.add('abierta');
+  }));
+}
 
-const io = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+lupa.addEventListener('click', () => lupa.classList.remove('abierta'));
+addEventListener('keydown', e => { if (e.key === 'Escape') lupa.classList.remove('abierta'); });
+
+/* Sacar la pantalla de carga NO puede depender de requestAnimationFrame: el
+   navegador no lo dispara si la pestaña no está componiendo (pestaña en
+   segundo plano, ventana minimizada, mobile ahorrando batería) y la página
+   queda colgada en "Levantando la aldea…" con todo cargado por detrás. */
+function ocultarCargando() {
+  if (!cargando.isConnected) return;
+  cargando.classList.add('listo');
+  setTimeout(() => cargando.remove(), 600);
+}
+setTimeout(ocultarCargando, 5000);          // red de seguridad, pase lo que pase
+
+function mostrarRespaldo() {
+  respaldo.classList.remove('oculto');
+  document.querySelectorAll('.chrome').forEach(n => n.remove());
+  panel.remove();
+  const abrir = document.getElementById('abrir-panel');
+  if (abrir) abrir.remove();
+  canvas.remove();
+  ocultarCargando();
+}
+
+if (!hayWebGL()) {
+  mostrarRespaldo();
+} else try {
+  respaldo.classList.add('oculto');
+  const { iniciarAldea } = await import('./assets/village/village.js');
+
+  let primeraFicha = true;
+  if (innerWidth < 900) document.body.classList.add('panel-cerrado');
+
+  const atajos = document.getElementById('atajos');
+  const botones = new Map();
+  for (const n of NODOS) {
+    const b = document.createElement('button');
+    b.textContent = n.kind === 'keep' ? 'Perfil' : n.nombre;
+    b.addEventListener('click', () => aldea.seleccionar(n.id));
+    atajos.appendChild(b);
+    botones.set(n.id, b);
+  }
+
+  const aldea = iniciarAldea({
+    canvas,
+    capaCarteles: document.getElementById('carteles'),
+    huecoPanel: () => {
+      if (document.body.classList.contains('panel-cerrado')) return null;
+      const r = panel.getBoundingClientRect();
+      return innerWidth < 900 ? { ancho: 0, alto: r.height } : { ancho: r.width, alto: 0 };
+    },
+    onSeleccion: id => {
+      botones.forEach((b, k) => b.classList.toggle('on', k === id));
+      /* En mobile la hoja tapa media pantalla: al entrar conviene ver la
+         aldea entera, y que la ficha aparezca recién al tocar un edificio. */
+      mostrarFicha(id, !(primeraFicha && innerWidth < 900));
+      primeraFicha = false;
+    }
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  document.getElementById('panel-cerrar').addEventListener('click', () => {
+    document.body.classList.add('panel-cerrado');
+    setTimeout(aldea.recalcularEncuadre, 40);
+  });
+  document.getElementById('abrir-panel').addEventListener('click', () => {
+    document.body.classList.remove('panel-cerrado');
+    setTimeout(aldea.recalcularEncuadre, 40);
+  });
+  document.getElementById('ir-perfil').addEventListener('click', e => {
+    e.preventDefault();
+    aldea.vistaGeneral();
+  });
+
+  ocultarCargando();
+
+} catch (e) {
+  /* WebGL puede existir y aun asi fallar al crear el contexto. Antes eso
+     dejaba la pantalla de carga puesta y nada mas. */
+  console.error('No se pudo iniciar la aldea:', e);
+  mostrarRespaldo();
+}
 </script>
 </body>
 </html>
