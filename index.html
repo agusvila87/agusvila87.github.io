@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Agustín Vila · Game &amp; Level Designer</title>
-<meta name="description" content="Game y Level Designer en Buenos Aires. Sealcoating Simulator (ACE 87 Studios) y SolAR (KYKUYO). Unity, Unreal y C#.">
+<title>Agustín Vila · Game Designer · Combat &amp; Systems Design</title>
+<meta name="description" content="Game Designer especializado en combate: enemigos, bosses y las habilidades del jugador. SolAR (KYKUYO, Lightship Grand Prize) y Sealcoating Simulator. Buenos Aires.">
 <meta name="theme-color" content="#0A0710">
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="Agustín Vila · Game &amp; Level Designer">
-<meta property="og:description" content="Sistemas, encuentros y niveles. Sealcoating Simulator y SolAR. Buenos Aires.">
+<meta property="og:title" content="Agustín Vila · Game Designer · Combat &amp; Systems Design">
+<meta property="og:description" content="Enemigos, bosses y las habilidades con las que el jugador los enfrenta. SolAR y Sealcoating Simulator. Buenos Aires.">
 <!-- EDITAR: falta subir la imagen 1200x630 al repo como og.png -->
 <meta property="og:image" content="https://agusvila87.github.io/og.png">
 <meta property="og:url" content="https://agusvila87.github.io/">
@@ -96,12 +96,19 @@ section{padding:clamp(56px,8vw,110px) 0}
 .yt iframe{width:100%;height:100%;border:0;display:block}
 
 /* ── proyectos destacados ── */
-.proj{border:1px solid var(--line);background:var(--panel);margin-bottom:26px;overflow:hidden;transition:border-color .25s}
+.proj{border:1px solid var(--line);background:var(--panel);margin-bottom:26px;overflow:clip;transition:border-color .25s}
 .proj:hover{border-color:rgba(169,107,255,.45)}
 .proj-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr)}
 @media(max-width:900px){.proj-grid{grid-template-columns:1fr}}
 .shot{position:relative;border-right:1px solid var(--line);background:#0E0A18;display:flex;flex-direction:column}
 @media(max-width:900px){.shot{border-right:0;border-bottom:1px solid var(--line)}}
+/* La columna de texto es mas alta que la de imagenes. En vez de estirar las
+   imagenes para rellenar, la columna se queda fija y conserva el 16:9 exacto. */
+@media(min-width:901px){
+  .proj-grid{align-items:start}
+  .shot{position:sticky;top:60px;border-right:0}
+  .proj-body{border-left:1px solid var(--line)}
+}
 .shot>.yt{flex:1 1 auto}
 /* height:auto es obligatorio: el atributo height="720" del <img> se aplica como
    estilo de presentacion y, si queda, pisa el aspect-ratio y estira la imagen */
@@ -116,6 +123,7 @@ section{padding:clamp(56px,8vw,110px) 0}
 .proj h3{font-family:var(--display);font-variation-settings:"wdth" 76,"wght" 800;font-size:clamp(24px,3.4vw,36px);line-height:1;text-transform:uppercase;margin-bottom:16px}
 .meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:20px}
 .meta div{background:var(--panel);padding:10px 12px}
+.meta div:last-child:nth-child(odd){grid-column:1/-1}
 .meta dt{font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
 .meta dd{font-size:13.5px;font-weight:500}
 .proj p{color:var(--muted);font-size:15px;margin-bottom:14px}
@@ -201,7 +209,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
       </div>
 
       <h1>Agustín<em>Vila</em></h1>
-      <div class="role">Game Designer &nbsp;·&nbsp; Level Designer</div>
+      <div class="role">Game Designer &nbsp;·&nbsp; Combat &amp; Systems Design</div>
 
       <p class="pitch">Diseño enemigos, bosses y las habilidades con las que el jugador los
       enfrenta. Me interesa el momento en que alguien entiende una mecánica sin que nadie
@@ -309,6 +317,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
             <div><dt>Estudio</dt><dd>KYKUYO · Singapur</dd></div>
             <div><dt>Motor</dt><dd>Unity</dd></div>
             <div><dt>Plataforma</dt><dd>Mobile · Geolocalización y AR</dd></div>
+            <div><dt>Premio</dt><dd>Lightship Grand Prize Winner</dd></div>
           </dl>
 
           <!-- Escrito segun las pautas de KYKUYO: rol y responsabilidades si, sistemas y
@@ -321,15 +330,19 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
           juego no se dibuja, lo da la ciudad, y el trabajo es diseñar encuentros que funcionen
           en cualquier esquina. Trabajé <strong>tres años</strong> en el equipo de KYKUYO.</p>
 
-          <p>Estuve a cargo de las dos mitades del combate: el <strong>diseño de enemigos</strong>,
-          con la mecánica de cada uno, su comportamiento y el rol que cumple en pelea, y las
-          <strong>habilidades del jugador</strong>, ataques especiales y ultimates, que son las
-          herramientas con las que ese bestiario se enfrenta. Cubrí esa área de punta a punta, del
-          concepto a la documentación con la que después trabajan animación y programación.</p>
+          <p>Estuve a cargo de las dos mitades del combate. Del lado de los enemigos, el
+          <strong>bestiario completo y los bosses</strong>: la mecánica de cada uno, su
+          comportamiento, las telegrafías con las que se lee un ataque y el rol que cumple en
+          pelea. Del lado del jugador, las <strong>habilidades, ataques especiales y
+          ultimates</strong> con las que ese bestiario se enfrenta.</p>
 
-          <p>También construí prototipos para validar ideas antes de comprometer tiempo de
-          producción, y me ocupé de documentación de diseño, investigación, testeo y diseño de
-          niveles en zonas puntuales del mapa.</p>
+          <p>También diseñé las <strong>arenas y los espacios de combate</strong>, con su layout,
+          su ritmo de encuentros y sus curvas de dificultad, y fui responsable de la
+          <strong>FTUE completa</strong>: en qué orden el jugador conoce combate, geolocalización
+          y progresión sin que la primera sesión lo abrume.</p>
+
+          <p>A eso se suman prototipos para validar ideas antes de comprometer tiempo de
+          producción, documentación de diseño en GDD vivos, investigación y testeo.</p>
 
           <p>También trabajé en <strong>SolAR × SPCA</strong>, un spin-off de tiempo limitado
           hecho junto a la SPCA de Singapur: gatos virtuales modelados sobre los gatos reales que
@@ -543,8 +556,8 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
     </div>
 
     <div class="skills rv">
-      <div class="skill"><span class="num">01</span><h4>Enemigos y comportamientos</h4>
-        <p>Qué enemigos existen, qué mecánica tiene cada uno y cómo se comporta. Bestiarios completos, no criaturas sueltas.</p></div>
+      <div class="skill"><span class="num">01</span><h4>Enemigos y bosses</h4>
+        <p>Qué enemigos existen, qué mecánica tiene cada uno, cómo se comporta y con qué telegrafía se lee su ataque. Bestiarios completos, no criaturas sueltas.</p></div>
       <div class="skill"><span class="num">02</span><h4>Habilidades y combate</h4>
         <p>Ultimates y ataques especiales: qué hace cada uno, cómo se ejecuta, en qué se diferencia del resto y cómo se cruza con el bestiario que tiene enfrente.</p></div>
       <div class="skill"><span class="num">03</span><h4>Diseño de niveles</h4>
