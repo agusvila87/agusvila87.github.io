@@ -15,10 +15,12 @@ const DIA = {
   hemi:     { cielo: 0xA9CFEC, suelo: 0x7E9A4E, intensidad: 1.25 },
   ambiente: { color: 0xFFF4E6, intensidad: 0.22 }
 };
+/* Un poco mas de luna de lo que pide el realismo: de noche igual hay que
+   poder leer las fachadas y ver a los aldeanos, no solo las ventanas. */
 const NOCHE = {
-  sol:      { color: 0x8FA7D6, intensidad: 0.55, pos: new THREE.Vector3(70, 80, -40) },
-  hemi:     { cielo: 0x27324F, suelo: 0x141A24, intensidad: 0.55 },
-  ambiente: { color: 0x2C3552, intensidad: 0.28 }
+  sol:      { color: 0x9DB4E0, intensidad: 0.85, pos: new THREE.Vector3(70, 80, -40) },
+  hemi:     { cielo: 0x2E3B5C, suelo: 0x18202C, intensidad: 0.78 },
+  ambiente: { color: 0x2F3A5A, intensidad: 0.34 }
 };
 
 export function crearLuces(escena) {

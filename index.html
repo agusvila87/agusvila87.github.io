@@ -11,8 +11,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Agustín Vila · Game &amp; Level Designer">
 <meta property="og:description" content="Una aldea medieval donde cada casa es un proyecto. Sealcoating Simulator y SolAR.">
-<!-- EDITAR: falta subir la imagen 1200x630 al repo como og.png -->
-<meta property="og:image" content="https://agusvila87.github.io/og.png">
+<meta property="og:image" content="https://agusvila87.github.io/og.jpg">
 <meta property="og:url" content="https://agusvila87.github.io/">
 <meta name="twitter:card" content="summary_large_image">
 
@@ -194,10 +193,16 @@ body.panel-cerrado #abrir-panel{display:block}
 #lupa.abierta{display:grid}
 #lupa img{max-width:100%;max-height:92vh;object-fit:contain;border:1px solid var(--linea)}
 
-#cargando{position:fixed;inset:0;z-index:95;display:grid;place-items:center;background:#2A1E15;
+#cargando{position:fixed;inset:0;z-index:95;display:grid;place-items:center;align-content:center;
+  gap:18px;background:radial-gradient(ellipse at 50% 40%,#3A2A1E,#1C140F 70%);
   font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;
-  color:var(--tenue);transition:opacity .5s}
+  color:var(--tenue);transition:opacity .6s}
 #cargando.listo{opacity:0;pointer-events:none}
+#cargando svg{width:64px;height:64px;color:var(--ambar);filter:drop-shadow(0 6px 18px rgba(232,184,75,.35))}
+#cargando i{display:block;width:150px;height:2px;background:var(--linea);position:relative;overflow:hidden;border-radius:2px}
+#cargando i::after{content:"";position:absolute;left:-40%;top:0;width:40%;height:100%;background:var(--ambar);
+  animation:barra 1.3s ease-in-out infinite}
+@keyframes barra{to{left:100%}}
 
 /* ── respaldo: sin WebGL, sin JS, o para lectores de pantalla ── */
 #respaldo.oculto{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);
@@ -238,7 +243,11 @@ body.panel-cerrado #abrir-panel{display:block}
 <canvas id="aldea"></canvas>
 <div id="etiqueta" aria-hidden="true"><b></b><em></em></div>
 
-<div id="cargando">Levantando la aldea…</div>
+<div id="cargando" aria-busy="true">
+  <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3l5.5 6.5h-1.6V27h-7.8V9.5H10.5z" fill="currentColor"/><rect x="14.2" y="18" width="3.6" height="9" fill="#1C140F"/><rect x="11" y="12.5" width="10" height="1.6" fill="#BC8A28"/></svg>
+  <span>Levantando la aldea…</span>
+  <i></i>
+</div>
 
 <div class="chrome" id="barra-sup">
   <a href="#" class="mark" id="ir-perfil">Agustín <span>Vila</span></a>
@@ -463,12 +472,14 @@ if (!hayWebGL()) {
   /* Calidad: el post-proceso completo (oclusion ambiental + bloom) va en
      desktop; en pantallas chicas o punteros gruesos se baja a 'media'.
      ?calidad=alta|media|baja fuerza una para probar. */
-  const forzada = new URLSearchParams(location.search).get('calidad');
+  const params = new URLSearchParams(location.search);
+  const forzada = params.get('calidad');
   const calidad = forzada || ((innerWidth < 900 || matchMedia('(pointer: coarse)').matches) ? 'media' : 'alta');
 
   const aldea = iniciarAldea({
     canvas,
     calidad,
+    intro: !params.has('sin-intro'),        // ?sin-intro salta la cinematica, para depurar
     etiqueta: document.getElementById('etiqueta'),
     /* id null = vista general, sin nada elegido. Se carga el perfil en la
        ficha pero sin abrirla: el modal solo se abre cuando elegiste algo. */

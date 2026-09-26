@@ -14,7 +14,8 @@ import { C, azar } from './paleta.js';
 import { construirEdificio } from './edificios.js';
 import { construirCielo, construirTerreno, construirTerrazas, construirPasto,
          construirMuralla, decorarAldea, alturaTerreno,
-         H_ALTA, H_MEDIA, H_BAJA, R_ALTA, R_MEDIA, R_BAJA, RADIO_MURALLA } from './escenario.js';
+         H_ALTA, H_MEDIA, H_BAJA, R_ALTA, R_MEDIA, R_BAJA, RADIO_MURALLA,
+         R_FOSO_INTERNO, R_FOSO_EXTERNO } from './escenario.js';
 import { crearLuces } from './luces.js';
 import { crearPost } from './post.js';
 import { crearFoso, crearPuente } from './agua.js';
@@ -52,9 +53,10 @@ class CamaraOrbital {
     this.cam = camara;
     this.foco = new THREE.Vector3(0, 14, 0);
     this.focoMeta = this.foco.clone();
-    this.azim = 0;           this.azimMeta = 0;
-    this.polar = 57 * GRADO; this.polarMeta = this.polar;
-    this.dist = 205;         this.distMeta = 142;
+    this.azim = 0.55;        this.azimMeta = 0;             // y girando un poco
+    this.polar = 78 * GRADO; this.polarMeta = 57 * GRADO;   // entra casi a ras y se eleva
+    this.dist = 300;         this.distMeta = 142;
+    this.suavidad = 0.075;   // k del lerp; la entrada lo baja y lo va soltando
     this.punteros = new Map();
     this.pinch = 0;
     this.arrastro = 0;
@@ -102,7 +104,7 @@ class CamaraOrbital {
     }
   }
   actualizar() {
-    const k = 0.075;
+    const k = this.suavidad;
     this.foco.lerp(this.focoMeta, k);
     this.azim  += (this.azimMeta  - this.azim)  * k;
     this.polar += (this.polarMeta - this.polar) * k;
@@ -119,9 +121,9 @@ class CamaraOrbital {
 }
 
 /* ── Arranque ──────────────────────────────────────────────────────── */
-export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta' }) {
+export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta', intro = true }) {
   const escena = new THREE.Scene();
-  escena.fog = new THREE.Fog(C.cieloBajo, 230, 470);
+  escena.fog = new THREE.Fog(C.cieloBajo, 175, 430);   // arranca antes de la cordillera: la separa en capas
 
   const camara = new THREE.PerspectiveCamera(50, 1, 0.5, 1400);
   const render = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -138,15 +140,15 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta' }
   construirMuralla(escena);
 
   /* foso alrededor de la muralla, con el puente sobre la avenida */
-  const RADIO_FOSO = RADIO_MURALLA + 3.5, ANCHO_FOSO = 9;
-  const foso = crearFoso({ radioInterno: RADIO_FOSO, radioExterno: RADIO_FOSO + ANCHO_FOSO, y: -0.9, segmentos: 96 });
+  const ANCHO_FOSO = R_FOSO_EXTERNO - R_FOSO_INTERNO;
+  const foso = crearFoso({ radioInterno: R_FOSO_INTERNO, radioExterno: R_FOSO_EXTERNO, y: -0.9, segmentos: 128 });
   escena.add(foso.mesh);
-  const puente = crearPuente({ largo: ANCHO_FOSO + 4, ancho: 6, y: 0.1 });
-  puente.position.z = RADIO_FOSO + ANCHO_FOSO / 2;
+  const puente = crearPuente({ largo: ANCHO_FOSO + 5, ancho: 6, y: 0.1 });
+  puente.position.z = (R_FOSO_INTERNO + R_FOSO_EXTERNO) / 2;
   escena.add(puente);
 
   const horizonte = construirHorizonte(escena, {
-    alturaTerreno, radioMuralla: RADIO_MURALLA, radioFoso: RADIO_FOSO + ANCHO_FOSO
+    alturaTerreno, radioMuralla: RADIO_MURALLA, radioFoso: R_FOSO_EXTERNO
   });
 
   /* ── edificios ── */
@@ -386,6 +388,27 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta' }
 
   redimensionar();
   vistaGeneral();
+
+  /* Entrada cinematica: la camara arranca lejos y a ras, y en ~4 s sube y
+     gira hasta la vista general. Se logra bajando la suavidad del lerp al
+     principio y soltandola con una curva, no con un tween aparte. */
+  if (intro) {
+    const inicio = performance.now();
+    orbita.suavidad = 0.012;
+    (function entrada() {
+      const u = Math.min(1, (performance.now() - inicio) / 4200);
+      orbita.suavidad = 0.012 + (0.075 - 0.012) * u * u;
+      if (u < 1) requestAnimationFrame(entrada);
+    })();
+  } else {
+    /* sin entrada: la camara arranca ya en la vista general */
+    orbita.dist = orbita.distMeta; orbita.polar = orbita.polarMeta; orbita.azim = orbita.azimMeta;
+    orbita.foco.copy(orbita.focoMeta);
+  }
+  /* Un primer cuadro sincronico: deja la camara ubicada y las matrices al
+     dia antes del primer requestAnimationFrame. Si no, hasta ese momento
+     la camara esta en el origen, adentro del torreon. */
+  cuadro();
 
   return {
     seleccionar, vistaGeneral,

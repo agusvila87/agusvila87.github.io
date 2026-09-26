@@ -167,6 +167,23 @@ export function techoDosAguas({ ancho, largo, alto, grosor = 0.32,
   cumbrera.castShadow = true;
   g.add(cumbrera);
 
+  /* Alero levantado: una pestaña angulada en el borde bajo de cada faldon.
+     Es el "swoop" de la referencia: la curva que separa un techo de
+     videojuego estilizado de una caja con tapa. Mas una tabla de fascia. */
+  for (const lado of [1, -1]) {
+    const xb = lado * (ancho / 2 + alero * Math.cos(a));
+    const yb = -alero * Math.sin(a);
+    const pestana = caja(alero * 0.9, grosor * 0.85, L, matTecho);
+    pestana.position.set(xb - lado * alero * 0.3, yb + 0.14, 0);
+    pestana.rotation.z = -lado * (a - 0.62);          // mas plana que el faldon: se levanta
+    pestana.castShadow = true;
+    g.add(pestana);
+    const fascia = caja(0.16, 0.34, L + 0.06, matFronton);
+    fascia.position.set(xb + lado * 0.2, yb + 0.02, 0);
+    fascia.rotation.z = -lado * a;
+    g.add(fascia);
+  }
+
   /* filete a lo largo de los dos aleros: es lo que da el aire de realeza */
   if (matFilete) {
     for (const lado of [1, -1]) {
@@ -252,6 +269,65 @@ export function variar(hex, k) {
   c.getHSL(hsl);
   c.setHSL(hsl.h, hsl.s, Math.min(0.92, Math.max(0.08, hsl.l + k)));
   return c.getHex();
+}
+
+/* ── Detalles de fachada ────────────────────────────────────────────
+   Lo que hace que una casa parezca habitada: postigos, una jardinera con
+   flores bajo la ventana, un cartel colgando de una mensula, un arco
+   sobre la puerta. Todos se apoyan en la cara +Z (o la que se rote). */
+export function postigos(matMadera, w = 0.85, h = 1.05) {
+  const g = new THREE.Group();
+  for (const s of [-1, 1]) {
+    const hoja = caja(0.34, h - 0.1, 0.07, matMadera);
+    hoja.position.set(s * (w / 2 + 0.2), 0, 0.03);
+    hoja.rotation.y = s * 0.22;                        // entreabiertos
+    g.add(hoja);
+  }
+  return g;
+}
+
+export function jardinera(matMadera, matHoja, colores, w = 0.9) {
+  const g = new THREE.Group();
+  g.add(ubicar(caja(w, 0.3, 0.34, matMadera), 0, 0, 0.25));
+  for (let i = 0; i < 4; i++) {
+    const x = -w / 2 + 0.15 + i * (w - 0.3) / 3;
+    g.add(ubicar(new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 0), matHoja), x, 0.2, 0.25));
+    const flor = new THREE.Mesh(new THREE.IcosahedronGeometry(0.09, 0), colores[i % colores.length]);
+    flor.position.set(x + 0.04, 0.32, 0.3);
+    g.add(flor);
+  }
+  return g;
+}
+
+export function arcoPuerta(matPiedra, w = 1.1, prof = 0.3) {
+  const arco = new THREE.Mesh(new THREE.CylinderGeometry(w / 2 + 0.22, w / 2 + 0.22, prof, 10, 1, false, 0, Math.PI), matPiedra);
+  arco.rotation.x = Math.PI / 2;
+  arco.rotation.z = Math.PI / 2;
+  return arco;
+}
+
+export function cartelColgante(matMadera, matTabla, matHierro) {
+  const g = new THREE.Group();
+  g.add(ubicar(caja(1.15, 0.12, 0.12, matHierro), 0.45, 0, 0));        // mensula
+  g.add(ubicar(caja(0.12, 0.12, 0.6, matHierro), 0.98, 0, 0.2));
+  for (const z of [0.05, 0.4]) g.add(ubicar(caja(0.06, 0.55, 0.06, matHierro), 0.98, -0.32, z));
+  g.add(ubicar(caja(0.14, 0.8, 0.95, matTabla), 0.98, -0.98, 0.22));  // la tabla, colgando
+  g.add(ubicar(caja(0.16, 0.08, 1.0, matMadera), 0.98, -0.62, 0.22));
+  g.add(ubicar(caja(0.16, 0.08, 1.0, matMadera), 0.98, -1.34, 0.22));
+  return g;
+}
+
+export function estandarte(matTela, ancho = 1.1, largo = 3.2) {
+  const g = new THREE.Group();
+  g.add(ubicar(caja(ancho + 0.3, 0.1, 0.1, matTela), 0, 0, 0));
+  const tela = caja(ancho, largo, 0.06, matTela);
+  tela.position.set(0, -largo / 2, 0.04);
+  g.add(tela);
+  const punta = new THREE.Mesh(new THREE.ConeGeometry(ancho / 2, 0.5, 4), matTela);
+  punta.rotation.x = Math.PI; punta.rotation.y = Math.PI / 4;
+  punta.position.set(0, -largo - 0.25, 0.04);
+  g.add(punta);
+  return g;
 }
 
 /* Ruido determinista: mismo id, misma aldea en cada carga. */

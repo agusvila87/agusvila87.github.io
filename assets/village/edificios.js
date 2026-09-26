@@ -11,8 +11,27 @@
    ═══════════════════════════════════════════════════════════════════ */
 
 import * as THREE from 'three';
+import { materialTexturado } from './texturas.js';
 import { C, CLASES, mat, caja, cilindro, cono, ubicar, techoDosAguas,
-         entramado, ventana, puerta, azar, variar, fusionar, MAT_VIDRIO } from './paleta.js';
+         entramado, ventana, puerta, azar, variar, fusionar, MAT_VIDRIO, MAT_FAROL,
+         postigos, jardinera, arcoPuerta, cartelColgante, estandarte } from './paleta.js';
+
+/* Materiales de detalle compartidos por todos los edificios: no se
+   resaltan, no hace falta clonarlos. */
+const M_HOJA = mat(C.hoja);
+const M_FLORES = [0xE04E5E, 0xF2C94C, 0xF0F0F0, 0xB86BD4].map(c => mat(c));
+const M_HIERRO = mat(C.hierro);
+const M_TABLA = mat(0xD9C6A0);
+
+/* Farol de pared junto a la puerta: de noche es lo que enciende la
+   fachada, con el mismo material que los faroles de la calle. */
+function farolDePared(g, x, y, z, rotY, matHierro) {
+  g.add(ubicar(caja(0.5, 0.08, 0.08, matHierro), x, y + 0.3, z, rotY));
+  const luz = caja(0.3, 0.38, 0.3, MAT_FAROL);
+  luz.position.set(x, y, z);
+  g.add(luz);
+  g.add(ubicar(new THREE.Mesh(new THREE.ConeGeometry(0.26, 0.2, 4), matHierro), x, y + 0.3, z, rotY + Math.PI / 4));
+}
 
 /* Junta los materiales del edificio para poder resaltarlo despues.
    El vidrio queda afuera: no tiene que cambiar de color al seleccionar. */
@@ -20,7 +39,13 @@ function taller() {
   const materiales = [];
   return {
     materiales,
-    m: (color, extra) => { const x = mat(color, extra); materiales.push(x); return x; },
+    /* m(color, textura, extra): la textura es de luminancia y se multiplica
+       con el color, asi que la clase sigue mandando el tono. */
+    m: (color, textura, extra) => {
+      const x = textura ? materialTexturado(color, textura, extra) : mat(color, extra);
+      materiales.push(x);
+      return x;
+    },
     suelto: (color, extra) => mat(color, extra)
   };
 }
@@ -88,12 +113,12 @@ export function construirCasa(semilla) {
   const t = taller();
   const g = new THREE.Group();
 
-  const piedra = t.m(K.piedra);
-  const yeso   = t.m(K.muro);
-  const yesoAlto = t.m(K.muroAlto);
-  const madera = t.m(K.madera);
-  const marco  = t.m(K.marco);
-  const teja   = t.m(variar(K.teja, (rnd() - 0.5) * 0.16));   // misma clase, no clones
+  const piedra = t.m(K.piedra, 'piedra');
+  const yeso   = t.m(K.muro, 'revoque');
+  const yesoAlto = t.m(K.muroAlto, 'revoque');
+  const madera = t.m(K.madera, 'madera');
+  const marco  = t.m(K.marco, 'madera');
+  const teja   = t.m(variar(K.teja, (rnd() - 0.5) * 0.16), 'teja');   // misma clase, no clones
   const musgo  = t.m(C.musgo);
   const vidrio = MAT_VIDRIO;
   const matHumo = t.suelto(C.humo, { transparent: true, opacity: 0.72 });
@@ -118,8 +143,17 @@ export function construirCasa(semilla) {
     mensula.rotation.x = sz * 0.5;
     g.add(mensula);
   }
-  for (const sx of [-1, 1]) g.add(ubicar(ventana(marco, vidrio), sx * 1.3, yAlta + 0.2, 2.82));
+  for (const sx of [-1, 1]) {
+    g.add(ubicar(ventana(marco, vidrio), sx * 1.3, yAlta + 0.2, 2.82));
+    g.add(ubicar(postigos(madera), sx * 1.3, yAlta + 0.2, 2.86));
+    if (rnd() > 0.3) g.add(ubicar(jardinera(madera, M_HOJA, M_FLORES), sx * 1.3, yAlta - 0.45, 2.82));
+  }
   g.add(ubicar(ventana(marco, vidrio), -2.82, yAlta + 0.2, 0, -Math.PI / 2));
+  g.add(ubicar(postigos(madera), -2.86, yAlta + 0.2, 0, -Math.PI / 2));
+
+  /* farol junto a la puerta, y en algunas un cartel colgando */
+  farolDePared(g, 1.1, 0.7 + 2.25, 2.5, 0, M_HIERRO);
+  if (rnd() > 0.45) g.add(ubicar(cartelColgante(madera, M_TABLA, M_HIERRO), -2.35, 0.7 + baja - 0.15, 2.5));
 
   /* techo */
   const yTecho = 0.7 + baja + alta;
@@ -152,13 +186,13 @@ export function construirCastillo(semilla) {
   const t = taller();
   const g = new THREE.Group();
 
-  const piedra = t.m(K.piedra);
-  const piedraOsc = t.m(K.muroAlto);
-  const yeso   = t.m(K.muro);
-  const madera = t.m(K.madera);
-  const marco  = t.m(K.marco);
-  const teja   = t.m(K.teja);
-  const bronce = t.m(K.trim);
+  const piedra = t.m(K.piedra, 'piedra');
+  const piedraOsc = t.m(K.muroAlto, 'piedraOscura');
+  const yeso   = t.m(K.muro, 'revoque');
+  const madera = t.m(K.madera, 'madera');
+  const marco  = t.m(K.marco, 'madera');
+  const teja   = t.m(K.teja, 'teja');
+  const bronce = t.m(K.trim, null, { roughness: 0.55, metalness: 0.35 });
   const musgo  = t.m(C.musgo);
   const vidrio = MAT_VIDRIO;
   const matHumo = t.suelto(C.humo, { transparent: true, opacity: 0.72 });
@@ -170,8 +204,11 @@ export function construirCastillo(semilla) {
   const baja = 6.2, yBaja = 0.9 + baja / 2;
   g.add(ubicar(caja(6.8, baja, 6.8, piedra), 0, yBaja, 0));
   g.add(ubicar(puerta(marco, 1.8, 2.9), 0, 0.9 + 1.45, 3.46));
+  g.add(ubicar(arcoPuerta(piedraOsc, 1.8, 0.5), 0, 0.9 + 2.9, 3.5));
+  for (const sx of [-1, 1]) farolDePared(g, sx * 1.55, 0.9 + 2.3, 3.55, 0, M_HIERRO);
   for (const sx of [-1, 1]) {
     g.add(ubicar(ventana(marco, vidrio, 1.0, 1.3), sx * 1.9, yBaja + 0.9, 3.46));
+    g.add(ubicar(postigos(madera, 1.0, 1.3), sx * 1.9, yBaja + 0.9, 3.5));
     g.add(ubicar(ventana(marco, vidrio, 1.0, 1.3), sx * 3.46, yBaja + 0.9, 0, sx * Math.PI / 2));
   }
 
@@ -185,7 +222,12 @@ export function construirCastillo(semilla) {
     mensula.rotation.x = sz * 0.5;
     g.add(mensula);
   }
-  for (const sx of [-1, 1]) g.add(ubicar(ventana(marco, vidrio), sx * 1.9, yAlta + 0.25, 3.92));
+  for (const sx of [-1, 1]) {
+    g.add(ubicar(ventana(marco, vidrio), sx * 1.9, yAlta + 0.25, 3.92));
+    g.add(ubicar(jardinera(madera, M_HOJA, M_FLORES), sx * 1.9, yAlta - 0.4, 3.92));
+  }
+  /* estandarte de la clase colgando de la planta alta */
+  g.add(ubicar(estandarte(banderaMat, 1.0, 2.6), 0, yAlta + alta / 2 - 0.2, 3.98));
 
   const yTecho = 0.9 + baja + alta;
   const altoTecho = 4.0;
@@ -222,14 +264,14 @@ export function construirTorreon() {
   const t = taller();
   const g = new THREE.Group();
 
-  const piedra = t.m(K.piedra);
-  const piedraOsc = t.m(K.muroAlto);
-  const yeso   = t.m(K.muro);
-  const madera = t.m(K.madera);
-  const marco  = t.m(K.trim);          // los marcos tambien van en oro
-  const teja   = t.m(K.teja);
-  const oro    = t.m(K.trim);
-  const oroOsc = t.m(K.trimOscuro);
+  const piedra = t.m(K.piedra, 'piedra');
+  const piedraOsc = t.m(K.muroAlto, 'piedraOscura');
+  const yeso   = t.m(K.muro, 'revoque');
+  const madera = t.m(K.madera, 'madera');
+  const marco  = t.m(K.trim, null, { roughness: 0.45, metalness: 0.5 });   // los marcos tambien van en oro
+  const teja   = t.m(K.teja, 'teja');
+  const oro    = t.m(K.trim, null, { roughness: 0.45, metalness: 0.5 });
+  const oroOsc = t.m(K.trimOscuro, null, { roughness: 0.5, metalness: 0.45 });
   const musgo  = t.m(C.musgo);
   const vidrio = MAT_VIDRIO;
   const banderaMat = t.suelto(K.bandera, { side: THREE.DoubleSide });
@@ -243,6 +285,13 @@ export function construirTorreon() {
   const baja = 6.6, yBaja = 1.0 + baja / 2;
   g.add(ubicar(caja(9.4, baja, 9.4, piedra), 0, yBaja, 0));
   g.add(ubicar(puerta(marco, 2.2, 3.4), 0, 1.0 + 1.7, 4.76));
+  g.add(ubicar(arcoPuerta(oro, 2.2, 0.55), 0, 1.0 + 3.4, 4.8));
+  for (const sx of [-1, 1]) farolDePared(g, sx * 1.9, 1.0 + 2.6, 4.86, 0, oroOsc);
+  /* pilastras en las esquinas del salon, con capitel de oro */
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
+    g.add(ubicar(caja(0.8, baja, 0.8, piedraOsc), sx * 4.55, yBaja, sz * 4.55));
+    g.add(ubicar(caja(1.0, 0.24, 1.0, oro), sx * 4.55, 1.0 + baja - 0.12, sz * 4.55));
+  }
   for (const sx of [-1, 1]) {
     g.add(ubicar(ventana(marco, vidrio, 1.1, 1.5), sx * 2.7, yBaja + 1.1, 4.76));
     g.add(ubicar(ventana(marco, vidrio, 1.1, 1.5), sx * 4.76, yBaja + 1.1, 0, sx * Math.PI / 2));
@@ -261,6 +310,7 @@ export function construirTorreon() {
     g.add(mensula);
   }
   for (const sx of [-1.5, 1.5]) g.add(ubicar(ventana(marco, vidrio), sx * 1.7, yAlta + 0.3, 5.32));
+  for (const sx of [-1, 1]) g.add(ubicar(estandarte(banderaMat, 1.2, 3.4), sx * 4.3, yAlta + alta / 2 - 0.25, 5.38));
 
   const yTecho = 1.0 + baja + alta;
   const altoTecho = 4.6;

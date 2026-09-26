@@ -13,9 +13,32 @@ están los comentarios de cada módulo en `assets/village/`.
       querés cambiar, reemplazá `assets/foto.jpg` por otra cuadrada; si el
       archivo llegara a faltar, la ficha cae sola a las iniciales "AV".
 
-- [ ] **Imagen de Open Graph.** Falta subir `og.png` (1200×630) a la raíz.
-      El `<meta property="og:image">` ya la apunta. Sin eso, cuando compartís
-      el link por WhatsApp o LinkedIn no aparece la preview.
+- [x] ~~Imagen de Open Graph.~~ Hecha: `og.jpg` (1200×630, ~140 KB) generada desde
+      la propia aldea con la vista general de día. Si querés otra, cualquier
+      captura del canvas a esa proporción sirve; el `<meta>` ya la apunta.
+
+---
+
+## Segunda etapa (septiembre 2026): de blockout a mundo
+
+Lo que se agregó, módulo por módulo, y qué botón tocar en cada uno:
+
+| Módulo | Qué hace | Dónde ajustar |
+|---|---|---|
+| `luces.js` | Sol de hora dorada y luna; `setNoche(t)` | constantes `DIA` / `NOCHE` |
+| `post.js` | EffectComposer: GTAO, bloom, grade (viñeta, calidez, noche), ACES | constantes al principio y uniforms del `GradeShader`; umbral de bloom de día si el oro no florece |
+| `texturas.js` | 9 texturas de canvas (revoque, piedra, piedraOscura, teja, madera, adoquín, tierra, pasto, tela) + bump | `MEDIA = 0.86` (gris medio); `sillares()`, `tejado()`, `armarTablas()` para escala |
+| `agua.js` | Foso, río y puente. Shader propio con olas, fresnel, espuma | uniforms de color día/noche; `K_FLUJO` |
+| `horizonte.js` | Cordillera, bosque lejano (900 instancias), arbustos, hiedra, flores, rocas | array de cúmulos (ángulo, radio, picos); `LAMINA_RIO` |
+| `vida.js` | 7 aldeanos con circuitos y escaleras, 2 bandadas, molino, banderas ondeando | `azar(7331)`; circuitos en `armarCircuitos` |
+| `escenario.js` | Terrazas, muralla con almenas y contrafuertes, **cauce del foso y del río en `alturaTerreno`**, trazado del río (`RIO`) | `R_FOSO_*`, `PROFUNDIDAD_*`, `RIO_CONTROL` |
+| `paleta.js` | `CLASES`, UVs a escala de mundo (`UNIDADES_POR_TILE`), techo con alero levantado, postigos/jardinera/arco/cartel/estandarte, `fusionar` | — |
+
+Reglas que conviene no romper:
+- Todo importa `three` por el **import map** de `index.html`. Nunca la ruta del archivo: serían dos copias de Three.
+- Lo que se **anima** (humo, banderas, aspas, aldeanos) va marcado `userData.animado` o queda fuera de `fusionar()`. Lo demás se fusiona por material.
+- El **agua tiene que tener cauce**: una lámina sobre un plano opaco no se ve. Foso y río se cavan en `alturaTerreno`, que es la única fuente de verdad de la altura del piso.
+- Calidad: desktop `alta` (con GTAO), touch/angosto `media` (sin GTAO), `?calidad=baja` para depurar. `?sin-intro` salta la entrada cinematica. Medido: ~300 draw calls y ~140k triángulos la escena, más los pases.
 
 ---
 

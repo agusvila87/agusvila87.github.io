@@ -12,6 +12,7 @@
 
 import * as THREE from 'three';
 import { C, mat, caja, cilindro, cono, ubicar, azar, techoDosAguas, fusionar } from './paleta.js';
+import { materialTexturado } from './texturas.js';
 import { barril, cajon, carro, puesto, banderines, pozo, cerca, farol,
          roca, pilaDeHeno, nube } from './props.js';
 
@@ -22,10 +23,41 @@ export const R_ALTA  = 12,   H_ALTA  = 5.6;   // meseta del torreon
 export const R_MEDIA = 28.5, H_MEDIA = 3.6;   // castillos
 export const R_BAJA  = 40,   H_BAJA  = 1.8;   // anillo interior de casas
 export const RADIO_MURALLA = 52;
+/* El foso rodea la muralla; el terreno se hunde ahi para que el agua
+   (que va a y = -0.9) tenga cauce y orillas en vez de quedar enterrada. */
+export const R_FOSO_INTERNO = 55.5, R_FOSO_EXTERNO = 64.5, PROFUNDIDAD_FOSO = 2.6;
 
 const GRADO = Math.PI / 180;
 /* Las escaleras esquivan los angulos donde hay casas. */
 const ESCALERAS = [0, 130, -130];
+
+/* ── Rio ─────────────────────────────────────────────────────────────
+   Baja de la cordillera (atras-izquierda) y muere en el foso. Vive aca
+   y no en horizonte.js porque el terreno tiene que conocer su trazado
+   para cavarle el cauce: una lamina de agua apoyada sobre un plano
+   opaco no se ve. Puntos de control en polares; Catmull-Rom los suaviza. */
+const RIO_CONTROL = [
+  [-140, 266], [-131, 232], [-145, 196], [-129, 160],
+  [-140, 124], [-126, 94], [-134, 74], [-131, 65.5]
+];
+export const RIO_ANCHO = 8;
+export const RIO = (() => {
+  const pts = RIO_CONTROL.map(([a, r]) => new THREE.Vector3(Math.sin(a * GRADO) * r, 0, Math.cos(a * GRADO) * r));
+  return new THREE.CatmullRomCurve3(pts, false, 'centripetal').getSpacedPoints(40).map(p => [p.x, p.z]);
+})();
+
+export function distanciaRio(x, z) {
+  let mejor = Infinity;
+  for (let i = 0; i < RIO.length - 1; i++) {
+    const [ax, az] = RIO[i], [bx, bz] = RIO[i + 1];
+    const dx = bx - ax, dz = bz - az;
+    const t = Math.max(0, Math.min(1, ((x - ax) * dx + (z - az) * dz) / (dx * dx + dz * dz || 1)));
+    const d = Math.hypot(x - (ax + dx * t), z - (az + dz * t));
+    if (d < mejor) mejor = d;
+  }
+  return mejor;
+}
+const PROFUNDIDAD_RIO = 2.0, MEDIO_CAUCE = RIO_ANCHO / 2 + 2.5;
 
 /* Altura del piso en cualquier punto. La usan los edificios, la utileria
    y el pasto para apoyarse donde corresponde. */
@@ -35,9 +67,26 @@ export function alturaTerreno(x, z) {
   if (d < R_MEDIA) return H_MEDIA;
   if (d < R_BAJA) return H_BAJA;
   if (d < RADIO_MURALLA + 2) return 0;
+  /* cauce del foso: baja suave desde la orilla, fondo plano, sube suave */
+  if (d < R_FOSO_EXTERNO + 2) {
+    const orillaIn = R_FOSO_INTERNO - 1.2, orillaOut = R_FOSO_EXTERNO + 1.2;
+    if (d < orillaIn) return 0;
+    const bajada = Math.min(1, (d - orillaIn) / 2.6);
+    const subida = Math.min(1, (orillaOut - d) / 2.6);
+    const k = Math.min(bajada, subida);
+    return -PROFUNDIDAD_FOSO * (k * k * (3 - 2 * k));
+  }
   const k = Math.min((d - RADIO_MURALLA - 2) / 24, 1);
   const n = Math.sin(x * 0.062) * Math.cos(z * 0.054) + 0.5 * Math.sin((x + z) * 0.09);
-  return n * 3.6 * k * k;
+  let h = n * 3.6 * k * k;
+  /* cauce del rio: fondo plano del ancho del agua y orillas de 2.5 */
+  const dr = distanciaRio(x, z);
+  if (dr < MEDIO_CAUCE) {
+    let c = Math.min(1, (MEDIO_CAUCE - dr) / 2.5);
+    c = c * c * (3 - 2 * c);
+    h -= PROFUNDIDAD_RIO * c;
+  }
+  return h;
 }
 
 /* ── Cielo ──────────────────────────────────────────────────────────
@@ -114,23 +163,32 @@ export function construirCielo(escena) {
 /* ── Suelo ──────────────────────────────────────────────────────────
    El pasto lleva color por vertice: un verde plano se ve sintetico. */
 export function construirTerreno(escena, nodos) {
-  const geo = new THREE.PlaneGeometry(620, 620, 104, 104);
+  const geo = new THREE.PlaneGeometry(620, 620, 200, 200);
   geo.rotateX(-Math.PI / 2);
   const pos = geo.attributes.position;
   const colores = new Float32Array(pos.count * 3);
   const claro = new THREE.Color(C.pastoClaro);
   const oscuro = new THREE.Color(C.pastoOscuro);
   const seco = new THREE.Color(C.pastoSeco);
+  const lecho = new THREE.Color(0x6B5A3E);
   const c = new THREE.Color();
 
   for (let i = 0; i < pos.count; i++) {
     const x = pos.getX(i), z = pos.getZ(i);
     const d = Math.hypot(x, z);
-    /* el plano solo modela el nivel del suelo; las terrazas son geometria aparte */
-    pos.setY(i, d < RADIO_MURALLA + 2 ? 0 : alturaTerreno(x, z));
+    /* el plano modela el suelo, el cauce del foso y las colinas; las
+       terrazas son geometria aparte */
+    pos.setY(i, alturaTerreno(x, z));
     const n = Math.sin(x * 0.21) * Math.cos(z * 0.17) * 0.5 + 0.5;
     const n2 = Math.sin((x + z) * 0.09) * 0.5 + 0.5;
     c.copy(oscuro).lerp(claro, n).lerp(seco, n2 * 0.35);
+    const y = pos.getY(i);
+    /* solo en el cauce del foso: las colinas tambien bajan de cero y no son barro */
+    if (y < -0.05 && d > R_FOSO_INTERNO - 2 && d < R_FOSO_EXTERNO + 2) {
+      c.lerp(lecho, Math.min(1, -y / PROFUNDIDAD_FOSO) * 0.85);
+    }
+    const dr = distanciaRio(x, z);
+    if (dr < MEDIO_CAUCE && d > R_FOSO_EXTERNO + 1) c.lerp(lecho, (1 - dr / MEDIO_CAUCE) * 0.75);
     colores[i * 3] = c.r; colores[i * 3 + 1] = c.g; colores[i * 3 + 2] = c.b;
   }
   geo.setAttribute('color', new THREE.BufferAttribute(colores, 3));
@@ -142,7 +200,7 @@ export function construirTerreno(escena, nodos) {
 
   /* caminos del anillo exterior */
   const g = new THREE.Group();
-  const tierra = mat(C.tierra);
+  const tierra = materialTexturado(C.tierra, 'tierra');
   const anillo = new THREE.Mesh(new THREE.RingGeometry(42.6, 44.8, 64), tierra);
   anillo.rotation.x = -Math.PI / 2;
   anillo.position.y = 0.02;
@@ -170,7 +228,7 @@ export function construirTerreno(escena, nodos) {
 /* ── Terrazas ───────────────────────────────────────────────────────
    Muro de contencion + coronamiento + superficie, y escaleras que
    bajan al nivel de abajo. */
-function escalera(g, anguloGrados, radio, arriba, abajo, ancho, matPiedra) {
+function escalera(g, anguloGrados, radio, arriba, abajo, ancho, matPiedra, matMurete) {
   const a = anguloGrados * GRADO;
   const alto = arriba - abajo;
   const n = Math.max(4, Math.round(alto / 0.34));
@@ -186,10 +244,11 @@ function escalera(g, anguloGrados, radio, arriba, abajo, ancho, matPiedra) {
     esc.castShadow = true; esc.receiveShadow = true;
     g.add(esc);
   }
-  /* muretes a los costados, para que la escalera se lea desde arriba */
+  /* muretes a los costados, para que la escalera se lea desde arriba;
+     en piedra clara como los muros de las terrazas, no como los escalones */
   for (const s of [-1, 1]) {
     const largo = n * fondo;
-    const m = caja(0.5, alto + 0.7, largo, matPiedra);
+    const m = caja(0.5, alto + 0.7, largo, matMurete || matPiedra);
     const r = radio + largo / 2;
     m.position.set(
       Math.sin(a) * r + Math.cos(a) * s * (ancho / 2 + 0.25),
@@ -220,11 +279,11 @@ function terraza(g, radio, alto, base, matMuro, matBorde) {
 
 export function construirTerrazas(escena, nodos) {
   const g = new THREE.Group();
-  const piedra = mat(C.piedra);
-  const piedraOsc = mat(C.piedraOscura);
-  const adoquin = mat(C.adoquin);
-  const pastoAlto = mat(C.pastoClaro);
-  const tierra = mat(C.tierra);
+  const piedra = materialTexturado(C.piedra, 'piedra');
+  const piedraOsc = materialTexturado(C.piedraOscura, 'piedraOscura');
+  const adoquin = materialTexturado(C.adoquin, 'adoquin');
+  const pastoAlto = materialTexturado(C.pastoClaro, 'pasto');
+  const tierra = materialTexturado(C.tierra, 'tierra');
 
   /* terraza baja (anillo interior de casas) */
   terraza(g, R_BAJA, H_BAJA, 0, piedra, piedraOsc);
@@ -264,9 +323,9 @@ export function construirTerrazas(escena, nodos) {
 
   /* escaleras: del suelo a la media, y de la media a la alta */
   for (const a of ESCALERAS) {
-    escalera(g, a, R_BAJA,  H_BAJA,  0,       7.0, piedraOsc);
-    escalera(g, a, R_MEDIA, H_MEDIA, H_BAJA,  6.5, piedraOsc);
-    escalera(g, a, R_ALTA,  H_ALTA,  H_MEDIA, 5.0, piedraOsc);
+    escalera(g, a, R_BAJA,  H_BAJA,  0,       7.0, piedraOsc, piedra);
+    escalera(g, a, R_MEDIA, H_MEDIA, H_BAJA,  6.5, piedraOsc, piedra);
+    escalera(g, a, R_ALTA,  H_ALTA,  H_MEDIA, 5.0, piedraOsc, piedra);
   }
 
   /* sendas de la terraza media hacia cada castillo */
@@ -289,11 +348,11 @@ export function construirTerrazas(escena, nodos) {
 /* ── Muralla ───────────────────────────────────────────────────────── */
 export function construirMuralla(escena) {
   const g = new THREE.Group();
-  const piedra = mat(C.piedra);
-  const piedraOsc = mat(C.piedraOscura);
-  const madera = mat(C.maderaOscura);
+  const piedra = materialTexturado(C.piedra, 'piedra');
+  const piedraOsc = materialTexturado(C.piedraOscura, 'piedraOscura');
+  const madera = materialTexturado(C.maderaOscura, 'madera');
   const musgo = mat(C.musgo);
-  const tejaTorre = mat(C.techos[0]);
+  const tejaTorre = materialTexturado(C.techos[0], 'teja');
   const R = RADIO_MURALLA, SEG = 54;
 
   for (let i = 0; i < SEG; i++) {
@@ -309,6 +368,19 @@ export function construirMuralla(escena) {
     remate.position.set(Math.sin(a) * R, 2.9, Math.cos(a) * R);
     remate.rotation.y = a;
     g.add(remate);
+    /* almenas: dos por tramo, y un contrafuerte por fuera cada dos tramos.
+       Sin esto la muralla era una cinta lisa que se leia como cordon. */
+    for (const k of [-0.28, 0.28]) {
+      const ak = a + k * (Math.PI * 2 / SEG);
+      g.add(ubicar(caja(largo * 0.3, 0.7, 1.1, piedra), Math.sin(ak) * R, 3.4, Math.cos(ak) * R, ak));
+    }
+    if (i % 2 === 0) {
+      const rc = R + 1.15;
+      const c = caja(1.1, 2.4, 1.0, piedraOsc);
+      c.position.set(Math.sin(a) * rc, 1.2, Math.cos(a) * rc);
+      c.rotation.y = a;
+      g.add(c);
+    }
     if (i % 6 === 0) {
       const parche = caja(largo * 0.6, 0.12, 1.75, musgo);
       parche.position.set(Math.sin(a) * R, 3.07, Math.cos(a) * R);
@@ -370,6 +442,7 @@ export function construirPasto(escena) {
     if (r > 18 && r < 22.6) continue;                // camino de la terraza media
     if (r > 30.4 && r < 34.2) continue;              // camino de la terraza baja
     if (r > 42 && r < 45.4) continue;                // camino del suelo
+    if (r > 54 && r < 66) continue;                  // el foso
     const y = alturaTerreno(x, z);
     const s = 0.7 + rnd() * 0.9;
     q.setFromAxisAngle(eje, rnd() * Math.PI);
