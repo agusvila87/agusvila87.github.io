@@ -10,7 +10,7 @@
    Escaleras de piedra conectan los tres niveles sobre el eje principal.
    ═══════════════════════════════════════════════════════════════════ */
 
-import * as THREE from '../vendor/three.module.min.js';
+import * as THREE from 'three';
 import { C, mat, caja, cilindro, cono, ubicar, azar, techoDosAguas, fusionar } from './paleta.js';
 import { barril, cajon, carro, puesto, banderines, pozo, cerca, farol,
          roca, pilaDeHeno, nube } from './props.js';
@@ -78,7 +78,37 @@ export function construirCielo(escena) {
     escena.add(n);
     nubes.push(n);
   }
-  return nubes;
+
+  /* estrellas: invisibles de dia, la noche les sube la opacidad */
+  const N = 900, pos = new Float32Array(N * 3);
+  for (let i = 0; i < N; i++) {
+    const u = rnd(), v = rnd();
+    const th = u * Math.PI * 2, ph = Math.acos(1 - v * 0.82);      // solo el hemisferio de arriba
+    const r = 560;
+    pos[i * 3] = r * Math.sin(ph) * Math.cos(th);
+    pos[i * 3 + 1] = r * Math.cos(ph);
+    pos[i * 3 + 2] = r * Math.sin(ph) * Math.sin(th);
+  }
+  const geoE = new THREE.BufferGeometry();
+  geoE.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  const estrellas = new THREE.Points(geoE, new THREE.PointsMaterial({
+    color: 0xFFF6E0, size: 2.2, sizeAttenuation: false, transparent: true, opacity: 0, depthWrite: false
+  }));
+  estrellas.frustumCulled = false;
+  escena.add(estrellas);
+
+  const DIA = { arriba: new THREE.Color(C.cieloAlto), abajo: new THREE.Color(C.cieloBajo) };
+  const NOCHE = { arriba: new THREE.Color(0x0B1230), abajo: new THREE.Color(0x2A3560) };
+  function setNoche(t) {
+    material.uniforms.arriba.value.copy(DIA.arriba).lerp(NOCHE.arriba, t);
+    material.uniforms.abajo.value.copy(DIA.abajo).lerp(NOCHE.abajo, t);
+    estrellas.material.opacity = Math.max(0, t - 0.35) / 0.65;
+    for (const n of nubes) n.traverse(o => { if (o.isMesh) o.material = t > 0.5 ? nubeNoche : nubeDia; });
+  }
+  const nubeDia = nubes[0].children[0].material;
+  const nubeNoche = nubeDia.clone(); nubeNoche.color.setHex(0x3A4266);
+
+  return { nubes, setNoche };
 }
 
 /* ── Suelo ──────────────────────────────────────────────────────────

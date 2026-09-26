@@ -10,9 +10,9 @@
    El rango se lee por material antes que por tamaño.
    ═══════════════════════════════════════════════════════════════════ */
 
-import * as THREE from '../vendor/three.module.min.js';
+import * as THREE from 'three';
 import { C, CLASES, mat, caja, cilindro, cono, ubicar, techoDosAguas,
-         entramado, ventana, puerta, azar, variar, fusionar } from './paleta.js';
+         entramado, ventana, puerta, azar, variar, fusionar, MAT_VIDRIO } from './paleta.js';
 
 /* Junta los materiales del edificio para poder resaltarlo despues.
    El vidrio queda afuera: no tiene que cambiar de color al seleccionar. */
@@ -52,6 +52,21 @@ function musgoEnTecho(g, ancho, largo, alto, y, matMusgo, rnd) {
   }
 }
 
+/* Bandera: plano con segmentos, anclada al asta por su borde izquierdo y
+   marcada como animada para que fusionar() la deje suelta y vida.js la
+   pueda ondular vertice por vertice. */
+function bandera(material, ancho, alto, x, y, z) {
+  const geo = new THREE.PlaneGeometry(ancho, alto, 8, 3);
+  geo.translate(ancho / 2, 0, 0);
+  const m = new THREE.Mesh(geo, material);
+  m.position.set(x, y, z);
+  m.userData.animado = true;
+  m.userData.esBandera = true;
+  m.userData.ancho = ancho;
+  m.castShadow = true;
+  return m;
+}
+
 /* Anillo de almenas alrededor de una torre, con coronamiento del metal
    de la clase si lo tiene. */
 function almenas(g, x, y, z, radio, n, matPiedra, matFilete) {
@@ -80,7 +95,7 @@ export function construirCasa(semilla) {
   const marco  = t.m(K.marco);
   const teja   = t.m(variar(K.teja, (rnd() - 0.5) * 0.16));   // misma clase, no clones
   const musgo  = t.m(C.musgo);
-  const vidrio = t.suelto(C.vidrio);
+  const vidrio = MAT_VIDRIO;
   const matHumo = t.suelto(C.humo, { transparent: true, opacity: 0.72 });
 
   g.add(ubicar(caja(5.5, 0.7, 5.5, piedra), 0, 0.35, 0));
@@ -145,7 +160,7 @@ export function construirCastillo(semilla) {
   const teja   = t.m(K.teja);
   const bronce = t.m(K.trim);
   const musgo  = t.m(C.musgo);
-  const vidrio = t.suelto(C.vidrio);
+  const vidrio = MAT_VIDRIO;
   const matHumo = t.suelto(C.humo, { transparent: true, opacity: 0.72 });
   const banderaMat = t.suelto(K.bandera, { side: THREE.DoubleSide });
 
@@ -190,7 +205,7 @@ export function construirCastillo(semilla) {
   g.add(ubicar(ventana(marco, vidrio, 0.8, 1.1), tx, altoTorre - 3.4, tz + 2.05));
   g.add(ubicar(cono(2.9, 4.4, teja, 10), tx, altoTorre + 3.1, tz));
   g.add(ubicar(caja(0.16, 2.6, 0.16, bronce), tx, altoTorre + 6.4, tz));
-  g.add(ubicar(caja(1.9, 1.15, 0.08, banderaMat), tx + 0.95, altoTorre + 7.2, tz));
+  g.add(bandera(banderaMat, 1.9, 1.15, tx, altoTorre + 7.2, tz));
 
   /* chimenea */
   g.add(ubicar(caja(0.95, 4.2, 0.95, piedra), -2.6, yTecho + 1.6, 2.2));
@@ -216,7 +231,7 @@ export function construirTorreon() {
   const oro    = t.m(K.trim);
   const oroOsc = t.m(K.trimOscuro);
   const musgo  = t.m(C.musgo);
-  const vidrio = t.suelto(C.vidrio);
+  const vidrio = MAT_VIDRIO;
   const banderaMat = t.suelto(K.bandera, { side: THREE.DoubleSide });
 
   /* plataforma escalonada, con filo de oro */
@@ -275,7 +290,7 @@ export function construirTorreon() {
   g.add(ubicar(new THREE.Mesh(new THREE.IcosahedronGeometry(0.62, 0), oro),
     0, altoTorre + 7.1, 0));                                 // remate dorado
   g.add(ubicar(caja(0.18, 3.4, 0.18, oro), 0, altoTorre + 8.4, 0));
-  g.add(ubicar(caja(2.6, 1.5, 0.08, banderaMat), 1.3, altoTorre + 9.3, 0));
+  g.add(bandera(banderaMat, 2.6, 1.5, 0, altoTorre + 9.3, 0));
 
   /* cuatro torretas de esquina */
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) {
@@ -284,7 +299,7 @@ export function construirTorreon() {
     g.add(ubicar(cilindro(1.58, 1.58, 0.24, oro, 8), x, h * 0.66, z));
     g.add(ubicar(cono(2.2, 3.4, teja, 8), x, h + 1.7, z));
     g.add(ubicar(caja(0.12, 1.8, 0.12, oro), x, h + 4.2, z));
-    g.add(ubicar(caja(1.3, 0.8, 0.06, banderaMat), x + 0.65, h + 4.6, z));
+    g.add(bandera(banderaMat, 1.3, 0.8, x, h + 4.6, z));
   }
 
   g.userData.materiales = t.materiales;
@@ -298,6 +313,6 @@ export function construirEdificio(nodo, semilla) {
           : construirCasa(semilla);
   g.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } });
   /* el humo se anima pieza por pieza, no se puede fusionar */
-  fusionar(g, o => o.parent && o.parent.userData.esHumo);
+  fusionar(g);
   return g;
 }

@@ -7,8 +7,8 @@
    y desordenados, cualquier escena 3D se lee como render generico.
    ═══════════════════════════════════════════════════════════════════ */
 
-import * as THREE from '../vendor/three.module.min.js';
-import { C, mat, caja, cilindro, cono, ubicar } from './paleta.js';
+import * as THREE from 'three';
+import { C, mat, caja, cilindro, cono, ubicar, MAT_FAROL } from './paleta.js';
 
 /* Materiales compartidos: la utileria no se resalta, no necesita clones. */
 const M = {
@@ -20,7 +20,7 @@ const M = {
   teja:      mat(C.techos[0]),
   paja:      mat(C.heno),
   nube:      mat(C.nube),
-  luz:       mat(C.vidrio),
+  luz:       MAT_FAROL,
   manzana:   mat(0xC0392B)
 };
 const TELAS = C.tela.map(c => mat(c, { side: THREE.DoubleSide }));

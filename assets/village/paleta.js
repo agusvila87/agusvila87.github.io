@@ -5,7 +5,7 @@
    revoque crema, techos a dos aguas empinados, piedra tibia.
    ═══════════════════════════════════════════════════════════════════ */
 
-import * as THREE from '../vendor/three.module.min.js';
+import * as THREE from 'three';
 
 export const C = {
   /* cielo y luz */
@@ -57,23 +57,66 @@ export const CLASES = {
   }
 };
 
-/* Lambert + flatShading: da la lectura plana y estilizada de la referencia
-   sin el costo de Standard. Cada edificio clona sus materiales para poder
-   resaltarse solo. */
+/* Standard + flatShading: responde a luz de entorno y a los mapas de las
+   texturas procedurales, y sigue leyendo plano y estilizado. Cada edificio
+   clona sus materiales para poder resaltarse solo. */
 export function mat(color, extra = {}) {
-  return new THREE.MeshLambertMaterial({ color, flatShading: true, ...extra });
+  return new THREE.MeshStandardMaterial({
+    color, flatShading: true, roughness: 0.92, metalness: 0, ...extra
+  });
+}
+
+/* Ventanas y faroles: un solo material compartido cada uno, asi el modo
+   noche los enciende a todos con un emissive y el bloom hace el resto. */
+export const MAT_VIDRIO = new THREE.MeshStandardMaterial({
+  color: 0xFFCE85, emissive: 0xFFB74A, emissiveIntensity: 0, roughness: 0.4, metalness: 0
+});
+export const MAT_FAROL = new THREE.MeshStandardMaterial({
+  color: 0xFFD98A, emissive: 0xFFC25A, emissiveIntensity: 0.15, roughness: 0.5, metalness: 0
+});
+
+/* ── UVs a escala de mundo ──────────────────────────────────────────
+   Las primitivas de Three mapean cada cara a 0..1, asi que una textura
+   se estiraria distinto en una viga de 0.3 que en un muro de 9. Aca se
+   reescalan para que un tile de textura cubra siempre UNIDADES_POR_TILE
+   unidades de mundo, sin importar el tamaño de la pieza. Las texturas
+   repiten (RepeatWrapping) y la fusion de geometria las conserva. */
+export const UNIDADES_POR_TILE = 2.2;
+
+function uvCaja(geo, w, h, d) {
+  const uv = geo.attributes.uv, n = geo.attributes.normal, k = UNIDADES_POR_TILE;
+  for (let i = 0; i < uv.count; i++) {
+    const nx = Math.abs(n.getX(i)), ny = Math.abs(n.getY(i));
+    const ancho = nx > 0.5 ? d : (ny > 0.5 ? w : w);
+    const alto  = nx > 0.5 ? h : (ny > 0.5 ? d : h);
+    uv.setXY(i, uv.getX(i) * ancho / k, uv.getY(i) * alto / k);
+  }
+  uv.needsUpdate = true;
+  return geo;
+}
+
+function uvRedondo(geo, radio, h) {
+  const uv = geo.attributes.uv, n = geo.attributes.normal, k = UNIDADES_POR_TILE;
+  const vuelta = 2 * Math.PI * radio;
+  for (let i = 0; i < uv.count; i++) {
+    if (Math.abs(n.getY(i)) > 0.99) uv.setXY(i, uv.getX(i) * radio * 2 / k, uv.getY(i) * radio * 2 / k);
+    else uv.setXY(i, uv.getX(i) * vuelta / k, uv.getY(i) * h / k);
+  }
+  uv.needsUpdate = true;
+  return geo;
 }
 
 export function caja(w, h, d, material) {
-  return new THREE.Mesh(new THREE.BoxGeometry(w, h, d), material);
+  return new THREE.Mesh(uvCaja(new THREE.BoxGeometry(w, h, d), w, h, d), material);
 }
 
 export function cilindro(rTop, rBot, h, material, caras = 8) {
-  return new THREE.Mesh(new THREE.CylinderGeometry(rTop, rBot, h, caras), material);
+  const r = Math.max(rTop, rBot);
+  return new THREE.Mesh(uvRedondo(new THREE.CylinderGeometry(rTop, rBot, h, caras), r, h), material);
 }
 
 export function cono(r, h, material, caras = 8) {
-  return new THREE.Mesh(new THREE.ConeGeometry(r, h, caras), material);
+  return new THREE.Mesh(uvRedondo(new THREE.ConeGeometry(r, h, caras), r, h), material);
 }
 
 export function ubicar(m, x, y, z, rotY = 0) {
@@ -261,7 +304,10 @@ function unirGeometrias(geos) {
   return out;
 }
 
-export function fusionar(grupo, saltar) {
+/* Predicado por defecto para fusionar: lo que se anima queda suelto. */
+export const SUELTO = o => o.userData.animado || (o.parent && o.parent.userData.esHumo);
+
+export function fusionar(grupo, saltar = SUELTO) {
   grupo.updateWorldMatrix(true, true);
   const aBase = new THREE.Matrix4().copy(grupo.matrixWorld).invert();
   const porMaterial = new Map();

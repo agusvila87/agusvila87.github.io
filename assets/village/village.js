@@ -9,11 +9,18 @@
    un loader de .glb: camara, seleccion y paneles siguen igual.
    ═══════════════════════════════════════════════════════════════════ */
 
-import * as THREE from '../vendor/three.module.min.js';
+import * as THREE from 'three';
 import { C, azar } from './paleta.js';
 import { construirEdificio } from './edificios.js';
 import { construirCielo, construirTerreno, construirTerrazas, construirPasto,
-         construirMuralla, decorarAldea, alturaTerreno, H_ALTA } from './escenario.js';
+         construirMuralla, decorarAldea, alturaTerreno,
+         H_ALTA, H_MEDIA, H_BAJA, R_ALTA, R_MEDIA, R_BAJA, RADIO_MURALLA } from './escenario.js';
+import { crearLuces } from './luces.js';
+import { crearPost } from './post.js';
+import { crearFoso, crearPuente } from './agua.js';
+import { construirHorizonte } from './horizonte.js';
+import { crearVida } from './vida.js';
+import { MAT_VIDRIO, MAT_FAROL } from './paleta.js';
 import { NODOS } from './data.js';
 
 const GRADO = Math.PI / 180;
@@ -112,7 +119,7 @@ class CamaraOrbital {
 }
 
 /* ── Arranque ──────────────────────────────────────────────────────── */
-export function iniciarAldea({ canvas, etiqueta, onSeleccion }) {
+export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta' }) {
   const escena = new THREE.Scene();
   escena.fog = new THREE.Fog(C.cieloBajo, 230, 470);
 
@@ -122,30 +129,25 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion }) {
   render.shadowMap.enabled = true;
   render.shadowMap.type = THREE.PCFSoftShadowMap;
 
-  /* Luz de mediodia tibia: sol fuerte, cielo azul de relleno y rebote
-     verde del pasto. Las tres juntas dan la lectura estilizada. */
-  escena.add(new THREE.HemisphereLight(C.reboteCielo, C.reboteSuelo, 1.45));
-  const sol = new THREE.DirectionalLight(C.sol, 2.3);
-  sol.position.set(-74, 100, 64);
-  sol.castShadow = true;
-  sol.shadow.mapSize.set(2048, 2048);
-  sol.shadow.camera.near = 20;
-  sol.shadow.camera.far = 320;
-  sol.shadow.camera.left = -84;
-  sol.shadow.camera.right = 84;
-  sol.shadow.camera.top = 84;
-  sol.shadow.camera.bottom = -84;
-  sol.shadow.camera.updateProjectionMatrix();
-  sol.shadow.bias = -0.0006;
-  sol.shadow.normalBias = 0.04;
-  escena.add(sol);
-  escena.add(new THREE.AmbientLight(0xFFFFFF, 0.25));
-
-  const nubes = construirCielo(escena);
+  const luces = crearLuces(escena);
+  const cielo = construirCielo(escena);
+  const nubes = cielo.nubes;
   construirTerreno(escena, NODOS);
   construirTerrazas(escena, NODOS);
   construirPasto(escena);
   construirMuralla(escena);
+
+  /* foso alrededor de la muralla, con el puente sobre la avenida */
+  const RADIO_FOSO = RADIO_MURALLA + 3.5, ANCHO_FOSO = 9;
+  const foso = crearFoso({ radioInterno: RADIO_FOSO, radioExterno: RADIO_FOSO + ANCHO_FOSO, y: -0.9, segmentos: 96 });
+  escena.add(foso.mesh);
+  const puente = crearPuente({ largo: ANCHO_FOSO + 4, ancho: 6, y: 0.1 });
+  puente.position.z = RADIO_FOSO + ANCHO_FOSO / 2;
+  escena.add(puente);
+
+  const horizonte = construirHorizonte(escena, {
+    alturaTerreno, radioMuralla: RADIO_MURALLA, radioFoso: RADIO_FOSO + ANCHO_FOSO
+  });
 
   /* ── edificios ── */
   const edificios = [];
@@ -168,6 +170,16 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion }) {
   }
 
   decorarAldea(escena, NODOS, posiciones);
+
+  const vida = crearVida(escena, {
+    nodos: NODOS, posiciones, alturaTerreno,
+    anillos: [
+      { radio: 20.3, y: H_MEDIA }, { radio: 32.3, y: H_BAJA }, { radio: 43.7, y: 0 }
+    ],
+    terrazas: { R_ALTA, H_ALTA, R_MEDIA, H_MEDIA, R_BAJA, H_BAJA, RADIO_MURALLA }
+  });
+
+  const post = crearPost({ render, escena, camara, calidad });
 
   /* Anillo de luz en el piso. Sin carteles, esto y el levante son la
      unica señal de que un edificio esta bajo el cursor o elegido. */
@@ -305,8 +317,27 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion }) {
     render.setSize(w, h, false);
     camara.aspect = w / h || 1;
     camara.updateProjectionMatrix();
+    post.redimensionar(w, h);
   }
   addEventListener('resize', redimensionar);
+
+  /* ── dia / noche ── */
+  let noche = 0, nocheMeta = 0;
+  function aplicarNoche(t) {
+    luces.setNoche(t);
+    cielo.setNoche(t);
+    escena.fog.color.copy(NIEBLA_DIA).lerp(NIEBLA_NOCHE, t);
+    MAT_VIDRIO.emissiveIntensity = t * 1.7;
+    MAT_FAROL.emissiveIntensity = 0.15 + t * 2.4;
+    foso.setNoche(t); horizonte.setNoche(t); vida.setNoche(t); post.setNoche(t);
+  }
+  const NIEBLA_DIA = new THREE.Color(C.cieloBajo), NIEBLA_NOCHE = new THREE.Color(0x1C2440);
+
+  /* ── deriva de camara cuando nadie toca nada ── */
+  let ultimoInput = performance.now();
+  for (const ev of ['pointerdown', 'wheel', 'keydown', 'touchstart']) {
+    addEventListener(ev, () => { ultimoInput = performance.now(); }, { passive: true });
+  }
 
   /* ── animacion ── */
   const humos = [];
@@ -314,8 +345,18 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion }) {
   const reloj = new THREE.Clock();
 
   function cuadro() {
+    const dt = Math.min(reloj.getDelta(), 0.05);
     const t = reloj.getElapsedTime();
     redimensionar();
+
+    if (Math.abs(nocheMeta - noche) > 0.001) {
+      noche += (nocheMeta - noche) * Math.min(1, dt * 2.2);
+      aplicarNoche(noche);
+    }
+    /* sin input por 8 s, la aldea gira sola muy despacio */
+    if (performance.now() - ultimoInput > 8000 && seleccionado === null) {
+      orbita.azimMeta += dt * 0.035;
+    }
     orbita.actualizar();
 
     for (const g of edificios) {
@@ -335,13 +376,21 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion }) {
       if (n.position.z > 300) n.position.z = -300;
     }
 
+    foso.actualizar(t);
+    horizonte.actualizar(t);
+    vida.actualizar(t, dt);
     moverEtiqueta();
-    render.render(escena, camara);
+    post.render(dt);
   }
   render.setAnimationLoop(cuadro);
 
   redimensionar();
   vistaGeneral();
 
-  return { seleccionar, vistaGeneral };
+  return {
+    seleccionar, vistaGeneral,
+    setNoche: v => { nocheMeta = v ? 1 : 0; },
+    esNoche: () => nocheMeta === 1,
+    calidad: post.calidad
+  };
 }

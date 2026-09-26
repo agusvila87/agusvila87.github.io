@@ -75,6 +75,7 @@ img{display:block;max-width:100%}
   color:var(--pergamino);text-decoration:none;transition:color .18s;white-space:nowrap;
   text-shadow:0 2px 8px rgba(30,18,10,.7)}
 .nl:hover{color:var(--ambar-claro)}
+button.nl{background:none;border:0;cursor:pointer;padding:0;font:inherit;font-family:var(--mono);font-size:10px;letter-spacing:.15em}
 
 #barra-inf{bottom:0;left:0;right:0;padding:12px clamp(14px,2.4vw,26px) calc(13px + env(safe-area-inset-bottom));
   background:linear-gradient(transparent,rgba(36,27,20,.72) 55%)}
@@ -244,6 +245,7 @@ body.panel-cerrado #abrir-panel{display:block}
   <a class="nl" href="Agustin_Vila_Game_Designer_CV.pdf" download>CV ↓</a>
   <a class="nl" href="https://www.linkedin.com/in/agustinvila87/" target="_blank" rel="noopener">LinkedIn ↗</a>
   <a class="nl" href="clasico.html">Versión clásica ↗</a>
+  <button class="nl" id="noche" type="button" aria-pressed="false" title="Cambiar entre día y noche">☾ Noche</button>
 </div>
 
 <div class="chrome" id="barra-inf">
@@ -297,6 +299,12 @@ body.panel-cerrado #abrir-panel{display:block}
   <a href="clasico.html#davinci">versión clásica del portfolio</a>.</p>
 </div>
 
+<!-- Un solo Three para todos: los addons importan "three" y los modulos
+     propios tambien. Sin esto habria dos copias y nada seria instanceof nada. -->
+<script type="importmap">
+{ "imports": { "three": "./assets/vendor/three.module.min.js",
+               "three/addons/": "./assets/vendor/jsm/" } }
+</script>
 <script type="module">
 import { NODOS, PERFIL } from './assets/village/data.js';
 
@@ -452,8 +460,15 @@ if (!hayWebGL()) {
     botones.set(n.id, b);
   }
 
+  /* Calidad: el post-proceso completo (oclusion ambiental + bloom) va en
+     desktop; en pantallas chicas o punteros gruesos se baja a 'media'.
+     ?calidad=alta|media|baja fuerza una para probar. */
+  const forzada = new URLSearchParams(location.search).get('calidad');
+  const calidad = forzada || ((innerWidth < 900 || matchMedia('(pointer: coarse)').matches) ? 'media' : 'alta');
+
   const aldea = iniciarAldea({
     canvas,
+    calidad,
     etiqueta: document.getElementById('etiqueta'),
     /* id null = vista general, sin nada elegido. Se carga el perfil en la
        ficha pero sin abrirla: el modal solo se abre cuando elegiste algo. */
@@ -473,6 +488,14 @@ if (!hayWebGL()) {
   abrirPanel.addEventListener('click', () => {
     document.body.classList.remove('panel-cerrado');
   });
+  const botonNoche = document.getElementById('noche');
+  botonNoche.addEventListener('click', () => {
+    const aNoche = !aldea.esNoche();
+    aldea.setNoche(aNoche);
+    botonNoche.textContent = aNoche ? '☀ Día' : '☾ Noche';
+    botonNoche.setAttribute('aria-pressed', String(aNoche));
+  });
+
   document.getElementById('ir-perfil').addEventListener('click', e => {
     e.preventDefault();
     aldea.vistaGeneral();
