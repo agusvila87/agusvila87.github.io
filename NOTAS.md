@@ -42,6 +42,40 @@ Reglas que conviene no romper:
 
 ---
 
+## Tercera etapa (septiembre 2026): de escenario a portfolio
+
+La aldea ya estaba linda pero adentro de cada edificio había lo mismo que
+en la versión clásica. Esta etapa hace que el sitio conteste rápido
+"qué hizo esta persona y cómo piensa".
+
+| Pieza | Qué es | Dónde se edita |
+|---|---|---|
+| Portada | El pitch de tres segundos sobre la entrada cinemática, con Tour / Explorar / Lista | HTML `#portada` en `index.html`; las cifras están a mano ahí |
+| Tour guiado | La cámara va parada por parada (8 s cada una), con una frase por proyecto y cierre con CV/LinkedIn/mail | `ORDEN_TOUR`, `CIERRE_TOUR` y el campo `tour` de cada nodo en `data.js` |
+| Blueprint | La aldea como greybox: materiales planos, contornos, anillos, accesos, camino crítico y anotaciones | `blueprint.js` (motor), `ANOTACIONES` en `data.js` (texto y posición) |
+| Fichas case study | Video primero, después "El proyecto", "Mi rol", "Decisiones de diseño", "Además", "Qué aprendí" | campos `miRol`, `decisiones[{titulo,texto}]`, `aprendi` en cada nodo. Las secciones vacías no se dibujan |
+| Ficha meta | "Cómo diseñé esta aldea": el sitio mismo como case study, con botón al plano | `ALDEA` en `data.js` |
+| Lista plana | Todos los proyectos en una ventana, para el que no quiere orbitar | `fichaLista()` en `index.html` |
+
+Atajos: `?sin-intro` salta cinemática y portada; `?sin-portada` solo la
+portada. Esc cierra lo que esté más arriba (lightbox → ficha → portada →
+tour → blueprint). Flechas ← → mueven el tour.
+
+**Lo que falta y solo lo podés llenar vos** (sin inventar nada quedó así):
+- `decisiones` solo tienen Sealcoating, SolAR, Cold Blooded y Bit Con: eran
+  los únicos con material real en los textos. Zack 2, Grab it, OrbBuster,
+  Proyecto Caos, Asteroids y Cold World tienen una sola línea. Con dos o
+  tres decisiones por juego (qué problema había, qué probaste, qué quedó)
+  la ficha las dibuja sola.
+- `aprendi` está soportado pero vacío en todos.
+- Imágenes de trabajo (mapas de nivel, greyboxes, planillas de balanceo,
+  bocetos) irían en `imagenes` de cada casa. Hoy solo los dos estudios
+  tienen tiras.
+- La ficha meta dice que el código se escribió "en pareja con Claude
+  Code". Es verdad; si preferís no decirlo, está en `ALDEA.parrafos[1]`.
+
+---
+
 ## Llevar los assets del pack de Unity a la web
 
 Sobre *Modular Stylized Medieval Town* (StylArts), que ya está comprado.

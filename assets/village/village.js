@@ -21,8 +21,9 @@ import { crearPost } from './post.js';
 import { crearFoso, crearPuente } from './agua.js';
 import { construirHorizonte } from './horizonte.js';
 import { crearVida } from './vida.js';
+import { crearBlueprint } from './blueprint.js';
 import { MAT_VIDRIO, MAT_FAROL } from './paleta.js';
-import { NODOS } from './data.js';
+import { NODOS, ANOTACIONES } from './data.js';
 
 const GRADO = Math.PI / 180;
 
@@ -121,7 +122,7 @@ class CamaraOrbital {
 }
 
 /* ── Arranque ──────────────────────────────────────────────────────── */
-export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta', intro = true }) {
+export function iniciarAldea({ canvas, etiqueta, notas, onSeleccion, calidad = 'alta', intro = true }) {
   const escena = new THREE.Scene();
   escena.fog = new THREE.Fog(C.cieloBajo, 175, 430);   // arranca antes de la cordillera: la separa en capas
 
@@ -190,7 +191,14 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta', 
     new THREE.MeshBasicMaterial({ color: 0xFFE9A8, transparent: true, opacity: 0, side: THREE.DoubleSide })
   );
   aro.rotation.x = -Math.PI / 2;
+  aro.userData.blueprint = true;     // el modo Blueprint lo deja en paz
   escena.add(aro);
+
+  const blueprint = crearBlueprint({
+    escena, edificios, camara, canvas, notas,
+    anotaciones: ANOTACIONES, alturaTerreno,
+    terrazas: { R_ALTA, H_ALTA, R_MEDIA, H_MEDIA, R_BAJA, H_BAJA, RADIO_MURALLA, R_FOSO_INTERNO, R_FOSO_EXTERNO }
+  });
 
   const orbita = new CamaraOrbital(camara, canvas);
   const rayo = new THREE.Raycaster();
@@ -201,7 +209,8 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta', 
     const id = g.userData.nodo.id;
     const activo = seleccionado === id, encima = hover === id;
     const intensidad = activo ? 0.07 : encima ? 0.045 : 0;
-    for (const m of g.userData.materiales) {
+    const lista = blueprint.activo && g.userData.materialesBP ? g.userData.materialesBP : g.userData.materiales;
+    for (const m of lista) {
       m.emissive.setHex(0xFFD98A);
       m.emissiveIntensity = intensidad;
     }
@@ -267,6 +276,7 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta', 
     seleccionado = null;
     edificios.forEach(pintar);
     if (!hover) aro.material.opacity = 0;
+    if (blueprint.activo) { vistaPlano(); if (onSeleccion) onSeleccion(null); return; }
     const e = ENCUADRE.keep;
     const angosto = canvas.clientWidth < 900;
     orbita.irA(new THREE.Vector3(0, H_ALTA + e.alturaFoco, 0),
@@ -274,7 +284,16 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta', 
     if (onSeleccion) onSeleccion(null);
   }
 
-  function seleccionar(id) {
+  /* El plano se mira desde arriba y un poco de costado, con toda la
+     aldea adentro del cuadro. Mantiene el azimut que traia la camara. */
+  function vistaPlano() {
+    const angosto = canvas.clientWidth < 900;
+    orbita.irA(new THREE.Vector3(0, H_MEDIA, 0), angosto ? 200 : 135, undefined, 30);
+  }
+
+  /* abrir=false mueve la camara y marca el edificio pero avisa que no hay
+     que abrir la ficha: lo usa el tour guiado. */
+  function seleccionar(id, abrir = true) {
     seleccionado = id;
     edificios.forEach(pintar);
 
@@ -289,11 +308,28 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta', 
         : g.position.clone().setY(g.userData.suelo + e.alturaFoco);
       const lado = nodo.angle >= 0 ? 1 : -1;
       const azim = nodo.kind === 'keep' ? 0 : (nodo.angle + lado * e.desvio) * GRADO;
-      orbita.irA(foco, e.dist, azim, e.polar);
+      orbita.irA(foco, e.dist, azim, blueprint.activo ? Math.min(e.polar, 34) : e.polar);
       marcarAro(id, true);
     }
-    if (onSeleccion) onSeleccion(id);
+    if (onSeleccion) onSeleccion(id, abrir);
   }
+
+  /* ── modo Blueprint ── */
+  let planoMeta = 0, plano = 0;
+  function setBlueprint(on) {
+    on = !!on;
+    if (on === blueprint.activo) return;
+    blueprint.setActivo(on);
+    planoMeta = on ? 1 : 0;
+    edificios.forEach(pintar);               // rehace el emissive sobre el material que toca
+    if (seleccionado) seleccionar(seleccionado, false);
+    else if (on) vistaPlano();
+    else vistaGeneral();
+  }
+
+  /* ── tour guiado: la camara gira despacio alrededor de cada parada ── */
+  let tourActivo = false;
+  function setTour(on) { tourActivo = !!on; }
 
   canvas.addEventListener('pointermove', e => {
     const r = canvas.getBoundingClientRect();
@@ -355,8 +391,15 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta', 
       noche += (nocheMeta - noche) * Math.min(1, dt * 2.2);
       aplicarNoche(noche);
     }
-    /* sin input por 8 s, la aldea gira sola muy despacio */
-    if (performance.now() - ultimoInput > 8000 && seleccionado === null) {
+    if (Math.abs(planoMeta - plano) > 0.001) {
+      plano += (planoMeta - plano) * Math.min(1, dt * 3);
+      post.setBlueprint(plano);
+    }
+    /* sin input por 8 s, la aldea gira sola muy despacio; en el tour gira
+       siempre, alrededor de la parada */
+    if (tourActivo) {
+      orbita.azimMeta += dt * 0.05;
+    } else if (performance.now() - ultimoInput > 8000 && seleccionado === null) {
       orbita.azimMeta += dt * 0.035;
     }
     orbita.actualizar();
@@ -381,6 +424,7 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta', 
     foso.actualizar(t);
     horizonte.actualizar(t);
     vida.actualizar(t, dt);
+    blueprint.actualizar();
     moverEtiqueta();
     post.render(dt);
   }
@@ -412,6 +456,10 @@ export function iniciarAldea({ canvas, etiqueta, onSeleccion, calidad = 'alta', 
 
   return {
     seleccionar, vistaGeneral,
+    enfocar: id => seleccionar(id, false),
+    setTour,
+    setBlueprint,
+    esBlueprint: () => blueprint.activo,
     setNoche: v => { nocheMeta = v ? 1 : 0; },
     esNoche: () => nocheMeta === 1,
     calidad: post.calidad

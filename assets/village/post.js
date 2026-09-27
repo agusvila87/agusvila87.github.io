@@ -13,6 +13,9 @@
        redimensionar(w, h)    tamaño en pixeles CSS (el pixelRatio lo pone render)
        setNoche(t)            0 = dia, 1 = noche; ajusta el grade (mas frio, mas
                               oscuro, bloom mas presente) con transicion suave
+       setBlueprint(t)        0 = normal, 1 = greybox: sin bloom, sin calidez,
+                              menos saturacion y viñeta, para que el plano se
+                              lea como un plano y no como una foto
        calidad                la calidad efectiva
      }
 
@@ -242,7 +245,8 @@ export function crearPost({ render, escena, camara, calidad = 'alta' }) {
       calidad: 'baja',
       render() { render.render(escena, camara); },
       redimensionar() {},
-      setNoche() {}
+      setNoche() {},
+      setBlueprint() {}
     };
   }
 
@@ -259,17 +263,35 @@ export function crearPost({ render, escena, camara, calidad = 'alta' }) {
     composer.setSize(w, h);
   }
 
+  /* noche y blueprint se combinan: el bloom lo apaga el blueprint, y el
+     grade queda mas neutro cuanto mas plano es el modo */
+  let tNoche = 0, tPlano = 0;
+  const BASE = { saturacion: grade.uniforms.saturacion.value, calidez: grade.uniforms.calidez.value,
+                 vineta: grade.uniforms.vineta.value };
+
+  function aplicar() {
+    grade.uniforms.noche.value = tNoche;
+    bloom.strength  = lerp(BLOOM.dia.fuerza, BLOOM.noche.fuerza, tNoche) * (1 - tPlano);
+    bloom.threshold = lerp(BLOOM.dia.umbral, BLOOM.noche.umbral, tNoche);
+    grade.uniforms.saturacion.value = lerp(BASE.saturacion, 0.82, tPlano);
+    grade.uniforms.calidez.value    = lerp(BASE.calidez, 0, tPlano);
+    grade.uniforms.vineta.value     = lerp(BASE.vineta, 0.18, tPlano);
+  }
+
   function setNoche(t) {
-    t = THREE.MathUtils.clamp(Number(t) || 0, 0, 1);
-    grade.uniforms.noche.value = t;
-    bloom.strength  = lerp(BLOOM.dia.fuerza, BLOOM.noche.fuerza, t);
-    bloom.threshold = lerp(BLOOM.dia.umbral, BLOOM.noche.umbral, t);
+    tNoche = THREE.MathUtils.clamp(Number(t) || 0, 0, 1);
+    aplicar();
+  }
+  function setBlueprint(t) {
+    tPlano = THREE.MathUtils.clamp(Number(t) || 0, 0, 1);
+    aplicar();
   }
 
   return {
     calidad: nivel,
     render(dt) { composer.render(dt); },
     redimensionar,
-    setNoche
+    setNoche,
+    setBlueprint
   };
 }

@@ -187,6 +187,129 @@ body.panel-cerrado #abrir-panel{display:block}
 .p-disponible i{width:6px;height:6px;border-radius:50%;background:var(--verde)}
 .p-pitch{font-size:17px;line-height:1.55;color:var(--pergamino);margin:22px auto 0;max-width:54ch}
 
+/* ── botones compartidos (portada, tour, blueprint) ── */
+.boton{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  padding:13px 20px;border-radius:3px;border:1px solid var(--linea);background:rgba(49,37,28,.9);
+  color:var(--pergamino);cursor:pointer;transition:all .18s;text-decoration:none;display:inline-block}
+.boton:hover{border-color:var(--ambar);color:var(--ambar-claro)}
+.boton.primario{background:var(--ambar);border-color:var(--ambar);color:#2A1E15;font-weight:700}
+.boton.primario:hover{background:var(--ambar-claro);border-color:var(--ambar-claro);color:#2A1E15}
+.nl.on{color:var(--ambar-claro)}
+
+/* ── portada: el pitch de tres segundos, sobre la entrada cinematica ── */
+#portada{position:fixed;inset:0;z-index:46;display:grid;place-items:center;padding:24px;
+  background:radial-gradient(ellipse at 50% 62%,rgba(24,17,12,.22),rgba(24,17,12,.72));
+  transition:opacity .5s,visibility .5s}
+#portada.oculta{opacity:0;visibility:hidden;pointer-events:none}
+.portada-caja{text-align:center;max-width:680px}
+.portada-caja h1{font-family:var(--display);font-variation-settings:"wdth" 66,"wght" 900;
+  font-size:clamp(54px,9.5vw,110px);line-height:.88;text-transform:uppercase;margin-top:16px;
+  text-shadow:0 8px 34px rgba(20,12,8,.65)}
+.portada-caja h1 span{color:var(--ambar-claro)}
+.portada-caja>p{font-size:clamp(15px,1.8vw,19px);line-height:1.55;color:var(--pergamino);
+  max-width:46ch;margin:22px auto 0;text-shadow:0 2px 12px rgba(20,12,8,.8)}
+.portada-cifras{display:flex;justify-content:center;gap:28px;margin-top:24px;font-family:var(--mono);
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--tenue);text-shadow:0 2px 8px rgba(20,12,8,.8)}
+.portada-cifras b{display:block;font-family:var(--display);font-variation-settings:"wdth" 72,"wght" 800;
+  font-size:28px;line-height:1;color:var(--pergamino);letter-spacing:0;margin-bottom:5px}
+.portada-botones{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:30px}
+.portada-lista{margin-top:18px}
+.portada-lista button{background:none;border:0;cursor:pointer;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--tenue);text-decoration:underline;
+  text-underline-offset:4px;text-shadow:0 2px 8px rgba(20,12,8,.8)}
+.portada-lista button:hover{color:var(--ambar-claro)}
+
+/* ── tour guiado: una tarjeta abajo, la camara hace el resto ── */
+#tour{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));z-index:45;
+  transform:translateX(-50%);width:min(600px,calc(100% - 28px));
+  background:linear-gradient(165deg,var(--tabla-2),var(--tinta) 70%);
+  border:1px solid var(--ambar);border-radius:5px;box-shadow:0 18px 50px rgba(20,12,8,.55);
+  padding:15px 18px 14px;display:none}
+body.tour #tour{display:block}
+body.tour #barra-inf,body.tour #abrir-panel{display:none}
+.t-cab{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.t-kicker{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ambar-claro)}
+.t-salir{background:none;border:0;color:var(--tenue);font-family:var(--mono);font-size:9px;
+  letter-spacing:.15em;text-transform:uppercase;cursor:pointer;padding:0}
+.t-salir:hover{color:var(--ambar-claro)}
+.t-titulo{font-family:var(--display);font-variation-settings:"wdth" 74,"wght" 800;
+  font-size:clamp(22px,3vw,30px);line-height:1;text-transform:uppercase;margin-top:8px}
+.t-texto{font-size:14.5px;line-height:1.5;color:#DBCFBB;margin-top:8px}
+.t-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.t-links:empty{display:none}
+.t-links a{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;padding:9px 13px;border:1px solid var(--linea);border-radius:3px;color:var(--pergamino)}
+.t-links a:hover{border-color:var(--ambar);color:var(--ambar-claro)}
+.t-links a.destacado{background:var(--ambar);border-color:var(--ambar);color:#2A1E15;font-weight:700}
+.t-pie{display:flex;align-items:center;gap:8px;margin-top:14px}
+.t-pie .boton{padding:9px 13px;font-size:9.5px}
+.t-pie .relleno{flex:1}
+.t-puntos{display:flex;gap:5px;margin-right:6px}
+.t-puntos i{width:6px;height:6px;border-radius:50%;background:var(--linea)}
+.t-puntos i.on{background:var(--ambar-claro)}
+.t-barra{height:2px;background:var(--linea);margin-top:12px;border-radius:2px;overflow:hidden}
+.t-barra i{display:block;height:100%;width:0;background:var(--ambar)}
+.t-barra i.corre{transition:width var(--dur,8s) linear;width:100%}
+
+/* ── blueprint: anotaciones ancladas a puntos de la aldea ── */
+#notas-bp{position:fixed;inset:0;z-index:35;pointer-events:none;display:none}
+body.blueprint #notas-bp{display:block}
+.nota{position:absolute;top:0;left:0;width:max-content;max-width:150px;opacity:0;transition:opacity .2s;
+  background:rgba(14,28,48,.88);border:1px solid rgba(234,241,248,.5);border-left:3px solid var(--ambar-claro);
+  border-radius:3px;padding:8px 11px 9px;margin-top:-12px}
+.nota::after{content:"";position:absolute;left:50%;bottom:-12px;width:1px;height:12px;background:rgba(234,241,248,.6)}
+.nota.visible{opacity:1}
+.nota b{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ambar-claro)}
+.nota span{display:block;font-size:11px;line-height:1.38;color:#EAF1F8;margin-top:4px}
+/* con menos pixeles las notas se pisan: van cayendo las menos importantes */
+@media(max-width:1100px){.nota:nth-child(6),.nota:nth-child(8){display:none}}
+#bp-ficha{display:none;position:fixed;left:clamp(14px,2.4vw,26px);
+  bottom:calc(76px + env(safe-area-inset-bottom));z-index:45;border-color:rgba(234,241,248,.5);
+  background:rgba(14,28,48,.9)}
+body.blueprint #bp-ficha{display:block}
+body.blueprint #barra-sup{background:linear-gradient(rgba(10,20,36,.72),transparent)}
+body.blueprint #barra-inf{background:linear-gradient(transparent,rgba(10,20,36,.8) 55%)}
+
+/* ── ficha tipo case study ── */
+.p-sec{margin:30px auto 0;max-width:62ch}
+.p-sec h3,.l-grupo h3{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--ambar-claro);display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.p-sec h3::after,.l-grupo h3::after{content:"";flex:1;height:1px;background:var(--linea)}
+.p-sec p{color:#DBCFBB;font-size:15px;line-height:1.68}
+.p-sec p+p{margin-top:12px}
+.p-sec p strong{color:var(--pergamino);font-weight:600}
+.p-dec{list-style:none;counter-reset:dec}
+.p-dec li{position:relative;padding:14px 16px 14px 58px;border:1px solid var(--linea);border-radius:4px;background:rgba(36,27,20,.5)}
+.p-dec li+li{margin-top:8px}
+.p-dec li::before{counter-increment:dec;content:"0" counter(dec);position:absolute;left:16px;top:12px;
+  font-family:var(--display);font-variation-settings:"wdth" 70,"wght" 800;font-size:22px;color:var(--ambar-claro)}
+.p-dec b{display:block;font-size:15px;font-weight:600;color:var(--pergamino);line-height:1.3}
+.p-dec p{font-size:14px;margin-top:6px;line-height:1.6}
+.p-iter{list-style:none}
+.p-iter li{position:relative;padding-left:18px;color:#DBCFBB;font-size:14.5px;line-height:1.6}
+.p-iter li+li{margin-top:8px}
+.p-iter li::before{content:"";position:absolute;left:0;top:11px;width:8px;height:2px;background:var(--ambar)}
+.p-accion{text-align:center;margin-top:26px}
+.p-nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+.p-nav button{background:none;border:0;cursor:pointer;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--tenue);padding:6px 0;text-align:left}
+.p-nav button:hover{color:var(--ambar-claro)}
+.p-nav button b{display:block;font-family:var(--body);font-size:12.5px;letter-spacing:0;text-transform:none;
+  color:var(--pergamino);margin-top:3px}
+.p-nav button.sig{text-align:right;margin-left:auto}
+
+/* ── lista plana de proyectos ── */
+.l-grupo{margin-top:26px}
+.l-grupo:first-of-type{margin-top:22px}
+.l-fila{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:none;border:0;
+  border-bottom:1px solid var(--linea);padding:12px 6px;cursor:pointer;color:inherit;font:inherit;transition:background .15s}
+.l-fila:hover{background:rgba(224,138,60,.08)}
+.l-fila i{width:10px;height:10px;border-radius:2px;flex:none}
+.l-fila i.keep{background:#E8B84B}.l-fila i.castle{background:#50609A}.l-fila i.house{background:#A85040}.l-fila i.meta{background:var(--tenue)}
+.l-fila b{font-family:var(--display);font-variation-settings:"wdth" 76,"wght" 800;font-size:17px;text-transform:uppercase;line-height:1.1}
+.l-fila span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--tenue);margin-top:3px}
+.l-fila em{margin-left:auto;font-style:normal;color:var(--ambar-claro);font-size:14px}
+
 /* lightbox */
 #lupa{position:fixed;inset:0;z-index:90;background:rgba(26,19,16,.94);display:none;
   place-items:center;padding:4vw;cursor:zoom-out}
@@ -227,14 +350,21 @@ body.panel-cerrado #abrir-panel{display:block}
   .p-ini{font-size:36px}
   .p-pitch{font-size:15px}
   .p-tiras{grid-template-columns:repeat(2,1fr)}
-  #abrir-panel{bottom:calc(66px + env(safe-area-inset-bottom))}
+  #abrir-panel,#bp-ficha{bottom:calc(66px + env(safe-area-inset-bottom))}
   #pistas{display:none}
+  .p-dec li{padding-left:50px}
+  .nota{max-width:140px}
+  .nota span{font-size:10.5px}
+  .nota:nth-child(n+5){display:none}
 }
 @media(max-width:560px){
   /* la barra de arriba no puede partirse en dos lineas */
   #barra-sup{gap:11px;padding:12px 14px}
   .mark{font-size:14px}
   .nl{font-size:8.5px;letter-spacing:.1em}
+  .nl.secundario{display:none}
+  .portada-cifras{gap:18px}
+  .t-puntos{display:none}   /* en un celular no entran los 12 puntos y el boton */
 }
 </style>
 </head>
@@ -251,10 +381,12 @@ body.panel-cerrado #abrir-panel{display:block}
 
 <div class="chrome" id="barra-sup">
   <a href="#" class="mark" id="ir-perfil">Agustín <span>Vila</span></a>
-  <a class="nl" href="Agustin_Vila_Game_Designer_CV.pdf" download>CV ↓</a>
-  <a class="nl" href="https://www.linkedin.com/in/agustinvila87/" target="_blank" rel="noopener">LinkedIn ↗</a>
-  <a class="nl" href="clasico.html">Versión clásica ↗</a>
+  <button class="nl" id="tour-btn" type="button" title="Recorrer la aldea con la cámara, proyecto por proyecto">▶ Tour</button>
+  <button class="nl" id="blueprint" type="button" aria-pressed="false" title="Ver la aldea como plano de level design">⌗ Blueprint</button>
   <button class="nl" id="noche" type="button" aria-pressed="false" title="Cambiar entre día y noche">☾ Noche</button>
+  <a class="nl" href="Agustin_Vila_Game_Designer_CV.pdf" download>CV ↓</a>
+  <a class="nl secundario" href="https://www.linkedin.com/in/agustinvila87/" target="_blank" rel="noopener">LinkedIn ↗</a>
+  <a class="nl secundario" href="clasico.html">Versión clásica ↗</a>
 </div>
 
 <div class="chrome" id="barra-inf">
@@ -271,6 +403,50 @@ body.panel-cerrado #abrir-panel{display:block}
 </aside>
 <button id="abrir-panel" type="button">Ver perfil</button>
 
+<!-- Portada: lo que hay que entender en tres segundos, mientras la
+     camara entra. Se va con cualquiera de los tres botones. -->
+<div id="portada">
+  <div class="portada-caja">
+    <div class="p-kicker">Game &amp; Level Designer · Buenos Aires</div>
+    <h1>Agustín <span>Vila</span></h1>
+    <p>Tres años diseñando juegos. Cada edificio de esta aldea es un proyecto: dos títulos publicados y ocho juegos de carrera.</p>
+    <div class="portada-cifras">
+      <div><b>2</b>Títulos publicados</div>
+      <div><b>8</b>Juegos de carrera</div>
+      <div><b>3</b>Años</div>
+    </div>
+    <div class="portada-botones">
+      <button class="boton primario" id="portada-tour" type="button">▶ Tour guiado · 90 s</button>
+      <button class="boton" id="portada-explorar" type="button">Explorar la aldea</button>
+    </div>
+    <div class="portada-lista"><button id="portada-lista" type="button">Ver la lista de proyectos</button></div>
+  </div>
+</div>
+
+<!-- Tour guiado: la camara va de parada en parada, esta tarjeta cuenta
+     que es cada una. -->
+<div id="tour" role="region" aria-label="Tour guiado">
+  <div class="t-cab">
+    <span class="t-kicker" id="t-kicker"></span>
+    <button class="t-salir" id="t-salir" type="button">Salir ✕</button>
+  </div>
+  <h2 class="t-titulo" id="t-titulo"></h2>
+  <p class="t-texto" id="t-texto"></p>
+  <div class="t-links" id="t-links"></div>
+  <div class="t-pie">
+    <button class="boton" id="t-ant" type="button" aria-label="Anterior">◀</button>
+    <button class="boton" id="t-ficha" type="button">Ver ficha</button>
+    <span class="relleno"></span>
+    <div class="t-puntos" id="t-puntos"></div>
+    <button class="boton" id="t-sig" type="button" aria-label="Siguiente">▶</button>
+  </div>
+  <div class="t-barra"><i id="t-progreso"></i></div>
+</div>
+
+<!-- Blueprint: las anotaciones las crea blueprint.js aca adentro -->
+<div id="notas-bp" aria-hidden="true"></div>
+<button id="bp-ficha" class="boton" type="button">Leer: cómo diseñé esta aldea →</button>
+
 <div id="lupa" role="dialog" aria-label="Imagen ampliada"><img alt=""></div>
 
 <!-- Contenido real: lo lee un lector de pantalla, un buscador, y cualquiera
@@ -278,7 +454,8 @@ body.panel-cerrado #abrir-panel{display:block}
 <div id="respaldo">
   <h1>Agustín<br>Vila</h1>
   <p><strong>Game Designer · Level Designer</strong> — Buenos Aires, AR.</p>
-  <p>Diseño loops, encuentros y niveles. Me interesa el momento en que alguien entiende
+  <p>Tres años diseñando juegos: dos títulos publicados y ocho juegos de carrera.
+  Diseño loops, encuentros y niveles. Me interesa el momento en que alguien entiende
   una mecánica sin que nadie se la haya explicado.</p>
   <p>
     <a href="Agustin_Vila_Game_Designer_CV.pdf">Descargar CV</a> ·
@@ -315,7 +492,12 @@ body.panel-cerrado #abrir-panel{display:block}
                "three/addons/": "./assets/vendor/jsm/" } }
 </script>
 <script type="module">
-import { NODOS, PERFIL } from './assets/village/data.js';
+import { NODOS, PERFIL, ALDEA, ORDEN_TOUR, CIERRE_TOUR } from './assets/village/data.js';
+
+/* Los edificios son NODOS; la aldea como case study no es un edificio
+   pero tiene ficha igual. */
+const FICHAS = [...NODOS, ALDEA];
+const ficha = id => FICHAS.find(x => x.id === id);
 
 const canvas = document.getElementById('aldea');
 const respaldo = document.getElementById('respaldo');
@@ -351,23 +533,50 @@ function videoHTML(id) {
     <span class="play"><i></i></span></button>`;
 }
 
+const seccion = (titulo, html) => html ? `<section class="p-sec"><h3>${titulo}</h3>${html}</section>` : '';
+const parrafosHTML = ps => (ps || []).map(p => `<p>${p}</p>`).join('');
+const decisionesHTML = d => (d && d.length)
+  ? `<ol class="p-dec">${d.map(x => `<li><b>${x.titulo}</b><p>${x.texto}</p></li>`).join('')}</ol>` : '';
+const metaHTML = m => (m || []).length
+  ? `<dl class="p-meta">${m.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>` : '';
+
+/* anterior / siguiente en el orden del tour */
+function navHTML(id) {
+  const i = ORDEN_TOUR.indexOf(id);
+  if (i < 0) return '';
+  const ant = i > 0 ? ficha(ORDEN_TOUR[i - 1]) : null;
+  const sig = i < ORDEN_TOUR.length - 1 ? ficha(ORDEN_TOUR[i + 1]) : null;
+  const nombre = n => n.kind === 'keep' ? 'Perfil' : n.nombre;
+  return `<div class="p-nav">
+    ${ant ? `<button type="button" data-ir="${ant.id}">← Anterior<b>${nombre(ant)}</b></button>` : ''}
+    ${sig ? `<button type="button" class="sig" data-ir="${sig.id}">Siguiente →<b>${nombre(sig)}</b></button>` : ''}
+  </div>`;
+}
+
+/* Ficha de proyecto como case study: video primero, despues que es,
+   que hice yo, que decidi y por que. Las secciones sin datos no se
+   dibujan, asi que una casa con una sola linea sigue viendose bien. */
 function fichaProyecto(n) {
   const media = n.video ? videoHTML(n.video)
               : n.portada ? `<img src="${n.portada}" alt="" loading="lazy">` : '';
   const tiras = (n.imagenes || []).length
     ? `<div class="p-tiras">${n.imagenes.map(u => `<img src="${u}" alt="" loading="lazy">`).join('')}</div>` : '';
-  const meta = (n.meta || []).length
-    ? `<dl class="p-meta">${n.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')}</dl>` : '';
+  const [primero, ...resto] = n.parrafos || [];
   return `<div class="p-cab">
       <div class="p-kicker">${n.rol || 'Proyecto'}</div>
       <h2 class="p-titulo">${n.nombre}</h2>
       <div class="p-linea">${n.linea || ''}</div>
     </div>
-    ${meta}
     ${media ? `<div class="p-media">${media}</div>` : ''}
     ${tiras}
-    <div class="p-texto">${(n.parrafos || []).map(p => `<p>${p}</p>`).join('')}</div>
-    <div class="p-links">${linksHTML(n.links)}</div>`;
+    ${metaHTML(n.meta)}
+    ${seccion('El proyecto', primero ? `<p>${primero}</p>` : '')}
+    ${seccion('Mi rol', n.miRol ? `<p>${n.miRol}</p>` : '')}
+    ${seccion('Decisiones de diseño', decisionesHTML(n.decisiones))}
+    ${seccion('Además', parrafosHTML(resto))}
+    ${seccion('Qué aprendí', n.aprendi ? `<p>${n.aprendi}</p>` : '')}
+    <div class="p-links">${linksHTML(n.links)}</div>
+    ${navHTML(n.id)}`;
 }
 
 function fichaPerfil(n) {
@@ -383,19 +592,54 @@ function fichaPerfil(n) {
       <p class="p-pitch">${n.pitch}</p>
     </div>
     <div class="p-stats">${n.stats.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('')}</div>
-    <div class="p-texto">${n.parrafos.map(p => `<p>${p}</p>`).join('')}</div>
+    <div class="p-texto">${parrafosHTML(n.parrafos)}</div>
+    <div class="p-links">${linksHTML(n.links)}</div>
+    ${navHTML(n.id)}`;
+}
+
+/* La aldea como case study: por que esta hecha asi, decision por
+   decision, y el boton para verlo en el plano. */
+function fichaMeta(n) {
+  const iter = (n.iteraciones || []).length
+    ? `<ul class="p-iter">${n.iteraciones.map(t => `<li>${t}</li>`).join('')}</ul>` : '';
+  return `<div class="p-cab">
+      <div class="p-kicker">${n.rol}</div>
+      <h2 class="p-titulo">${n.nombre}</h2>
+      <div class="p-linea">${n.linea}</div>
+    </div>
+    ${metaHTML(n.meta)}
+    ${seccion('Por qué una aldea', parrafosHTML(n.parrafos))}
+    ${seccion('Decisiones de diseño', decisionesHTML(n.decisiones))}
+    ${seccion('Lo que cambió en el camino', iter)}
+    <div class="p-accion"><button class="boton primario" type="button" data-blueprint>⌗ Verlo en el plano</button></div>
     <div class="p-links">${linksHTML(n.links)}</div>`;
 }
 
-function mostrarFicha(id, abrir = true) {
-  const n = NODOS.find(x => x.id === id);
-  if (!n) return;
-  cuerpo.innerHTML = n.kind === 'keep' ? fichaPerfil(n) : fichaProyecto(n);
-  cuerpo.scrollTop = 0;
-  if (abrir) document.body.classList.remove('panel-cerrado');
+/* Lista plana: para el que tiene apuro y no quiere orbitar. */
+function fichaLista() {
+  const fila = n => `<button class="l-fila" type="button" data-ir="${n.id}">
+      <i class="${n.kind}"></i>
+      <div><b>${n.kind === 'keep' ? 'Perfil · ' + n.nombre : n.nombre}</b><span>${n.linea || n.rol || ''}</span></div>
+      <em>→</em></button>`;
+  const grupo = (titulo, ns) => `<div class="l-grupo"><h3>${titulo}</h3>${ns.map(fila).join('')}</div>`;
+  const por = k => FICHAS.filter(n => n.kind === k);
+  return `<div class="p-cab">
+      <div class="p-kicker">Todo lo que hay</div>
+      <h2 class="p-titulo">Proyectos</h2>
+      <div class="p-linea">Tocá uno y la cámara te lleva</div>
+    </div>
+    ${grupo('Quién', por('keep'))}
+    ${grupo('Trabajo profesional', por('castle'))}
+    ${grupo('Carrera · Escuela Da Vinci', por('house'))}
+    ${grupo('Este sitio', por('meta'))}`;
+}
 
-  /* thumbnails de YouTube: cuando no hay maxresdefault, YouTube devuelve
-     un gris de 120x90 con status 200, asi que hay que medir la imagen. */
+let aldea = null;   // la devuelve iniciarAldea(); las fichas la usan para navegar
+
+function armarCuerpo(html, titulo) {
+  cuerpo.innerHTML = html;
+  cuerpo.scrollTop = 0;
+
   /* si assets/foto.jpg todavía no está subida, caen las iniciales */
   const retrato = cuerpo.querySelector('[data-foto]');
   if (retrato) retrato.addEventListener('error', () => {
@@ -405,6 +649,8 @@ function mostrarFicha(id, abrir = true) {
     retrato.replaceWith(ini);
   });
 
+  /* thumbnails de YouTube: cuando no hay maxresdefault, YouTube devuelve
+     un gris de 120x90 con status 200, asi que hay que medir la imagen. */
   cuerpo.querySelectorAll('.yt img[data-fb]').forEach(img => {
     const revisar = () => { if (img.naturalWidth <= 120 && img.src !== img.dataset.fb) img.src = img.dataset.fb; };
     img.complete ? revisar() : img.addEventListener('load', revisar);
@@ -414,17 +660,42 @@ function mostrarFicha(id, abrir = true) {
     f.src = `https://www.youtube-nocookie.com/embed/${b.dataset.id}?autoplay=1&rel=0`;
     f.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
     f.allowFullscreen = true;
-    f.title = 'Video de ' + n.nombre;
+    f.title = 'Video de ' + titulo;
     b.replaceWith(f);
   }));
   cuerpo.querySelectorAll('.p-tiras img').forEach(img => img.addEventListener('click', () => {
     lupa.querySelector('img').src = img.src;
     lupa.classList.add('abierta');
   }));
+  cuerpo.querySelectorAll('[data-ir]').forEach(b => b.addEventListener('click', () => {
+    if (!aldea) return;
+    const id = b.dataset.ir;
+    if (id === ALDEA.id) mostrarFicha(id, true);
+    else aldea.seleccionar(id);
+  }));
+  cuerpo.querySelectorAll('[data-blueprint]').forEach(b => b.addEventListener('click', () => {
+    cerrarFicha();
+    setBlueprint(true);
+  }));
 }
 
+function mostrarFicha(id, abrir = true) {
+  const n = ficha(id);
+  if (!n) return;
+  const html = n.kind === 'keep' ? fichaPerfil(n) : n.kind === 'meta' ? fichaMeta(n) : fichaProyecto(n);
+  armarCuerpo(html, n.nombre);
+  if (abrir) document.body.classList.remove('panel-cerrado');
+}
+
+function mostrarLista() {
+  armarCuerpo(fichaLista(), 'Proyectos');
+  document.body.classList.remove('panel-cerrado');
+}
+
+function cerrarFicha() { document.body.classList.add('panel-cerrado'); }
+const fichaAbierta = () => !document.body.classList.contains('panel-cerrado');
+
 lupa.addEventListener('click', () => lupa.classList.remove('abierta'));
-addEventListener('keydown', e => { if (e.key === 'Escape') lupa.classList.remove('abierta'); });
 
 /* Sacar la pantalla de carga NO puede depender de requestAnimationFrame: el
    navegador no lo dispara si la pestaña no está componiendo (pestaña en
@@ -440,12 +711,23 @@ setTimeout(ocultarCargando, 5000);          // red de seguridad, pase lo que pas
 function mostrarRespaldo() {
   respaldo.classList.remove('oculto');
   document.querySelectorAll('.chrome').forEach(n => n.remove());
-  panel.remove();
-  document.getElementById('velo').remove();
-  const abrir = document.getElementById('abrir-panel');
-  if (abrir) abrir.remove();
+  for (const id of ['panel', 'velo', 'abrir-panel', 'portada', 'tour', 'notas-bp', 'bp-ficha']) {
+    const n = document.getElementById(id);
+    if (n) n.remove();
+  }
   canvas.remove();
   ocultarCargando();
+}
+
+/* ── blueprint (se define afuera del try para que las fichas lo usen) ── */
+const botonBlueprint = document.getElementById('blueprint');
+function setBlueprint(on) {
+  if (!aldea) return;
+  aldea.setBlueprint(on);
+  document.body.classList.toggle('blueprint', on);
+  botonBlueprint.textContent = on ? '⌗ Aldea' : '⌗ Blueprint';
+  botonBlueprint.setAttribute('aria-pressed', String(on));
+  botonBlueprint.classList.toggle('on', on);
 }
 
 if (!hayWebGL()) {
@@ -461,10 +743,10 @@ if (!hayWebGL()) {
   const abrirPanel = document.getElementById('abrir-panel');
   const atajos = document.getElementById('atajos');
   const botones = new Map();
-  for (const n of NODOS) {
+  for (const n of FICHAS) {
     const b = document.createElement('button');
-    b.textContent = n.kind === 'keep' ? 'Perfil' : n.nombre;
-    b.addEventListener('click', () => aldea.seleccionar(n.id));
+    b.textContent = n.kind === 'keep' ? 'Perfil' : n.kind === 'meta' ? 'Cómo la diseñé' : n.nombre;
+    b.addEventListener('click', () => n.kind === 'meta' ? mostrarFicha(n.id, true) : aldea.seleccionar(n.id));
     atajos.appendChild(b);
     botones.set(n.id, b);
   }
@@ -476,40 +758,153 @@ if (!hayWebGL()) {
   const forzada = params.get('calidad');
   const calidad = forzada || ((innerWidth < 900 || matchMedia('(pointer: coarse)').matches) ? 'media' : 'alta');
 
-  const aldea = iniciarAldea({
+  aldea = iniciarAldea({
     canvas,
     calidad,
     intro: !params.has('sin-intro'),        // ?sin-intro salta la cinematica, para depurar
     etiqueta: document.getElementById('etiqueta'),
+    notas: document.getElementById('notas-bp'),
     /* id null = vista general, sin nada elegido. Se carga el perfil en la
-       ficha pero sin abrirla: el modal solo se abre cuando elegiste algo. */
-    onSeleccion: id => {
+       ficha pero sin abrirla: el modal solo se abre cuando elegiste algo.
+       abrir=false viene del tour: mueve la camara y deja la ficha lista
+       pero cerrada. */
+    onSeleccion: (id, abrir = true) => {
       botones.forEach((b, k) => b.classList.toggle('on', k === id));
-      mostrarFicha(id || PERFIL.id, id !== null);
+      mostrarFicha(id || PERFIL.id, id !== null && abrir);
       abrirPanel.textContent = (!id || id === PERFIL.id) ? 'Ver perfil' : 'Ver ficha';
     }
   });
 
-  const cerrarFicha = () => document.body.classList.add('panel-cerrado');
   document.getElementById('panel-cerrar').addEventListener('click', cerrarFicha);
   document.getElementById('velo').addEventListener('click', cerrarFicha);
-  addEventListener('keydown', e => {
-    if (e.key === 'Escape' && !lupa.classList.contains('abierta')) cerrarFicha();
-  });
-  abrirPanel.addEventListener('click', () => {
-    document.body.classList.remove('panel-cerrado');
-  });
+  abrirPanel.addEventListener('click', () => document.body.classList.remove('panel-cerrado'));
+
   const botonNoche = document.getElementById('noche');
   botonNoche.addEventListener('click', () => {
     const aNoche = !aldea.esNoche();
     aldea.setNoche(aNoche);
     botonNoche.textContent = aNoche ? '☀ Día' : '☾ Noche';
     botonNoche.setAttribute('aria-pressed', String(aNoche));
+    botonNoche.classList.toggle('on', aNoche);
   });
+
+  botonBlueprint.addEventListener('click', () => setBlueprint(!aldea.esBlueprint()));
+  document.getElementById('bp-ficha').addEventListener('click', () => mostrarFicha(ALDEA.id, true));
 
   document.getElementById('ir-perfil').addEventListener('click', e => {
     e.preventDefault();
+    if (tour.activo) salirTour();
     aldea.vistaGeneral();
+  });
+
+  /* ── tour guiado ──
+     Parada por parada en el orden de ORDEN_TOUR, y una ultima con el
+     llamado a la accion. Avanza solo cada DURACION ms; se pausa mientras
+     hay una ficha abierta y sigue al cerrarla. */
+  const DURACION = 8000;
+  const paradas = [...ORDEN_TOUR.map(ficha).filter(Boolean), null];   // null = cierre
+  const tour = { activo: false, i: 0, timer: 0 };
+  const t = {
+    kicker: document.getElementById('t-kicker'), titulo: document.getElementById('t-titulo'),
+    texto: document.getElementById('t-texto'), links: document.getElementById('t-links'),
+    puntos: document.getElementById('t-puntos'), progreso: document.getElementById('t-progreso'),
+    ficha: document.getElementById('t-ficha'), ant: document.getElementById('t-ant'),
+    sig: document.getElementById('t-sig')
+  };
+  t.puntos.innerHTML = paradas.map(() => '<i></i>').join('');
+  t.progreso.style.setProperty('--dur', DURACION + 'ms');
+
+  const tipo = n => n.kind === 'keep' ? 'Perfil' : n.kind === 'castle' ? 'Estudio' : 'Escuela Da Vinci';
+
+  function programar() {
+    clearTimeout(tour.timer);
+    t.progreso.classList.remove('corre');
+    t.progreso.style.width = '0';
+    if (tour.i >= paradas.length - 1) return;        // el cierre no avanza solo
+    void t.progreso.offsetWidth;                     // fuerza el reflow para que la transicion arranque de 0
+    t.progreso.style.width = '';
+    t.progreso.classList.add('corre');
+    tour.timer = setTimeout(() => irParada(tour.i + 1), DURACION);
+  }
+  function pausarTour() {
+    clearTimeout(tour.timer);
+    const w = t.progreso.getBoundingClientRect().width;
+    t.progreso.classList.remove('corre');
+    t.progreso.style.width = w + 'px';
+  }
+  function irParada(i) {
+    tour.i = Math.max(0, Math.min(paradas.length - 1, i));
+    const n = paradas[tour.i];
+    [...t.puntos.children].forEach((p, k) => p.classList.toggle('on', k === tour.i));
+    t.ant.disabled = tour.i === 0;
+    t.sig.disabled = tour.i === paradas.length - 1;
+    if (n) {
+      aldea.enfocar(n.id);
+      t.kicker.textContent = `${tour.i + 1} / ${paradas.length - 1} · ${tipo(n)}`;
+      t.titulo.textContent = n.nombre;
+      t.texto.textContent = n.tour || n.linea || '';
+      t.links.innerHTML = '';
+      t.ficha.style.display = '';
+      t.ficha.textContent = n.kind === 'keep' ? 'Ver perfil' : 'Ver ficha';
+    } else {
+      aldea.vistaGeneral();
+      t.kicker.textContent = 'Fin del tour';
+      t.titulo.textContent = CIERRE_TOUR.titulo;
+      t.texto.textContent = CIERRE_TOUR.texto;
+      t.links.innerHTML = linksHTML(CIERRE_TOUR.links);
+      t.ficha.style.display = 'none';
+    }
+    programar();
+  }
+  function iniciarTour() {
+    if (aldea.esBlueprint()) setBlueprint(false);
+    cerrarFicha();
+    tour.activo = true;
+    document.body.classList.add('tour');
+    aldea.setTour(true);
+    irParada(0);
+  }
+  function salirTour() {
+    clearTimeout(tour.timer);
+    tour.activo = false;
+    document.body.classList.remove('tour');
+    aldea.setTour(false);
+    aldea.vistaGeneral();
+  }
+  document.getElementById('tour-btn').addEventListener('click', () => tour.activo ? salirTour() : iniciarTour());
+  document.getElementById('t-salir').addEventListener('click', salirTour);
+  t.ant.addEventListener('click', () => irParada(tour.i - 1));
+  t.sig.addEventListener('click', () => irParada(tour.i + 1));
+  t.ficha.addEventListener('click', () => {
+    const n = paradas[tour.i];
+    if (n) mostrarFicha(n.id, true);
+  });
+  /* la ficha abierta pausa el tour; cerrarla lo reanuda desde la parada */
+  new MutationObserver(() => {
+    if (!tour.activo) return;
+    if (fichaAbierta()) pausarTour(); else programar();
+  }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+
+  /* ── portada ── */
+  const portada = document.getElementById('portada');
+  const ocultarPortada = () => portada.classList.add('oculta');
+  document.getElementById('portada-tour').addEventListener('click', () => { ocultarPortada(); iniciarTour(); });
+  document.getElementById('portada-explorar').addEventListener('click', ocultarPortada);
+  document.getElementById('portada-lista').addEventListener('click', () => { ocultarPortada(); mostrarLista(); });
+  if (params.has('sin-intro') || params.has('sin-portada')) ocultarPortada();
+
+  /* ── teclado: Esc cierra lo que este mas arriba; flechas mueven el tour ── */
+  addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (lupa.classList.contains('abierta')) lupa.classList.remove('abierta');
+      else if (fichaAbierta()) cerrarFicha();
+      else if (!portada.classList.contains('oculta')) ocultarPortada();
+      else if (tour.activo) salirTour();
+      else if (aldea.esBlueprint()) setBlueprint(false);
+    } else if (tour.activo && !fichaAbierta()) {
+      if (e.key === 'ArrowRight') irParada(tour.i + 1);
+      if (e.key === 'ArrowLeft') irParada(tour.i - 1);
+    }
   });
 
   ocultarCargando();
