@@ -1,23 +1,40 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Agustín Vila · Game Designer · Combat &amp; Level Design</title>
-<meta name="description" content="Game Designer especializado en combate y niveles. Bestiario completo de SolAR (KYKUYO, Lightship Grand Prize 2025) y niveles de Sealcoating Simulator. Buenos Aires.">
+<meta name="description" content="Game designer focused on combat and levels. Full bestiary for SolAR (KYKUYO, Lightship Grand Prize 2025) and the levels of Sealcoating Simulator. Buenos Aires.">
 <meta name="theme-color" content="#0A0710">
+
+<!-- Version en ingles por defecto; la version en espanol vive en ?lang=es -->
+<link rel="alternate" hreflang="en" href="https://agusvila87.github.io/">
+<link rel="alternate" hreflang="es" href="https://agusvila87.github.io/?lang=es">
+<link rel="alternate" hreflang="x-default" href="https://agusvila87.github.io/">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="Agustín Vila · Game Designer · Combat &amp; Level Design">
-<meta property="og:description" content="El bestiario completo de SolAR y los niveles de Sealcoating Simulator. Combat &amp; Level Design desde Buenos Aires.">
+<meta property="og:description" content="SolAR's full bestiary and the levels of Sealcoating Simulator. Combat &amp; Level Design from Buenos Aires.">
 <!-- EDITAR: falta subir la imagen 1200x630 al repo como og.png -->
 <meta property="og:image" content="https://agusvila87.github.io/og.png">
 <meta property="og:url" content="https://agusvila87.github.io/">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="es_AR">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<!-- Antes de pintar: si la URL trae ?lang=es, arranca en espanol sin parpadeo -->
+<script>
+  (function(){
+    try{
+      var q = new URLSearchParams(location.search).get('lang');
+      if (q === 'es') document.documentElement.lang = 'es';
+    }catch(e){}
+  })();
+</script>
 
 <style>
 :root{
@@ -44,6 +61,10 @@ picture{display:contents}
 picture>source{display:none}
 :focus-visible{outline:2px solid var(--violet-hot);outline-offset:3px;border-radius:2px}
 
+/* ── idiomas: cada texto existe dos veces, data-lang="en" y data-lang="es" ── */
+html[lang="en"] [data-lang="es"],
+html[lang="es"] [data-lang="en"]{display:none !important}
+
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--violet-hot);display:flex;align-items:center;gap:12px}
 .eyebrow::before{content:"";width:26px;height:2px;background:var(--violet);transform:skewX(-32deg)}
 .h2{font-family:var(--display);font-variation-settings:"wdth" 74,"wght" 800;font-size:clamp(34px,6.4vw,68px);line-height:.92;letter-spacing:-.01em;text-transform:uppercase;margin:18px 0 0}
@@ -52,10 +73,16 @@ picture>source{display:none}
 nav{position:sticky;top:0;z-index:60;background:rgba(10,7,16,.74);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
 .nav-in{max-width:var(--maxw);margin:0 auto;padding:14px var(--gut);display:flex;align-items:center;gap:24px}
 .mark{font-family:var(--display);font-variation-settings:"wdth" 62,"wght" 900;font-size:19px;letter-spacing:.06em;margin-right:auto;text-decoration:none}
-.mark span{color:var(--violet-hot)}
 .nav-in a.nl{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color .18s;white-space:nowrap}
 .nav-in a.nl:hover{color:var(--bone)}
-@media(max-width:760px){.nav-in a.nl:not(.keep){display:none}}
+@media(max-width:760px){.nav-in a.nl:not(.keep){display:none}.nav-in{gap:16px}}
+
+/* selector EN / ES, arriba a la izquierda */
+.lang{display:flex;border:1px solid var(--line);flex:none}
+.lang button{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;background:transparent;color:var(--muted);border:0;padding:6px 10px;cursor:pointer;transition:background .18s,color .18s}
+.lang button+button{border-left:1px solid var(--line)}
+.lang button:hover{color:var(--bone)}
+.lang button[aria-pressed="true"]{background:var(--violet);color:#fff}
 
 header{padding:clamp(52px,9vw,104px) 0 clamp(36px,6vw,72px)}
 .card{position:relative;background:linear-gradient(160deg,var(--panel-2),var(--panel) 58%);border:1px solid var(--line);padding:clamp(24px,4.2vw,54px);overflow:hidden}
@@ -134,12 +161,14 @@ section{padding:clamp(56px,8vw,110px) 0}
 
 /* ── grilla académica ── */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:22px}
+@media(max-width:380px){.grid{grid-template-columns:1fr}}
 .mini{border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;transition:border-color .25s,transform .25s}
 .mini:hover{border-color:rgba(169,107,255,.45);transform:translateY(-3px)}
 .mini-body{padding:20px 22px 22px;display:flex;flex-direction:column;flex:1}
 .mini h4{font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 800;font-size:20px;text-transform:uppercase;line-height:1.05;margin-bottom:10px}
 .mini .line{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--violet-hot);margin-bottom:12px}
 .mini p{color:var(--muted);font-size:14px;flex:1}
+.mini p strong{color:var(--bone);font-weight:600}
 .mini .foot{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
 .mini .foot a,.mini .foot span{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
 .mini .foot a{color:var(--violet-hot)}
@@ -159,7 +188,7 @@ section{padding:clamp(56px,8vw,110px) 0}
 .tile a:hover{border-bottom-color:var(--violet-hot)}
 
 /* ── competencias ── */
-.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.skills{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
 .skill{background:var(--panel);padding:clamp(20px,2.8vw,30px)}
 .skill h4{font-family:var(--display);font-variation-settings:"wdth" 78,"wght" 700;font-size:17px;text-transform:uppercase;margin-bottom:10px}
 .skill p{color:var(--muted);font-size:14.5px}
@@ -172,9 +201,12 @@ section{padding:clamp(56px,8vw,110px) 0}
 footer{border-top:1px solid var(--line);padding:26px 0 40px}
 .foot-in{max-width:var(--maxw);margin:0 auto;padding:0 var(--gut);display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 
+/* en mobile la tarjeta es muy alta y la franja inclinada se corria sobre el texto */
+@media(max-width:760px){.card::before{transform:none;width:5px}}
+
 @media(max-width:420px){
   .meta{grid-template-columns:1fr}
-  .more-row{gap:4px 12px}
+  .btn{padding:13px 16px}
 }
 
 .rv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease}
@@ -183,7 +215,7 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
   html{scroll-behavior:auto}
   .rv{opacity:1;transform:none;transition:none}
   .dot{animation:none}
-  .btn:hover,.mini:hover,.yt:hover img{transform:none}
+  .btn:hover,.mini:hover,.tile:hover,.yt:hover img{transform:none}
 }
 </style>
 </head>
@@ -191,13 +223,17 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
 
 <nav>
   <div class="nav-in">
-    <a href="#top" class="mark">AGUSTÍN VILA<span>.</span></a>
-    <a href="#destacados" class="nl">Proyectos</a>
-    <a href="#davinci" class="nl">Da Vinci</a>
-    <a href="#quehago" class="nl">Qué hago</a>
-    <a href="#docencia" class="nl">Docencia</a>
-    <a href="Agustin_Vila_Game_Designer_CV.pdf" class="nl" download>CV</a>
-    <a href="#contacto" class="nl keep">Contacto</a>
+    <div class="lang" role="group" aria-label="Language / Idioma">
+      <button type="button" data-set-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-set-lang="es" aria-pressed="false" lang="es">ES</button>
+    </div>
+    <a href="#top" class="mark">AGUSTÍN VILA</a>
+    <a href="#destacados" class="nl"><span data-lang="en">Projects</span><span data-lang="es">Proyectos</span></a>
+    <a href="#davinci" class="nl"><span data-lang="en">Student work</span><span data-lang="es">Da Vinci</span></a>
+    <a href="#quehago" class="nl"><span data-lang="en">What I do</span><span data-lang="es">Qué hago</span></a>
+    <a href="#docencia" class="nl"><span data-lang="en">Teaching</span><span data-lang="es">Docencia</span></a>
+    <a href="Agustin_Vila_Game_Designer_CV.pdf" class="nl cv-link" download>CV</a>
+    <a href="#contacto" class="nl keep"><span data-lang="en">Contact</span><span data-lang="es">Contacto</span></a>
   </div>
 </nav>
 
@@ -206,27 +242,30 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
     <div class="card">
       <div class="rowtop">
         <div class="loc">AR · Buenos Aires · GMT-3</div>
-        <div class="avail"><i class="dot"></i>Abierto a propuestas</div>
+        <div class="avail"><i class="dot"></i><span data-lang="en">Open to offers</span><span data-lang="es">Abierto a propuestas</span></div>
       </div>
 
       <h1>Agustín<em>Vila</em></h1>
       <div class="role">Game Designer &nbsp;·&nbsp; Combat &amp; Level Design</div>
 
-      <p class="pitch">Diseño enemigos, bosses y las habilidades con las que el jugador los
+      <p class="pitch" data-lang="en">I design enemies, bosses and the abilities players use to
+      face them. I care about the moment someone understands a mechanic without anyone
+      having explained it.</p>
+      <p class="pitch" data-lang="es">Diseño enemigos, bosses y las habilidades con las que el jugador los
       enfrenta. Me interesa el momento en que alguien entiende una mecánica sin que nadie
       se la haya explicado.</p>
 
       <div class="stats">
-        <div class="stat"><b>2</b><span>Juegos profesionales</span></div>
-        <div class="stat"><b>1</b><span>En camino a Steam</span></div>
-        <div class="stat"><b>3 años</b><span>En producción</span></div>
-        <div class="stat"><b>Unity · Unreal</b><span>Motores</span></div>
-        <div class="stat"><b>PC · Mobile · AR</b><span>Plataformas</span></div>
+        <div class="stat"><b>2</b><span data-lang="en">Professional games</span><span data-lang="es">Juegos profesionales</span></div>
+        <div class="stat"><b>1</b><span data-lang="en">Coming to Steam</span><span data-lang="es">En camino a Steam</span></div>
+        <div class="stat"><b data-lang="en">3 years</b><b data-lang="es">3 años</b><span data-lang="en">In production</span><span data-lang="es">En producción</span></div>
+        <div class="stat"><b>Unity · Unreal</b><span data-lang="en">Engines</span><span data-lang="es">Motores</span></div>
+        <div class="stat"><b>PC · Mobile · AR</b><span data-lang="en">Platforms</span><span data-lang="es">Plataformas</span></div>
       </div>
 
       <div class="cta-row">
-        <a href="#destacados" class="btn solid">Ver proyectos</a>
-        <a href="Agustin_Vila_Game_Designer_CV.pdf" class="btn ghost" download>Descargar CV</a>
+        <a href="#destacados" class="btn solid"><span data-lang="en">See projects</span><span data-lang="es">Ver proyectos</span></a>
+        <a href="Agustin_Vila_Game_Designer_CV.pdf" class="btn ghost cv-link" download><span data-lang="en">Download CV</span><span data-lang="es">Descargar CV</span></a>
       </div>
     </div>
   </div>
@@ -236,9 +275,11 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
 <section id="destacados">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="eyebrow">Trabajo profesional</div>
-      <h2 class="h2">Destacados</h2>
-      <p class="lede">Dos juegos, dos estudios, dos plataformas. Abajo está qué problema de
+      <div class="eyebrow"><span data-lang="en">Professional work</span><span data-lang="es">Trabajo profesional</span></div>
+      <h2 class="h2"><span data-lang="en">Featured</span><span data-lang="es">Destacados</span></h2>
+      <p class="lede" data-lang="en">Two games, two studios, two platforms. Below is the design problem
+      each one posed and what I decided to do about it.</p>
+      <p class="lede" data-lang="es">Dos juegos, dos estudios, dos plataformas. Abajo está qué problema de
       diseño había en cada uno y qué decidí al respecto.</p>
     </div>
 
@@ -246,48 +287,69 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
     <article class="proj rv">
       <div class="proj-grid">
         <div class="shot">
-          <span class="tag">En desarrollo · Steam</span>
-          <button class="yt" data-id="G1gEgFUrqv8" aria-label="Ver el trailer de Sealcoating Simulator">
-            <picture><source srcset="assets/sealcoating/keyart.webp" type="image/webp"><img src="assets/sealcoating/keyart.jpg" width="1280" height="720" alt="Key art de Sealcoating Simulator"></picture>
+          <span class="tag"><span data-lang="en">In development · Steam</span><span data-lang="es">En desarrollo · Steam</span></span>
+          <button class="yt" data-id="G1gEgFUrqv8" aria-label="Watch the Sealcoating Simulator trailer" data-aria-es="Ver el trailer de Sealcoating Simulator">
+            <picture><source srcset="assets/sealcoating/keyart.webp" type="image/webp"><img src="assets/sealcoating/keyart.jpg" width="1280" height="720" alt="Sealcoating Simulator key art" data-alt-es="Key art de Sealcoating Simulator"></picture>
             <span class="play"><i></i></span>
           </button>
           <div class="strip">
-            <picture><source srcset="assets/sealcoating/chorro.webp" type="image/webp"><img src="assets/sealcoating/chorro.jpg" width="640" height="360" loading="lazy" alt="Vertiendo sellador con la manguera sobre el asfalto"></picture>
-            <picture><source srcset="assets/sealcoating/barrido.webp" type="image/webp"><img src="assets/sealcoating/barrido.jpg" width="640" height="360" loading="lazy" alt="Extendiendo el sellador con el squeegee"></picture>
-            <picture><source srcset="assets/sealcoating/faltante.webp" type="image/webp"><img src="assets/sealcoating/faltante.jpg" width="640" height="360" loading="lazy" alt="Las zonas sin cubrir resaltadas sobre la superficie"></picture>
-            <picture><source srcset="assets/sealcoating/recargar.webp" type="image/webp"><img src="assets/sealcoating/recargar.jpg" width="640" height="360" loading="lazy" alt="Estación de recarga del tanque de sellador"></picture>
-            <picture><source srcset="assets/sealcoating/cobertura.webp" type="image/webp"><img src="assets/sealcoating/cobertura.jpg" width="640" height="360" loading="lazy" alt="Contador de cobertura al 99 por ciento"></picture>
-            <picture><source srcset="assets/sealcoating/completado.webp" type="image/webp"><img src="assets/sealcoating/completado.jpg" width="640" height="360" loading="lazy" alt="Pantalla de nivel completado con el resumen del trabajo"></picture>
+            <picture><source srcset="assets/sealcoating/chorro.webp" type="image/webp"><img src="assets/sealcoating/chorro.jpg" width="640" height="360" loading="lazy" alt="Pouring sealer onto the asphalt with the hose" data-alt-es="Vertiendo sellador con la manguera sobre el asfalto"></picture>
+            <picture><source srcset="assets/sealcoating/barrido.webp" type="image/webp"><img src="assets/sealcoating/barrido.jpg" width="640" height="360" loading="lazy" alt="Spreading sealer with the squeegee" data-alt-es="Extendiendo el sellador con el squeegee"></picture>
+            <picture><source srcset="assets/sealcoating/faltante.webp" type="image/webp"><img src="assets/sealcoating/faltante.jpg" width="640" height="360" loading="lazy" alt="Uncovered areas highlighted on the surface" data-alt-es="Las zonas sin cubrir resaltadas sobre la superficie"></picture>
+            <picture><source srcset="assets/sealcoating/recargar.webp" type="image/webp"><img src="assets/sealcoating/recargar.jpg" width="640" height="360" loading="lazy" alt="Sealer tank refill station" data-alt-es="Estación de recarga del tanque de sellador"></picture>
+            <picture><source srcset="assets/sealcoating/cobertura.webp" type="image/webp"><img src="assets/sealcoating/cobertura.jpg" width="640" height="360" loading="lazy" alt="Coverage counter at 99 percent" data-alt-es="Contador de cobertura al 99 por ciento"></picture>
+            <picture><source srcset="assets/sealcoating/completado.webp" type="image/webp"><img src="assets/sealcoating/completado.jpg" width="640" height="360" loading="lazy" alt="Level complete screen with the job summary" data-alt-es="Pantalla de nivel completado con el resumen del trabajo"></picture>
           </div>
         </div>
         <div class="proj-body">
           <h3>Sealcoating Simulator</h3>
           <dl class="meta">
-            <div><dt>Rol</dt><dd>Co-fundador · Game &amp; Level Designer</dd></div>
-            <div><dt>Estudio</dt><dd>Ace 87 Studios · desde abril 2026</dd></div>
-            <div><dt>Motor</dt><dd>Unity · C#</dd></div>
-            <div><dt>Plataforma</dt><dd>PC (Steam) · Coop local y online, hasta 4</dd></div>
+            <div><dt><span data-lang="en">Role</span><span data-lang="es">Rol</span></dt><dd><span data-lang="en">Co-founder · Game &amp; Level Designer</span><span data-lang="es">Co-fundador · Game &amp; Level Designer</span></dd></div>
+            <div><dt><span data-lang="en">Studio</span><span data-lang="es">Estudio</span></dt><dd><span data-lang="en">Ace 87 Studios · since April 2026</span><span data-lang="es">Ace 87 Studios · desde abril 2026</span></dd></div>
+            <div><dt><span data-lang="en">Engine</span><span data-lang="es">Motor</span></dt><dd>Unity · C#</dd></div>
+            <div><dt><span data-lang="en">Platform</span><span data-lang="es">Plataforma</span></dt><dd><span data-lang="en">PC (Steam) · Local &amp; online co-op, up to 4</span><span data-lang="es">PC (Steam) · Coop local y online, hasta 4</span></dd></div>
           </dl>
 
-          <p>Simulador cozy en primera persona sobre sellar asfalto, en desarrollo para PC en
-          <strong>Ace 87 Studios</strong>, el estudio que cofundé en abril de 2026. Cooperativo
-          local y online para hasta cuatro jugadores, por ahora.</p>
+          <div data-lang="en">
+            <p>A first-person cozy sim about sealcoating asphalt, in development for PC at
+            <strong>Ace 87 Studios</strong>, the studio I co-founded in April 2026. Local and
+            online co-op for up to four players, for now.</p>
 
-          <p>Estoy a cargo del <strong>diseño del juego y de todos los niveles jugables</strong>:
-          cada superficie es un problema distinto de recorrido, orden y ritmo. También el core
-          loop y la progresión de un oficio repetitivo convertido en gameplay, ajustados con
-          sesiones de testeo.</p>
+            <p>I own the <strong>game design and every playable level</strong>: each surface is
+            its own problem of routing, order and pacing. I also designed the core loop and the
+            progression that turn a repetitive trade into gameplay, tuned through playtest
+            sessions.</p>
 
-          <p>La dificultad no se regula con números. El sellador se comporta como un fluido: fluye,
-          se encharca y se asienta, así que ninguna superficie se resuelve dos veces igual. Lo que
-          gradúa la exigencia es la <strong>geometría del espacio, los obstáculos y la capacidad
-          del tanque</strong>.</p>
+            <p>Difficulty isn't tuned with numbers. The sealer behaves like a fluid: it flows,
+            pools and settles, so no surface plays out the same way twice. What scales the
+            challenge is <strong>the geometry of the space, the obstacles and the tank
+            capacity</strong>.</p>
 
-          <!-- EDITAR: que cambio en los niveles al pasar a coop de 4? Ese es el mejor ejemplo
-               de criterio de level design que tenes para contar en este proyecto. -->
-          <p>En un cozy la fricción tiene que estar en la tarea, nunca en orientarse. Por eso las
-          zonas sin cubrir se resaltan y las estaciones de recarga se ven a través de las paredes:
-          <strong>nadie pierde tiempo preguntándose qué le falta ni adónde ir</strong>.</p>
+            <p>In a cozy game the friction belongs in the task, never in finding your way. That's
+            why uncovered areas are highlighted and refill stations show through walls:
+            <strong>nobody wastes time wondering what's missing or where to go</strong>.</p>
+          </div>
+          <div data-lang="es">
+            <p>Simulador cozy en primera persona sobre sellar asfalto, en desarrollo para PC en
+            <strong>Ace 87 Studios</strong>, el estudio que cofundé en abril de 2026. Cooperativo
+            local y online para hasta cuatro jugadores, por ahora.</p>
+
+            <p>Estoy a cargo del <strong>diseño del juego y de todos los niveles jugables</strong>:
+            cada superficie es un problema distinto de recorrido, orden y ritmo. También el core
+            loop y la progresión de un oficio repetitivo convertido en gameplay, ajustados con
+            sesiones de testeo.</p>
+
+            <p>La dificultad no se regula con números. El sellador se comporta como un fluido: fluye,
+            se encharca y se asienta, así que ninguna superficie se resuelve dos veces igual. Lo que
+            gradúa la exigencia es la <strong>geometría del espacio, los obstáculos y la capacidad
+            del tanque</strong>.</p>
+
+            <!-- EDITAR: que cambio en los niveles al pasar a coop de 4? Ese es el mejor ejemplo
+                 de criterio de level design que tenes para contar en este proyecto. -->
+            <p>En un cozy la fricción tiene que estar en la tarea, nunca en orientarse. Por eso las
+            zonas sin cubrir se resaltan y las estaciones de recarga se ven a través de las paredes:
+            <strong>nadie pierde tiempo preguntándose qué le falta ni adónde ir</strong>.</p>
+          </div>
 
           <div class="proj-links">
             <a href="https://store.steampowered.com/app/5027030/Sealcoating_Simulator/" target="_blank" rel="noopener">Steam ↗</a>
@@ -300,58 +362,84 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
     <article class="proj rv">
       <div class="proj-grid">
         <div class="shot">
-          <span class="tag">Publicado · iOS y Android</span>
+          <span class="tag"><span data-lang="en">Live · iOS &amp; Android</span><span data-lang="es">Publicado · iOS y Android</span></span>
           <!-- Material de prensa publico de KYKUYO, copiado al repo para no depender de kykuyo.com -->
-          <picture><source srcset="assets/solar/gameplay.webp" type="image/webp"><img src="assets/solar/gameplay.jpg" width="1280" height="613" alt="Gameplay de SolAR en las calles de Singapur"></picture>
+          <picture><source srcset="assets/solar/gameplay.webp" type="image/webp"><img src="assets/solar/gameplay.jpg" width="1280" height="613" alt="SolAR gameplay on the streets of Singapore" data-alt-es="Gameplay de SolAR en las calles de Singapur"></picture>
           <div class="strip">
-            <picture><source srcset="assets/solar/enemigos.webp" type="image/webp"><img src="assets/solar/enemigos.jpg" width="640" height="360" loading="lazy" alt="Enemigos robot avanzando por una arena de neón"></picture>
-            <picture><source srcset="assets/solar/trailer.webp" type="image/webp"><img src="assets/solar/trailer.jpg" width="640" height="360" loading="lazy" alt="Fotograma del trailer de SolAR"></picture>
-            <picture><source srcset="assets/solar/portal.webp" type="image/webp"><img src="assets/solar/portal.jpg" width="640" height="361" loading="lazy" alt="El jugador cruza un portal de piedra hacia un parque con Supertrees al fondo"></picture>
-            <picture><source srcset="assets/solar/mundo-1.webp" type="image/webp"><img src="assets/solar/mundo-1.jpg" width="640" height="360" loading="lazy" alt="Un portal jugable emplazado sobre una esquina real de Singapur"></picture>
-            <picture><source srcset="assets/solar/mundo-2.webp" type="image/webp"><img src="assets/solar/mundo-2.jpg" width="640" height="360" loading="lazy" alt="Encuentro de combate en realidad aumentada a nivel de calle"></picture>
-            <picture><source srcset="assets/solar/mundo-3.webp" type="image/webp"><img src="assets/solar/mundo-3.jpg" width="640" height="360" loading="lazy" alt="Vista del mundo solarpunk de SolAR superpuesto a la ciudad"></picture>
+            <picture><source srcset="assets/solar/enemigos.webp" type="image/webp"><img src="assets/solar/enemigos.jpg" width="640" height="360" loading="lazy" alt="Robot enemies advancing across a neon arena" data-alt-es="Enemigos robot avanzando por una arena de neón"></picture>
+            <picture><source srcset="assets/solar/trailer.webp" type="image/webp"><img src="assets/solar/trailer.jpg" width="640" height="360" loading="lazy" alt="Frame from the SolAR trailer" data-alt-es="Fotograma del trailer de SolAR"></picture>
+            <picture><source srcset="assets/solar/portal.webp" type="image/webp"><img src="assets/solar/portal.jpg" width="640" height="361" loading="lazy" alt="The player steps through a stone portal into a park with the Supertrees behind" data-alt-es="El jugador cruza un portal de piedra hacia un parque con Supertrees al fondo"></picture>
+            <picture><source srcset="assets/solar/mundo-1.webp" type="image/webp"><img src="assets/solar/mundo-1.jpg" width="640" height="360" loading="lazy" alt="A playable portal placed on a real Singapore street corner" data-alt-es="Un portal jugable emplazado sobre una esquina real de Singapur"></picture>
+            <picture><source srcset="assets/solar/mundo-2.webp" type="image/webp"><img src="assets/solar/mundo-2.jpg" width="640" height="360" loading="lazy" alt="Street-level AR combat encounter" data-alt-es="Encuentro de combate en realidad aumentada a nivel de calle"></picture>
+            <picture><source srcset="assets/solar/mundo-3.webp" type="image/webp"><img src="assets/solar/mundo-3.jpg" width="640" height="360" loading="lazy" alt="SolAR's solarpunk world overlaid on the city" data-alt-es="Vista del mundo solarpunk de SolAR superpuesto a la ciudad"></picture>
           </div>
         </div>
         <div class="proj-body">
           <h3>SolAR</h3>
           <dl class="meta">
-            <div><dt>Rol</dt><dd>Game Designer · Combat, Enemy &amp; Level Design</dd></div>
-            <div><dt>Estudio</dt><dd>KYKUYO · Singapur, remoto</dd></div>
-            <div><dt>Período</dt><dd>Oct 2023 a ago 2026</dd></div>
-            <div><dt>Motor</dt><dd>Unity</dd></div>
-            <div><dt>Plataforma</dt><dd>Mobile · Geolocalización y AR</dd></div>
-            <div><dt>Premio</dt><dd>Lightship Grand Prize 2025</dd></div>
+            <div><dt><span data-lang="en">Role</span><span data-lang="es">Rol</span></dt><dd>Game Designer · Combat, Enemy &amp; Level Design</dd></div>
+            <div><dt><span data-lang="en">Studio</span><span data-lang="es">Estudio</span></dt><dd><span data-lang="en">KYKUYO · Singapore, remote</span><span data-lang="es">KYKUYO · Singapur, remoto</span></dd></div>
+            <div><dt><span data-lang="en">Period</span><span data-lang="es">Período</span></dt><dd><span data-lang="en">Oct 2023 – Aug 2026</span><span data-lang="es">Oct 2023 a ago 2026</span></dd></div>
+            <div><dt><span data-lang="en">Engine</span><span data-lang="es">Motor</span></dt><dd>Unity</dd></div>
+            <div><dt><span data-lang="en">Platform</span><span data-lang="es">Plataforma</span></dt><dd><span data-lang="en">Mobile · Geolocation &amp; AR</span><span data-lang="es">Mobile · Geolocalización y AR</span></dd></div>
+            <div><dt><span data-lang="en">Award</span><span data-lang="es">Premio</span></dt><dd>Lightship Grand Prize 2025</dd></div>
           </dl>
 
           <!-- Todo lo de este bloque sale del CV de septiembre 2026, que es la fuente de verdad.
                Los numeros del bestiario los publico Agustin en su CV. -->
-          <p>Geo-RPG solarpunk con realidad aumentada, live en Singapur para iOS y Android y
-          ganador del <strong>Lightship Grand Prize 2025</strong>. Usa <strong>7.700 lugares
-          reales</strong> de la ciudad como mapa y superó las <strong>5.000 descargas</strong>.
-          El espacio de juego no se dibuja, lo da la ciudad, y el trabajo es diseñar encuentros
-          que funcionen en cualquier esquina. Trabajé tres años en KYKUYO, en remoto.</p>
+          <div data-lang="en">
+            <p>A solarpunk geo-RPG with augmented reality, live in Singapore on iOS and Android and
+            winner of the <strong>Lightship Grand Prize 2025</strong>. It uses <strong>7,700 real
+            locations</strong> across the city as its map and has passed <strong>5,000
+            downloads</strong>. The play space isn't drawn, the city provides it, so the job is
+            designing encounters that work on any street corner. I spent three years at KYKUYO,
+            working remotely.</p>
 
-          <p>Diseñé el <strong>bestiario completo</strong>: 19 enemigos, 6 de ellos bosses, y el
-          resto con variantes chica, normal, grande y épica, además de unos 6 prototipos que no
-          llegaron a producción. Cada enemigo con telegrafías claras y feedback visual y sonoro,
-          priorizando la legibilidad y el game feel.</p>
+            <p>I designed the <strong>full bestiary</strong>: 19 enemies, 6 of them bosses, the rest
+            with small, normal, large and epic variants, plus around 6 prototypes that didn't make
+            it to production. Every enemy has clear telegraphs and visual and audio feedback,
+            prioritizing readability and game feel.</p>
 
-          <p>Del lado del jugador, las <strong>habilidades, ultimates y ataques especiales</strong>,
-          diseñadas en cruce con el bestiario. Y las <strong>arenas</strong>, con su ritmo de
-          encuentros y sus curvas de dificultad.</p>
+            <p>On the player side, the <strong>abilities, ultimates and special attacks</strong>,
+            designed hand in hand with the bestiary. And the <strong>arenas</strong>, with their
+            encounter pacing and difficulty curves.</p>
 
-          <p>También fui responsable de la <strong>FTUE completa</strong> y del <strong>balance
-          del combate y la progresión</strong> de largo plazo, documentados en GDD y
-          Living GDD.</p>
+            <p>I was also responsible for the <strong>complete FTUE</strong> and the long-term
+            <strong>combat and progression balance</strong>, documented in a GDD and a
+            Living GDD.</p>
 
-          <p>En <strong>SolAR × SPCA</strong> (2025), el spin-off con gatos reales de la SPCA de
-          Singapur, me ocupé del <strong>level design y el testing</strong>.</p>
+            <p>On <strong>SolAR × SPCA</strong> (2025), the spin-off featuring real cats from
+            Singapore's SPCA, I handled <strong>level design and testing</strong>.</p>
+          </div>
+          <div data-lang="es">
+            <p>Geo-RPG solarpunk con realidad aumentada, live en Singapur para iOS y Android y
+            ganador del <strong>Lightship Grand Prize 2025</strong>. Usa <strong>7.700 lugares
+            reales</strong> de la ciudad como mapa y superó las <strong>5.000 descargas</strong>.
+            El espacio de juego no se dibuja, lo da la ciudad, y el trabajo es diseñar encuentros
+            que funcionen en cualquier esquina. Trabajé tres años en KYKUYO, en remoto.</p>
+
+            <p>Diseñé el <strong>bestiario completo</strong>: 19 enemigos, 6 de ellos bosses, y el
+            resto con variantes chica, normal, grande y épica, además de unos 6 prototipos que no
+            llegaron a producción. Cada enemigo con telegrafías claras y feedback visual y sonoro,
+            priorizando la legibilidad y el game feel.</p>
+
+            <p>Del lado del jugador, las <strong>habilidades, ultimates y ataques especiales</strong>,
+            diseñadas en cruce con el bestiario. Y las <strong>arenas</strong>, con su ritmo de
+            encuentros y sus curvas de dificultad.</p>
+
+            <p>También fui responsable de la <strong>FTUE completa</strong> y del <strong>balance
+            del combate y la progresión</strong> de largo plazo, documentados en GDD y
+            Living GDD.</p>
+
+            <p>En <strong>SolAR × SPCA</strong> (2025), el spin-off con gatos reales de la SPCA de
+            Singapur, me ocupé del <strong>level design y el testing</strong>.</p>
+          </div>
 
           <div class="proj-links">
             <a href="https://apps.apple.com/sg/app/solar-solarpunk-geo-rpg/id6737652523" target="_blank" rel="noopener">App Store ↗</a>
             <a href="https://play.google.com/store/apps/details?id=com.kykuyo.solar" target="_blank" rel="noopener">Google Play ↗</a>
             <a href="https://apps.apple.com/sg/app/solar-x-spca/id6751254495" target="_blank" rel="noopener">SolAR × SPCA ↗</a>
-            <a href="https://www.kykuyo.com/solar" target="_blank" rel="noopener">Sobre el juego ↗</a>
+            <a href="https://www.kykuyo.com/solar" target="_blank" rel="noopener"><span data-lang="en">About the game</span><span data-lang="es">Sobre el juego</span> ↗</a>
           </div>
         </div>
       </div>
@@ -367,9 +455,11 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
            1. Completá cada [[COMPLETAR: ...]] de abajo.
            2. Poné las capturas en assets/incendios/ (mismo formato que las otras:
               .webp y .jpg, 1280x720 la grande y 640x360 las de la tira).
-           3. Borrá esta línea de apertura y la de cierre del comentario.
-           4. Cambiá el lede de la sección: hoy dice "Dos juegos, dos estudios,
-              dos plataformas" y pasarían a ser tres.
+           3. Duplicá cada texto con data-lang="en" y data-lang="es", igual que
+              en Sealcoating y SolAR (el sitio ahora es bilingüe).
+           4. Borrá esta línea de apertura y la de cierre del comentario.
+           5. Cambiá el lede de la sección: hoy dice "Two games / Dos juegos" y
+              pasarían a ser tres.
          ═══════════════════════════════════════════════════════════════════
 
     <article class="proj rv">
@@ -423,124 +513,136 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
   <div class="wrap">
     <div class="sec-head rv">
       <div class="eyebrow">Escuela Da Vinci</div>
-      <h2 class="h2">Proyectos de carrera</h2>
-      <p class="lede">Juegos terminados y jugables de la carrera de Videojuegos. Arriba están
+      <h2 class="h2"><span data-lang="en">Student projects</span><span data-lang="es">Proyectos de carrera</span></h2>
+      <p class="lede" data-lang="en">Finished, playable games from my game development degree. The ones at
+      the top show best how I design; the rest are below, all with video and download.</p>
+      <p class="lede" data-lang="es">Juegos terminados y jugables de la carrera de Videojuegos. Arriba están
       los que mejor muestran cómo diseño; abajo el resto, todos con video y descarga.</p>
     </div>
 
     <div class="grid rv">
 
       <article class="mini">
-        <button class="yt" data-id="4lcbUXcykps" aria-label="Ver gameplay de Cold Blooded">
-          <img src="https://img.youtube.com/vi/4lcbUXcykps/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/4lcbUXcykps/hqdefault.jpg" alt="Gameplay de Cold Blooded" loading="lazy">
+        <button class="yt" data-id="4lcbUXcykps" aria-label="Watch Cold Blooded gameplay" data-aria-es="Ver gameplay de Cold Blooded">
+          <img src="https://img.youtube.com/vi/4lcbUXcykps/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/4lcbUXcykps/hqdefault.jpg" alt="Cold Blooded gameplay" data-alt-es="Gameplay de Cold Blooded" loading="lazy">
           <span class="play"><i></i></span>
         </button>
         <div class="mini-body">
           <h4>Cold Blooded</h4>
-          <div class="line">PC · Unity 3D · FPS single player · Solo</div>
-          <p>Proyecto final de carrera, hecho de punta a punta por mí: <strong>3 niveles y 3
+          <div class="line"><span data-lang="en">PC · Unity 3D · Single-player FPS · Solo</span><span data-lang="es">PC · Unity 3D · FPS single player · Solo</span></div>
+          <p data-lang="en">My final degree project, built end to end by me: <strong>3 levels and 3
+          distinct bosses</strong>, with custom waypoint, explosion and object-throwing systems.
+          Full level design, programming and writing.</p>
+          <p data-lang="es">Proyecto final de carrera, hecho de punta a punta por mí: <strong>3 niveles y 3
           bosses distintos</strong>, con sistemas propios de waypoints, explosiones y lanzamiento
           de objetos. Level design, programación y guion completos.</p>
           <div class="foot">
-            <span>Game &amp; Level Design · Programación · Guion</span>
-            <a href="https://drive.google.com/open?id=1xBf7i2JIhsNbTl9bxaHIxE__QqPO_fQR&usp=drive_fs" target="_blank" rel="noopener">Descargar ↗</a>
+            <span><span data-lang="en">Game &amp; Level Design · Programming · Writing</span><span data-lang="es">Game &amp; Level Design · Programación · Guion</span></span>
+            <a href="https://drive.google.com/open?id=1xBf7i2JIhsNbTl9bxaHIxE__QqPO_fQR&amp;usp=drive_fs" target="_blank" rel="noopener"><span data-lang="en">Download</span><span data-lang="es">Descargar</span> ↗</a>
           </div>
         </div>
       </article>
       <article class="mini">
-        <button class="yt" data-id="MwDtFKsLwvs" aria-label="Ver gameplay de Zack 2">
-          <img src="https://img.youtube.com/vi/MwDtFKsLwvs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/MwDtFKsLwvs/hqdefault.jpg" alt="Gameplay de Zack 2" loading="lazy">
+        <button class="yt" data-id="MwDtFKsLwvs" aria-label="Watch Zack 2 gameplay" data-aria-es="Ver gameplay de Zack 2">
+          <img src="https://img.youtube.com/vi/MwDtFKsLwvs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/MwDtFKsLwvs/hqdefault.jpg" alt="Zack 2 gameplay" data-alt-es="Gameplay de Zack 2" loading="lazy">
           <span class="play"><i></i></span>
         </button>
         <div class="mini-body">
           <h4>Zack 2</h4>
-          <div class="line">Mobile · Unity 3D · Shooter survival · Solo</div>
-          <p>Shooter de supervivencia para mobile, hecho en solitario: diseño, niveles,
+          <div class="line"><span data-lang="en">Mobile · Unity 3D · Survival shooter · Solo</span><span data-lang="es">Mobile · Unity 3D · Shooter survival · Solo</span></div>
+          <p data-lang="en">A mobile survival shooter made solo: design, levels, programming and
+          writing. I took it from <strong>25 to a stable 60 FPS</strong> on low-end phones, cutting
+          over 500k polygons through level design and occlusion culling, plus combined meshes,
+          texture atlases and static branching to bring draw calls down.</p>
+          <p data-lang="es">Shooter de supervivencia para mobile, hecho en solitario: diseño, niveles,
           programación y guion. Lo llevé de <strong>25 a 60 FPS estables</strong> en celulares de
           gama baja, con más de 500k polígonos menos gracias al level design y al occlusion
           culling, sumado a meshes combinados, texture atlas y static branching para bajar los
           draw calls.</p>
           <div class="foot">
-            <span>Game &amp; Level Design · Programación · Optimización</span>
-            <a href="https://drive.google.com/file/d/1wGHjWC-hT7eG88OY1FST6lJG-An_nNfE/view" target="_blank" rel="noopener">Descargar ↗</a>
+            <span><span data-lang="en">Game &amp; Level Design · Programming · Optimization</span><span data-lang="es">Game &amp; Level Design · Programación · Optimización</span></span>
+            <a href="https://drive.google.com/file/d/1wGHjWC-hT7eG88OY1FST6lJG-An_nNfE/view" target="_blank" rel="noopener"><span data-lang="en">Download</span><span data-lang="es">Descargar</span> ↗</a>
           </div>
         </div>
       </article>
       <article class="mini">
-        <button class="yt" data-id="TfBjDYBX2PI" aria-label="Ver gameplay de Grab it, It's Hot!">
-          <img src="https://img.youtube.com/vi/TfBjDYBX2PI/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/TfBjDYBX2PI/hqdefault.jpg" alt="Gameplay de Grab it, It's Hot!" loading="lazy">
+        <button class="yt" data-id="TfBjDYBX2PI" aria-label="Watch Grab it, It's Hot! gameplay" data-aria-es="Ver gameplay de Grab it, It's Hot!">
+          <img src="https://img.youtube.com/vi/TfBjDYBX2PI/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/TfBjDYBX2PI/hqdefault.jpg" alt="Grab it, It's Hot! gameplay" data-alt-es="Gameplay de Grab it, It's Hot!" loading="lazy">
           <span class="play"><i></i></span>
         </button>
         <div class="mini-body">
           <h4>Grab it, It's Hot!</h4>
-          <div class="line">PC · Unity 3D · Multiplayer online hasta 16 con Photon · Materia: Desarrollo de Redes</div>
-          <p>Party game en red: multijugador online de hasta 16 jugadores con Photon. Me ocupé
+          <div class="line"><span data-lang="en">PC · Unity 3D · Online multiplayer up to 16 with Photon · Course: Network Development</span><span data-lang="es">PC · Unity 3D · Multiplayer online hasta 16 con Photon · Materia: Desarrollo de Redes</span></div>
+          <p data-lang="en">A networked party game: online multiplayer for up to 16 players with
+          Photon. I handled the programming, the mechanics design and the levels. A small
+          project, but the one I enjoyed making the most.</p>
+          <p data-lang="es">Party game en red: multijugador online de hasta 16 jugadores con Photon. Me ocupé
           de la programación, el diseño de mecánicas y los niveles. Un proyecto chico, pero el
           que más disfruté hacer.</p>
           <div class="foot">
-            <span>Programación · Game &amp; Level Design</span>
-            <a href="https://drive.google.com/open?id=1xErI63W65QAe1Zq-qM7va3-dPqqNPn2Q&amp;usp=drive_fs" target="_blank" rel="noopener">Descargar ↗</a>
+            <span><span data-lang="en">Programming · Game &amp; Level Design</span><span data-lang="es">Programación · Game &amp; Level Design</span></span>
+            <a href="https://drive.google.com/open?id=1xErI63W65QAe1Zq-qM7va3-dPqqNPn2Q&amp;usp=drive_fs" target="_blank" rel="noopener"><span data-lang="en">Download</span><span data-lang="es">Descargar</span> ↗</a>
           </div>
         </div>
       </article>
 
     </div>
 
-    <div class="tiles-h rv">También de la carrera</div>
+    <div class="tiles-h rv"><span data-lang="en">More from the program</span><span data-lang="es">También de la carrera</span></div>
     <div class="tiles rv">
       <article class="tile">
-        <button class="yt" data-id="S9SGYD3hVBs" aria-label="Ver gameplay de Bit Con">
-          <img src="https://img.youtube.com/vi/S9SGYD3hVBs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/S9SGYD3hVBs/hqdefault.jpg" alt="Gameplay de Bit Con" loading="lazy">
+        <button class="yt" data-id="S9SGYD3hVBs" aria-label="Watch Bit Con gameplay" data-aria-es="Ver gameplay de Bit Con">
+          <img src="https://img.youtube.com/vi/S9SGYD3hVBs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/S9SGYD3hVBs/hqdefault.jpg" alt="Bit Con gameplay" data-alt-es="Gameplay de Bit Con" loading="lazy">
           <span class="play"><i></i></span>
         </button>
         <div class="tile-body">
           <h4>Bit Con</h4>
-          <div class="line">PC · Unity 3D · Plataformero · Solo · Diseño de Niveles</div>
-          <a href="https://drive.google.com/file/d/1vTNqeawi_gHIq55o95ece2zziRdQ1f81/view" target="_blank" rel="noopener">Descargar ↗</a>
+          <div class="line"><span data-lang="en">PC · Unity 3D · Platformer · Solo · Level Design course</span><span data-lang="es">PC · Unity 3D · Plataformero · Solo · Diseño de Niveles</span></div>
+          <a href="https://drive.google.com/file/d/1vTNqeawi_gHIq55o95ece2zziRdQ1f81/view" target="_blank" rel="noopener"><span data-lang="en">Download</span><span data-lang="es">Descargar</span> ↗</a>
         </div>
       </article>
       <article class="tile">
-        <button class="yt" data-id="kFyClFSWqzs" aria-label="Ver gameplay de OrbBuster">
-          <img src="https://img.youtube.com/vi/kFyClFSWqzs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/kFyClFSWqzs/hqdefault.jpg" alt="Gameplay de OrbBuster" loading="lazy">
+        <button class="yt" data-id="kFyClFSWqzs" aria-label="Watch OrbBuster gameplay" data-aria-es="Ver gameplay de OrbBuster">
+          <img src="https://img.youtube.com/vi/kFyClFSWqzs/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/kFyClFSWqzs/hqdefault.jpg" alt="OrbBuster gameplay" data-alt-es="Gameplay de OrbBuster" loading="lazy">
           <span class="play"><i></i></span>
         </button>
         <div class="tile-body">
           <h4>OrbBuster</h4>
-          <div class="line">PC · Unreal Engine 4 · RPG · Equipo de 3</div>
-          <a href="https://drive.google.com/file/d/1E-hNoGor7rCVNsnJDJmmFoBBtuJWSDxg/view?usp=drive_link" target="_blank" rel="noopener">Descargar ↗</a>
+          <div class="line"><span data-lang="en">PC · Unreal Engine 4 · RPG · Team of 3</span><span data-lang="es">PC · Unreal Engine 4 · RPG · Equipo de 3</span></div>
+          <a href="https://drive.google.com/file/d/1E-hNoGor7rCVNsnJDJmmFoBBtuJWSDxg/view?usp=drive_link" target="_blank" rel="noopener"><span data-lang="en">Download</span><span data-lang="es">Descargar</span> ↗</a>
         </div>
       </article>
       <article class="tile">
-        <button class="yt" data-id="PfuSDMfh4vQ" aria-label="Ver gameplay de Proyecto Caos">
-          <img src="https://img.youtube.com/vi/PfuSDMfh4vQ/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/PfuSDMfh4vQ/hqdefault.jpg" alt="Gameplay de Proyecto Caos" loading="lazy">
+        <button class="yt" data-id="PfuSDMfh4vQ" aria-label="Watch Proyecto Caos gameplay" data-aria-es="Ver gameplay de Proyecto Caos">
+          <img src="https://img.youtube.com/vi/PfuSDMfh4vQ/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/PfuSDMfh4vQ/hqdefault.jpg" alt="Proyecto Caos gameplay" data-alt-es="Gameplay de Proyecto Caos" loading="lazy">
           <span class="play"><i></i></span>
         </button>
         <div class="tile-body">
           <h4>Proyecto Caos</h4>
-          <div class="line">PC · Unity 2D · Plataformero · Equipo de 4</div>
-          <a href="https://drive.google.com/file/d/1NYe7GxX6MJrHdbW2NOB7UnjQNTSNwy4I/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
+          <div class="line"><span data-lang="en">PC · Unity 2D · Platformer · Team of 4</span><span data-lang="es">PC · Unity 2D · Plataformero · Equipo de 4</span></div>
+          <a href="https://drive.google.com/file/d/1NYe7GxX6MJrHdbW2NOB7UnjQNTSNwy4I/view?usp=sharing" target="_blank" rel="noopener"><span data-lang="en">Download</span><span data-lang="es">Descargar</span> ↗</a>
         </div>
       </article>
       <article class="tile">
-        <button class="yt" data-id="TTQJIlwGJXM" aria-label="Ver gameplay de Asteroids">
-          <img src="https://img.youtube.com/vi/TTQJIlwGJXM/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/TTQJIlwGJXM/hqdefault.jpg" alt="Gameplay de Asteroids" loading="lazy">
+        <button class="yt" data-id="TTQJIlwGJXM" aria-label="Watch Asteroids gameplay" data-aria-es="Ver gameplay de Asteroids">
+          <img src="https://img.youtube.com/vi/TTQJIlwGJXM/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/TTQJIlwGJXM/hqdefault.jpg" alt="Asteroids gameplay" data-alt-es="Gameplay de Asteroids" loading="lazy">
           <span class="play"><i></i></span>
         </button>
         <div class="tile-body">
           <h4>Asteroids</h4>
-          <div class="line">PC · Unity 2D · Equipo de 2 · Modelos y Algoritmos 1</div>
-          <a href="https://drive.google.com/file/d/1r74E0lzcg4vZ-iKusEGUyCoGO44rkLw5/view?usp=sharing" target="_blank" rel="noopener">Descargar ↗</a>
+          <div class="line"><span data-lang="en">PC · Unity 2D · Team of 2 · Models &amp; Algorithms 1</span><span data-lang="es">PC · Unity 2D · Equipo de 2 · Modelos y Algoritmos 1</span></div>
+          <a href="https://drive.google.com/file/d/1r74E0lzcg4vZ-iKusEGUyCoGO44rkLw5/view?usp=sharing" target="_blank" rel="noopener"><span data-lang="en">Download</span><span data-lang="es">Descargar</span> ↗</a>
         </div>
       </article>
       <article class="tile">
-        <button class="yt" data-id="kGAdaWTG4cg" aria-label="Ver gameplay de Cold World">
-          <img src="https://img.youtube.com/vi/kGAdaWTG4cg/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/kGAdaWTG4cg/hqdefault.jpg" alt="Gameplay de Cold World" loading="lazy">
+        <button class="yt" data-id="kGAdaWTG4cg" aria-label="Watch Cold World gameplay" data-aria-es="Ver gameplay de Cold World">
+          <img src="https://img.youtube.com/vi/kGAdaWTG4cg/maxresdefault.jpg" data-fb="https://img.youtube.com/vi/kGAdaWTG4cg/hqdefault.jpg" alt="Cold World gameplay" data-alt-es="Gameplay de Cold World" loading="lazy">
           <span class="play"><i></i></span>
         </button>
         <div class="tile-body">
           <h4>Cold World</h4>
-          <div class="line">PC · Unity 2D · Plataformero shooter · Solo · Mi primer juego</div>
-          <a href="https://drive.google.com/file/d/1wCVIjtfbjw6e97jDAwVeZwWj6NXRA7Pv/view" target="_blank" rel="noopener">Descargar ↗</a>
+          <div class="line"><span data-lang="en">PC · Unity 2D · Platformer shooter · Solo · My first game</span><span data-lang="es">PC · Unity 2D · Plataformero shooter · Solo · Mi primer juego</span></div>
+          <a href="https://drive.google.com/file/d/1wCVIjtfbjw6e97jDAwVeZwWj6NXRA7Pv/view" target="_blank" rel="noopener"><span data-lang="en">Download</span><span data-lang="es">Descargar</span> ↗</a>
         </div>
       </article>
     </div>
@@ -552,23 +654,29 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
 <section id="quehago">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="eyebrow">Especialidades</div>
-      <h2 class="h2">Qué hago</h2>
+      <div class="eyebrow"><span data-lang="en">Specialties</span><span data-lang="es">Especialidades</span></div>
+      <h2 class="h2"><span data-lang="en">What I do</span><span data-lang="es">Qué hago</span></h2>
     </div>
 
     <div class="skills rv">
       <div class="skill"><span class="num">01</span><h4>Game Design</h4>
-        <p>Core loop, progresión, balance y economía, documentados en GDD y Living GDD. Definir qué hace el jugador y por qué querría hacerlo de nuevo.</p></div>
+        <p data-lang="en">Core loop, progression, balance and economy, documented in GDDs and Living GDDs. Defining what the player does and why they'd want to do it again.</p>
+        <p data-lang="es">Core loop, progresión, balance y economía, documentados en GDD y Living GDD. Definir qué hace el jugador y por qué querría hacerlo de nuevo.</p></div>
       <div class="skill"><span class="num">02</span><h4>Combat Design</h4>
-        <p>Enemigos, bosses y las habilidades del jugador que los enfrentan, con telegrafías que se leen antes de que llegue el golpe.</p></div>
+        <p data-lang="en">Enemies, bosses and the player abilities that face them, with telegraphs that read before the hit lands.</p>
+        <p data-lang="es">Enemigos, bosses y las habilidades del jugador que los enfrentan, con telegrafías que se leen antes de que llegue el golpe.</p></div>
       <div class="skill"><span class="num">03</span><h4>Level Design</h4>
-        <p>Blockout, recorrido, ritmo de encuentros y dificultad. Niveles que enseñan una idea y después la ponen a prueba.</p></div>
-      <div class="skill"><span class="num">04</span><h4>FTUE y onboarding</h4>
-        <p>Enseñar sistemas jugando, sin muros de texto. Las primeras sesiones de un juego complejo, en el orden justo.</p></div>
-      <div class="skill"><span class="num">05</span><h4>Optimización en Unity</h4>
-        <p>Zack 2 pasó de 25 a 60 FPS en gama baja con occlusion culling, batching y texture atlas.</p></div>
-      <div class="skill"><span class="num">06</span><h4>Prototipado Unity / C#</h4>
-        <p>Validar mecánicas jugando antes de producirlas, sin pedirle tiempo a nadie.</p></div>
+        <p data-lang="en">Blockout, routing, encounter pacing and difficulty. Levels that teach an idea and then put it to the test.</p>
+        <p data-lang="es">Blockout, recorrido, ritmo de encuentros y dificultad. Niveles que enseñan una idea y después la ponen a prueba.</p></div>
+      <div class="skill"><span class="num">04</span><h4><span data-lang="en">FTUE &amp; onboarding</span><span data-lang="es">FTUE y onboarding</span></h4>
+        <p data-lang="en">Teaching systems through play, without walls of text. The first sessions of a complex game, in the right order.</p>
+        <p data-lang="es">Enseñar sistemas jugando, sin muros de texto. Las primeras sesiones de un juego complejo, en el orden justo.</p></div>
+      <div class="skill"><span class="num">05</span><h4><span data-lang="en">Unity optimization</span><span data-lang="es">Optimización en Unity</span></h4>
+        <p data-lang="en">Zack 2 went from 25 to 60 FPS on low-end devices with occlusion culling, batching and texture atlases.</p>
+        <p data-lang="es">Zack 2 pasó de 25 a 60 FPS en gama baja con occlusion culling, batching y texture atlas.</p></div>
+      <div class="skill"><span class="num">06</span><h4><span data-lang="en">Unity / C# prototyping</span><span data-lang="es">Prototipado Unity / C#</span></h4>
+        <p data-lang="en">Validating mechanics by playing them before they go into production, without taking up anyone else's time.</p>
+        <p data-lang="es">Validar mecánicas jugando antes de producirlas, sin pedirle tiempo a nadie.</p></div>
     </div>
 
     <div class="tools rv">
@@ -585,19 +693,24 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
 <section id="docencia">
   <div class="wrap">
     <div class="sec-head rv">
-      <div class="eyebrow">Enseñar diseño</div>
-      <h2 class="h2">Docencia y mentoría</h2>
-      <p class="lede">Me interesan los sistemas que enseñan, y también enseñar: di un taller de
+      <div class="eyebrow"><span data-lang="en">Teaching design</span><span data-lang="es">Enseñar diseño</span></div>
+      <h2 class="h2"><span data-lang="en">Teaching &amp; mentoring</span><span data-lang="es">Docencia y mentoría</span></h2>
+      <p class="lede" data-lang="en">I'm drawn to systems that teach, and to teaching itself: I ran a game
+      design workshop for kids and I mentor at game jams.</p>
+      <p class="lede" data-lang="es">Me interesan los sistemas que enseñan, y también enseñar: di un taller de
       diseño para chicos y soy mentor en game jams.</p>
     </div>
 
     <div class="skills rv">
-      <div class="skill"><span class="num">JUL A DIC 2025</span><h4>Escuela Modelo de Bella Vista</h4>
-        <p>Tallerista del taller de diseño de videojuegos, con dos comisiones de 5.º y 6.º grado de unos 35 alumnos cada una, unos 70 en total. Diseñé un juego en el que cada alumno armaba su propia aventura, y con él enseñé los conceptos básicos de diseño.</p></div>
+      <div class="skill"><span class="num"><span data-lang="en">JUL – DEC 2025</span><span data-lang="es">JUL A DIC 2025</span></span><h4>Escuela Modelo de Bella Vista</h4>
+        <p data-lang="en">Ran the school's game design workshop for two groups of 5th and 6th graders, about 35 students each, around 70 in total. I designed a game in which every student built their own adventure, and used it to teach the fundamentals of design.</p>
+        <p data-lang="es">Tallerista del taller de diseño de videojuegos, con dos comisiones de 5.º y 6.º grado de unos 35 alumnos cada una, unos 70 en total. Diseñé un juego en el que cada alumno armaba su propia aventura, y con él enseñé los conceptos básicos de diseño.</p></div>
       <div class="skill"><span class="num">2024</span><h4>Global Game Jam UADE</h4>
-        <p>Mentor de unos 5 equipos, con feedback de diseño y de scope para que cada uno llegara a un juego terminado.</p></div>
-      <div class="skill"><span class="num">UADE</span><h4>Feedback de diseño</h4>
-        <p>A compañeros de Introducción al Diseño, Diseño de Sistemas, Juegos Aplicados y Proyecto Final, que lo aplicaron en sus entregas.</p></div>
+        <p data-lang="en">Mentored around 5 teams, giving design and scope feedback so each one reached a finished game.</p>
+        <p data-lang="es">Mentor de unos 5 equipos, con feedback de diseño y de scope para que cada uno llegara a un juego terminado.</p></div>
+      <div class="skill"><span class="num">UADE</span><h4><span data-lang="en">Design feedback</span><span data-lang="es">Feedback de diseño</span></h4>
+        <p data-lang="en">For classmates in Intro to Design, Systems Design, Applied Games and Final Project, who applied it to their submissions.</p>
+        <p data-lang="es">A compañeros de Introducción al Diseño, Diseño de Sistemas, Juegos Aplicados y Proyecto Final, que lo aplicaron en sus entregas.</p></div>
     </div>
   </div>
 </section>
@@ -606,13 +719,18 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
 <section id="contacto">
   <div class="wrap">
     <div class="card rv">
-      <div class="eyebrow">Contacto</div>
-      <p class="contact-h">Hablemos<br>de tu juego</p>
-      <p class="lede">Puedo mostrar documentación de diseño, layouts anotados y planillas de
+      <div class="eyebrow"><span data-lang="en">Contact</span><span data-lang="es">Contacto</span></div>
+      <p class="contact-h" data-lang="en">Let's talk<br>about your game</p>
+      <p class="contact-h" data-lang="es">Hablemos<br>de tu juego</p>
+      <p class="lede" data-lang="en">I can share design docs, annotated layouts and balancing spreadsheets
+      from my own and academic projects. Studio work I'm happy to walk through in an
+      interview, in as much detail as needed.</p>
+      <p class="lede" data-lang="es">Puedo mostrar documentación de diseño, layouts anotados y planillas de
       balanceo de mis proyectos propios y de los académicos. Del trabajo de estudio hablo en
       entrevista, con el detalle que haga falta.</p>
-      <p class="lede"><strong style="color:var(--bone)">Disponible para roles remotos y
-      presenciales en Buenos Aires.</strong></p>
+      <p class="lede"><strong style="color:var(--bone)"><span data-lang="en">Available for remote roles and
+      on-site in Buenos Aires.</span><span data-lang="es">Disponible para roles remotos y
+      presenciales en Buenos Aires.</span></strong></p>
       <div class="links">
         <a class="btn solid" href="mailto:agusvila0087@gmail.com">agusvila0087@gmail.com</a>
         <a class="btn ghost" href="https://www.linkedin.com/in/agustinvila87/" target="_blank" rel="noopener">LinkedIn</a>
@@ -631,8 +749,75 @@ footer{border-top:1px solid var(--line);padding:26px 0 40px}
 </footer>
 
 <script>
-// thumbnails: si no hay maxresdefault, YouTube devuelve un gris de 120x90 con
-// status 200, asi que el evento 'error' nunca dispara. Hay que medir la imagen.
+// ── idioma ──────────────────────────────────────────────────────────────
+// Arranca siempre en ingles. ?lang=es abre la version en espanol (sirve para
+// mandarle el link directo a estudios de habla hispana).
+const META = {
+  en: {
+    title: 'Agustín Vila · Game Designer · Combat & Level Design',
+    desc:  'Game designer focused on combat and levels. Full bestiary for SolAR (KYKUYO, Lightship Grand Prize 2025) and the levels of Sealcoating Simulator. Buenos Aires.'
+  },
+  es: {
+    title: 'Agustín Vila · Game Designer · Combat & Level Design',
+    desc:  'Game Designer especializado en combate y niveles. Bestiario completo de SolAR (KYKUYO, Lightship Grand Prize 2025) y niveles de Sealcoating Simulator. Buenos Aires.'
+  }
+};
+
+// CV por idioma. EDITAR: subí la versión en inglés con este nombre exacto.
+// Si todavía no está subida, el sitio usa la de español sin romper el link.
+const CV = {
+  es: 'Agustin_Vila_Game_Designer_CV.pdf',
+  en: 'Agustin_Vila_Game_Designer_CV_EN.pdf'
+};
+let cvEnDisponible = false;
+fetch(CV.en, { method: 'HEAD' })
+  .then(r => { cvEnDisponible = r.ok; aplicarCV(document.documentElement.lang); })
+  .catch(() => {});
+
+function aplicarCV(lang){
+  const file = (lang === 'en' && cvEnDisponible) ? CV.en : CV.es;
+  document.querySelectorAll('.cv-link').forEach(a => a.setAttribute('href', file));
+}
+
+function setLang(lang){
+  if (lang !== 'es') lang = 'en';
+  const html = document.documentElement;
+  html.lang = lang;
+
+  document.querySelectorAll('[data-set-lang]').forEach(b =>
+    b.setAttribute('aria-pressed', String(b.dataset.setLang === lang)));
+
+  // alt y aria-label: el ingles queda en el atributo, el espanol en data-*-es
+  document.querySelectorAll('[data-alt-es]').forEach(el => {
+    if (!el.dataset.altEn) el.dataset.altEn = el.getAttribute('alt') || '';
+    el.setAttribute('alt', lang === 'es' ? el.dataset.altEs : el.dataset.altEn);
+  });
+  document.querySelectorAll('[data-aria-es]').forEach(el => {
+    if (!el.dataset.ariaEn) el.dataset.ariaEn = el.getAttribute('aria-label') || '';
+    el.setAttribute('aria-label', lang === 'es' ? el.dataset.ariaEs : el.dataset.ariaEn);
+  });
+
+  document.title = META[lang].title;
+  const d = document.querySelector('meta[name="description"]');
+  if (d) d.setAttribute('content', META[lang].desc);
+
+  aplicarCV(lang);
+
+  // la URL refleja el idioma, asi recargar o compartir mantiene la eleccion
+  try {
+    const url = new URL(location.href);
+    if (lang === 'es') url.searchParams.set('lang', 'es'); else url.searchParams.delete('lang');
+    history.replaceState(null, '', url);
+  } catch(e){}
+}
+
+document.querySelectorAll('[data-set-lang]').forEach(b =>
+  b.addEventListener('click', () => setLang(b.dataset.setLang)));
+setLang(document.documentElement.lang);
+
+// ── thumbnails ──────────────────────────────────────────────────────────
+// si no hay maxresdefault, YouTube devuelve un gris de 120x90 con status 200,
+// asi que el evento 'error' nunca dispara. Hay que medir la imagen.
 document.querySelectorAll('.yt img[data-fb]').forEach(img => {
   const usarFallback = () => {
     if (img.src !== img.dataset.fb) img.src = img.dataset.fb;
@@ -648,7 +833,7 @@ document.querySelectorAll('.yt').forEach(box => {
     const id = box.dataset.id;
     if (!id) return;
     const f = document.createElement('iframe');
-    f.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+    f.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&hl=${document.documentElement.lang}`;
     f.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture';
     f.allowFullscreen = true;
     f.title = box.getAttribute('aria-label') || 'Video';
